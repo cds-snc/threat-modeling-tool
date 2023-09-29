@@ -98,7 +98,7 @@ const useImportExport = () => {
 
     const validatedData = validateData(parsedData);
 
-    if (!validatedData.success) {
+    if (validatedData.success === false) {
       throw new Error(validatedData.error.issues.map(i => `${i.path}: ${i.message}`).join('\n'));
     }
 

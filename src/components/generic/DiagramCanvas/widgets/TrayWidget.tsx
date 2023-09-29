@@ -14,22 +14,20 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { FC } from 'react';
-import { useDataflowInfoContext } from '../../../contexts/DataflowContext/context';
-import { DataflowInfoSchema, EditableComponentBaseProps } from '../../../customTypes';
-import BaseDiagramInfo from '../../generic/BaseDiagramInfo';
+import * as React from 'react';
+import styled from '@emotion/styled';
 
+namespace S {
+  export const Tray = styled.div`
+		min-width: 200px;
+		background: rgb(20, 20, 20);
+		flex-grow: 0;
+		flex-shrink: 0;
+	`;
+}
 
-const DataflowInfo: FC<EditableComponentBaseProps> = (props) => {
-  const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
-  return <BaseDiagramInfo
-    {...props}
-    headerTitle='Dataflow'
-    diagramTitle=''
-    entity={dataflowInfo}
-    onConfirm={(diagram) => setDataflowInfo(diagram)}
-    validateData={DataflowInfoSchema.shape.description.safeParse}
-  />;
-};
-
-export default DataflowInfo;
+export class TrayWidget extends React.Component<any, any> {
+  render() {
+	  return <S.Tray>{this.props.children}</S.Tray>;
+  }
+}

@@ -20,17 +20,8 @@ import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { css } from '@emotion/react';
-
-import createEngine, {
-  DefaultLinkModel,
-  //DefaultLabelModel,
-  DefaultNodeModel,
-  DiagramModel,
-} from '@projectstorm/react-diagrams';
-
-import {
-  CanvasWidget,
-} from '@projectstorm/react-canvas-core';
+import { BodyWidget } from './widgets/BodyWidget';
+import { Application } from './Application';
 
 import { FC, useCallback, useState, useMemo, useEffect } from 'react';
 import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
@@ -81,48 +72,21 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const diagramWrapper = css({
     display: 'grid',
-    height: '100vh',
+    height: '75vh',
     minHeight: '100%',
-    width: '100vw',
-  });
-  const canvasCSS = css({
-    height: '100vh',
+    width: '50vw',
+    minWidth: '100%',
   });
 
-  const useReactDiagramEngine = () => {
-    const engine = createEngine();
-
-    const node1 = new DefaultNodeModel({
-      name: 'Node 1',
-      color: 'rgb(0,192,255)',
-    });
-    node1.setPosition(100, 100);
-    let port1 = node1.addOutPort('Out');
-
-    const node2 = new DefaultNodeModel({
-      name: 'Node 2',
-      color: 'rgb(192,255,0)',
-    });
-    node2.setPosition(400, 100);
-    let port2 = node2.addInPort('In');
-
-    const link = port1.link<DefaultLinkModel>(port2);
-    //link.addLabel(new DefaultLabelModel({ label: 'Label' }));
-
-    const model = new DiagramModel();
-    model.addAll(node1, node2, link);
-    engine.setModel(model);
-    return engine;
-  };
+  const app = new Application();
 
   return (
     <Container header={<Header actions={actions}>{headerTitle}</Header>}>
       {editMode ? (
         <SpaceBetween direction='vertical' size='s'>
 
-          <Header variant='h3'>{headerTitle} Diagram</Header>
           <div css={diagramWrapper}>
-            <CanvasWidget engine={useReactDiagramEngine()} css={canvasCSS} />
+            <BodyWidget app={app} />
           </div>
         </SpaceBetween>) :
         (<SpaceBetween direction='vertical' size='s'>
