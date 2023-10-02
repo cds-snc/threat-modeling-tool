@@ -8,7 +8,8 @@
   "plugins": [
     "@typescript-eslint",
     "import",
-    "header"
+    "header",
+    "react-hooks"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -146,12 +147,7 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": [
-          "**/src/**/*.test.tsx",
-          "**/src/setupTests.ts",
-          "**/test/**",
-          "**/build-tools/**"
-        ],
+        "devDependencies": true,
         "optionalDependencies": false,
         "peerDependencies": true
       }
@@ -192,26 +188,12 @@
     "no-bitwise": [
       "error"
     ],
-    "@typescript-eslint/member-ordering": [
-      "error",
-      {
-        "default": [
-          "public-static-field",
-          "public-static-method",
-          "protected-static-field",
-          "protected-static-method",
-          "private-static-field",
-          "private-static-method",
-          "field",
-          "constructor",
-          "method"
-        ]
-      }
-    ],
     "header/header": [
       2,
       "config/header.js"
-    ]
+    ],
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
   },
   "overrides": [
     {

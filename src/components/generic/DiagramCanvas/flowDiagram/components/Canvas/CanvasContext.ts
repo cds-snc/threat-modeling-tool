@@ -14,23 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
-  return res;
-};
+import * as React from 'react';
 
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
-};
+// NB: always import CanvasContext directly from this file to prevent circular module imports
+// see https://github.com/facebook/react/issues/13969#issuecomment-433253469
 
-export default intersectArrays;
+const CanvasContext = React.createContext({ offsetX: 0, offsetY: 0 });
+
+export default CanvasContext;

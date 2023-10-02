@@ -14,23 +14,23 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
-  return res;
+import styled from 'styled-components';
+import { IConfig } from '../../types';
+
+export interface ICanvasOuterDefaultProps {
+  config: IConfig;
+  children: any;
+  ref?: React.Ref<any>;
 };
 
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
-};
-
-export default intersectArrays;
+export const CanvasOuterDefault = styled.div<ICanvasOuterDefaultProps>`
+  position: relative;
+  background-size: 20px 20px;
+  background-color: rgba(0,0,0,0.08);
+  background-image:
+    linear-gradient(90deg,hsla(0,0%,100%,.2) 1px,transparent 0),
+    linear-gradient(180deg,hsla(0,0%,100%,.2) 1px,transparent 0);
+  width: 100%;
+  overflow: hidden;
+  cursor: not-allowed;
+` as any;

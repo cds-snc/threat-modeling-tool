@@ -13,24 +13,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
-  return res;
+export interface IPosition {
+  x: number;
+  y: number;
+  portType?: string;
+  node?: any;
+  nodeWidth?: number;
+  nodeHeight?: number;
 };
 
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
+export interface ISize {
+  width: number;
+  height: number;
 };
 
-export default intersectArrays;
+export interface IOffset {
+  offsetLeft: number;
+  offsetTop: number;
+};

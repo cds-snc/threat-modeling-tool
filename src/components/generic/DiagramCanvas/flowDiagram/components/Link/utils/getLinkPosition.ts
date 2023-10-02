@@ -13,24 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { INode, IPosition } from '../../../';
 
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
+export const getLinkPosition = (node: INode, portId: string): IPosition => {
+  const port = node.ports[portId];
+  let nodeWidth = (!!node && !!node.size) ? node.size.width : 0;
+  let nodeHeight = (!!node && !!node.size) ? node.size.height : 0;
+  return {
+    x: node.position.x + (port.position ? port.position.x : 0),
+    y: node.position.y + (port.position ? port.position.y : 0),
+    portType: port.type,
+    nodeWidth,
+    nodeHeight,
   };
-  return res;
 };
-
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
-};
-
-export default intersectArrays;

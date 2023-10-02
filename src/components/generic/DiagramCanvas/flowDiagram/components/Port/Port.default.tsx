@@ -13,24 +13,38 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+//import * as React from 'react';
+import styled from 'styled-components';
+import { IConfig, IPort } from '../../';
 
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
-  return res;
+export interface IPortDefaultProps {
+  config: IConfig;
+  port: IPort;
+  isselected: boolean;
+  isHovered: boolean;
+  isLinkSelected: boolean;
+  isLinkHovered: boolean;
 };
 
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
-};
+const PortDefaultInner = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: cornflowerblue;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-export default intersectArrays;
+  &:hover {
+    background: cornflowerblue;
+  }
+  & svg {
+    width: 15px;
+    height: 15px;
+  }
+`;
+
+export const PortDefault = () => (
+  <PortDefaultInner />
+);

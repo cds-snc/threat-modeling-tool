@@ -13,24 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
+export default function mapValues<
+  Obj extends object,
+  Res extends { [key in keyof Obj]: any }
+> (o: Obj, func: (value: Obj[Extract<keyof Obj, string>]) => Res[Extract<keyof Obj, string>]) {
+  const res: Res = {} as any;
+  for (const key in o) {
+    if (o.hasOwnProperty(key)) {
+      res[key] = func(o[key]);
+    }
+  }
   return res;
 };
-
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
-};
-
-export default intersectArrays;

@@ -13,24 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { IPosition } from '../../';
 
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
-  return res;
+// center = rotation center
+// current = current position
+// x, y = rotated positions
+// angle = angle of rotation
+export const rotate = (center: IPosition, current: IPosition, angle: number): IPosition => {
+  const radians = (Math.PI / 180) * angle;
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+  const x = (cos * (current.x - center.x)) + (sin * (current.y - center.y)) + center.x;
+  const y = (cos * (current.y - center.y)) - (sin * (current.x - center.x)) + center.y;
+  return { x, y };
 };
-
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
-};
-
-export default intersectArrays;

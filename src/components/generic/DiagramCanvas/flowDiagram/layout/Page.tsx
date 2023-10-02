@@ -13,24 +13,35 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+//import * as React from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
 
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
-  return res;
-};
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0px;
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    font-family: sans-serif;
+  }
 
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
-};
+  *, :after, :before {
+    box-sizing: inherit;
+  }
+`;
 
-export default intersectArrays;
+const PageContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  max-width: 100vw;
+  max-height: 100vh;
+`;
+
+export const Page = ({ children }: { children: any}) => (
+  <PageContent>
+    {children}
+    <GlobalStyle />
+  </PageContent>
+);

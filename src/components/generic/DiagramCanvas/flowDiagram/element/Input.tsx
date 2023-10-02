@@ -13,24 +13,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+//import * as React from 'react';
+import styled from 'styled-components';
 
-const intersection = (arr1: number[], arr2: number[]) => {
-  const res: number[] = [];
-  for (let i = 0; i < arr1.length; i++) {
-    if (!arr2.includes(arr1[i])) {
-      continue;
-    };
-    res.push(arr1[i]);
-  };
-  return res;
+const CustomInput = styled.input`
+  width: 100%;
+  height: 30px;
+  padding-left: 0.5rem;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  outline: none;
+  font-size: 14px;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    border: 1px solid #10a9ff;
+  }
+`;
+
+export interface IInputProps {
+  value: string;
+  type: string;
+  onChange: (e: any) => void;
 };
 
-const intersectArrays = (...arrs: number[][]) => {
-  let res = arrs[0].slice();
-  for (let i = 1; i < arrs.length; i++) {
-    res = intersection(res, arrs[i]);
-  };
-  return res;
+export const Input = ({ value, type, onChange }: IInputProps) => {
+  return (
+    <CustomInput value={value} type={type} onChange={onChange} />
+  );
 };
-
-export default intersectArrays;

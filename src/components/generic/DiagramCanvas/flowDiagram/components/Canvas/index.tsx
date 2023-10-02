@@ -13,21 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
-import * as React from 'react';
-import styled from '@emotion/styled';
-
-namespace S {
-  export const Tray = styled.div`
-		min-width: 200px;
-		background: rgb(20, 20, 20);
-		flex-grow: 0;
-		flex-shrink: 0;
-	`;
-}
-
-export class TrayWidget extends React.Component<any, any> {
-  render() {
-	  return <S.Tray>{this.props.children}</S.Tray>;
-  }
-}
+export * from './CanvasInner.default';
+export * from './CanvasOuter.default';
+export * from './Canvas.wrapper';
