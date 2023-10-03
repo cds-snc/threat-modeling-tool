@@ -148,6 +148,7 @@ export const onDeleteKey: IOnDeleteKey = () => (chart: IChart) => {
 };
 
 export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
+  console.log('\\//\\//\\// Clicked NodeID: ', nodeId);
   if (chart.selected.id !== nodeId || chart.selected.type !== 'node') {
     chart.selected = {
       type: 'node',

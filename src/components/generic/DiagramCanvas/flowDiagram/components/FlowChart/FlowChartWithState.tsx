@@ -227,7 +227,19 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   setNodeInfo = (): boolean => {
-    // console.log("nodeName: ", this.state.nodeName)
+    console.log('***&&&*** nodeName: ', this.state.nodeName);
+    console.log('***&&&*** newNodeId: ', this.state.newNodeId);
+    console.log('***&&&*** clickNodeId: ', this.state.clickNodeId);
+    let nodeKey = '';
+    for (var key of Object.keys(this.state.nodes)) {
+      console.log('***&&&*** current node.position: ', this.state.nodes[key].position);
+      if (nodeKey !== '' && this.state.nodes[key].position === this.state.nodes[nodeKey].position) {
+        console.log('***&&&*** WE HAVE A MATCH ');
+        delete this.state.nodes[key];
+      }
+      nodeKey = key;
+    }
+
     if (this.state.nodeName.trim() === '') {
       this.warningMessage('Please input the node name!');
       return false;
@@ -348,12 +360,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   componentDidUpdate() {
-    //get work flow data
     let flowData = this.state;
     delete flowData.offset.node;
     for (var key of Object.keys(flowData.nodes)) {
       let node = flowData.nodes[key];
-
       if (node.position && node.position.node) {
         delete node.position.node;
       }
@@ -414,7 +424,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
   public render () {
     const { Components, config } = this.props;
-    console.log('Flow chart props: ', this.props.Components);
 
     return (
       <React.Fragment>

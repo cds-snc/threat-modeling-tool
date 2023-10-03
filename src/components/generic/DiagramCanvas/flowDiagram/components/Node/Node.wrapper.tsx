@@ -125,8 +125,6 @@ export const NodeWrapper = ({
   const nodeRef = React.useRef(null);
 
   function handleDrag(event, data: DraggableData) {
-    console.log('\\//\\//\\// Node Drag Event: ', event);
-    console.log('\\//\\//\\// Node Drag Data: ', data);
     onDragNode({ config, event, data, id: node.id });
   };
 

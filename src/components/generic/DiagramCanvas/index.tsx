@@ -16,6 +16,8 @@
 
 /** @jsxImportSource @emotion/react */
 import styled from 'styled-components';
+import { css } from '@emotion/react';
+import Grid from '@cloudscape-design/components/grid';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
@@ -25,9 +27,21 @@ import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes'
 
 import FlowChartWithState from './flowDiagram/components/FlowChart/FlowChartWithState';
 import { IPortDefaultProps, INodeDefaultProps, LinkDefault } from './flowDiagram';
-import { Content, Sidebar, SidebarItem } from './flowDiagram/layout';
+import { Sidebar, SidebarItem } from './flowDiagram/layout';
 import { chartSimple } from './flowDiagram/exampleChartState';
 import { generateLabelPosition } from './flowDiagram/utils';
+
+import ThreatStatementCard from '../../threats/ThreatStatementCard';
+import { useThreatsContext } from '../../../contexts';
+import useEditMetadata from '../../../hooks/useEditMetadata';
+
+const diagramWrapper = css({
+  display: 'grid',
+  height: '75vh',
+  minHeight: '100%',
+  width: '100%',
+  maxWidth: '100%',
+});
 
 export interface DiagramCanvasProps extends EditableComponentBaseProps {
   entity: BaseImageInfo;
@@ -94,20 +108,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   justify-content: center;
   font-size: 10px;
   cursor: pointer;
-  `;
-
-  /*
-  interface Port {
-  id: string,
-  type: string,
-  position?: any
-  }
-  */
-
-  const Message = styled.div`
-  margin: 10px;
-  padding: 10px;
-  background: rgba(0,0,0,0.05);
   `;
 
   const PortDefaultOuter = styled.div`
@@ -290,22 +290,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       id: 'port4',
       type: 'bottom',
     },
-    port5: {
-      id: 'port5',
-      type: 'left',
-    },
-    port6: {
-      id: 'port6',
-      type: 'right',
-    },
-    port7: {
-      id: 'port7',
-      type: 'top',
-    },
-    port8: {
-      id: 'port8',
-      type: 'bottom',
-    },
   };
 
   const processQueuePoint = {
@@ -391,43 +375,79 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
-  return (
-    <Container header={<Header actions={actions}>{headerTitle}</Header>}>
-      {editMode ? (
-        <SpaceBetween direction='vertical' size='s'>
+  const { statementList, saveStatement, removeStatement } = useThreatsContext();
 
-          <Sidebar>
-            <Message>
-              Drag and drop these items onto the canvas.
-            </Message>
-            <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
-            <SidebarItem type="process-point" ports={processPoint} />
-            <SidebarItem type="end" ports={ endPoint } />
-            <SidebarItem type="process-queue" ports={processQueuePoint} />
-          </Sidebar>
-
-          <Content>
-            <FlowChartWithState
-              isAllowAddLinkLabel = {true}
-              initialValue={chartSimple}
-              nodeRoleOptions={nodeRoleOptions}
-              getWorkFlowChartValue={getWorkFlowChartValue}
-              Components={{
-                Port: PortCustom,
-                Node: NodeCustom,
-                Link: LinkCustom,
-              }}
-              config={{ readonly: false }}
-            />
-          </Content>
-
-        </SpaceBetween>) :
-        (<SpaceBetween direction='vertical' size='s'>
-          <Header variant='h3' key='diagramInfo'>Description</Header>
-          <Header variant='h3' key='diagram'>{diagramTitle}</Header>
-        </SpaceBetween>)
+  const filteredStatementList = useMemo(() => {
+    let output = statementList;
+    output = output.filter(st => {
+      const stride = st.metadata?.find(m => m.key === 'STRIDE');
+      if (!stride || !stride.value || stride.value.length === 0) {
+        return true;
+      } else {
+        return false;
       }
-    </Container>
+    });
+    return output;
+  }, [statementList],
+  );
+
+  const handleEditMetadata = useEditMetadata(saveStatement);
+
+  const handleRemoveThreat = useCallback(async (statementId: string) => {
+    //update the threat by removing the selected DFD_Node_Id from dependencies
+    removeStatement(statementId);
+  }, [removeStatement]);
+
+  return (
+    <SpaceBetween direction='vertical' size='s'>
+      <Container header={<Header actions={actions}>{headerTitle}</Header>}>
+        {editMode ? (
+          <SpaceBetween direction='vertical' size='s'>
+            <Grid gridDefinition={[{ colspan: 2 }, { colspan: 10 }]}>
+              <SpaceBetween direction='vertical' size='s'>
+                <Sidebar>
+                  <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
+                  <SidebarItem type="process-point" ports={processPoint} />
+                  <SidebarItem type="end" ports={ endPoint } />
+                  <SidebarItem type="process-queue" ports={processQueuePoint} />
+                </Sidebar>
+              </SpaceBetween>
+              <div css={diagramWrapper}>
+                <FlowChartWithState
+                  isAllowAddLinkLabel = {true}
+                  initialValue={chartSimple}
+                  nodeRoleOptions={nodeRoleOptions}
+                  getWorkFlowChartValue={getWorkFlowChartValue}
+                  Components={{
+                    Port: PortCustom,
+                    Node: NodeCustom,
+                    Link: LinkCustom,
+                  }}
+                  config={{ readonly: false }}
+                />
+              </div>
+            </Grid>
+          </SpaceBetween>
+
+        ) :
+          (<SpaceBetween direction='vertical' size='s'>
+            <Header variant='h3' key='diagramInfo'>Description</Header>
+            <Header variant='h3' key='diagram'>{diagramTitle}</Header>
+          </SpaceBetween>)
+        }
+      </Container>
+      <Container>
+        <SpaceBetween direction='horizontal' size='xxl'>
+          {filteredStatementList?.map(st => (<ThreatStatementCard
+            key={st.id}
+            statement={st}
+            onRemove={handleRemoveThreat}
+            onEditMetadata={handleEditMetadata}
+            showLinkedEntities={false}
+          />))}
+        </SpaceBetween>
+      </Container>
+    </SpaceBetween>
   );
 };
 

@@ -102,8 +102,6 @@ export class CanvasWrapper extends React.Component<ICanvasWrapperProps, IState> 
     } = this.state;
 
     function handleDrag(event, data: DraggableData) {
-      console.log('\\//\\//\\// Canvas Drag Event: ', event);
-      console.log('\\//\\//\\// Canvas Drag Data: ', data);
       onDragCanvas({ config, event, data });
     };
 
@@ -132,7 +130,6 @@ export class CanvasWrapper extends React.Component<ICanvasWrapperProps, IState> 
               onDrop={ (e) => {
                 const data = JSON.parse(e.dataTransfer.getData(REACT_FLOW_CHART));
                 if (data) {
-                  console.log('___ ____ _____ DROP EVENT _____ ____ ___', data);
                   onCanvasDrop({
                     data,
                     position: {
