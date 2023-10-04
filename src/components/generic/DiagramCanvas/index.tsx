@@ -197,13 +197,13 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     switch (node.type) {
       case 'start':
         return (
-          <StartPoint ref={ref} {...otherProps}>
+          <StartPoint ref={ref} defaultSTRIDE={['S', 'T', 'R', 'I', 'D', 'E']} {...otherProps}>
             {children}
           </StartPoint>
         );
       case 'end':
         return (
-          <EndPoint ref={ref} {...otherProps}>
+          <EndPoint ref={ref} defaultSTRIDE={['T', 'R', 'I', 'D']} {...otherProps}>
             {children}
           </EndPoint>
         );
@@ -215,7 +215,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
         );
       case 'process-point':
         return (
-          <ProcessPoint ref={ref} {...otherProps}>
+          <ProcessPoint ref={ref} defaultSTRIDE={['S', 'R']} {...otherProps}>
             {children}
           </ProcessPoint>
         );
@@ -238,8 +238,10 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     const { centerX, centerY } = generateLabelPosition(startPos, endPos);
     return (
       <>
-        <LinkDefault {...props} />
-        <Label style={{ left: centerX, top: centerY }} onDoubleClick={ () => { onLabelDoubleClick( { linkId: link.id } ); } }>
+        <LinkDefault defaultSTRIDE={['T', 'I', 'D']} {...props} />
+        <Label
+          style={{ left: centerX, top: centerY }}
+          onDoubleClick={ () => { onLabelDoubleClick( { linkId: link.id } ); } }>
           { props.link.properties && props.link.properties.label && (
             <LabelContent>{props.link.properties && props.link.properties.label}</LabelContent>
           )}
@@ -379,6 +381,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const filteredStatementList = useMemo(() => {
     let output = statementList;
+    console.log('statementList: ', statementList);
     output = output.filter(st => {
       const stride = st.metadata?.find(m => m.key === 'STRIDE');
       if (!stride || !stride.value || stride.value.length === 0) {
@@ -438,13 +441,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       </Container>
       <Container>
         <SpaceBetween direction='horizontal' size='xxl'>
-          {filteredStatementList?.map(st => (<ThreatStatementCard
-            key={st.id}
-            statement={st}
-            onRemove={handleRemoveThreat}
-            onEditMetadata={handleEditMetadata}
-            showLinkedEntities={false}
-          />))}
+          {filteredStatementList?.map(st => (
+            <ThreatStatementCard
+              key={st.id}
+              statement={st}
+              onRemove={handleRemoveThreat}
+              onEditMetadata={handleEditMetadata}
+              showLinkedEntities={false}
+            />))}
         </SpaceBetween>
       </Container>
     </SpaceBetween>

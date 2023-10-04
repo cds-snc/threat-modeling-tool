@@ -26,7 +26,6 @@ DiagramContextProviderProps & LocalStateContextProviderBaseProps<DiagramInfo>>> 
   children,
   initialValue,
 }) => {
-  console.log('DiagramContext>>>LocalStateContextProvider>>>index.tsx>>>constructor', 'calling');
   const [diagramInfo, setDiagramInfo] = useState<DiagramInfo>(initialValue || INFO_DEFAULT_VALUE);
 
   const handleRemoveDiagramInfo = useCallback(async () => {

@@ -16,12 +16,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import mapValues from '../../container/utils/mapValues';
-import { FlowChart, IChart, IConfig, IFlowChartComponents, IOnNodeDoubleClick, IOnLabelDoubleClick } from '../..';
+import { FlowChart, IChart, IConfig, IFlowChartComponents, IOnNodeClick, IOnNodeDoubleClick, IOnLabelDoubleClick } from '../..';
 import {
   onDragNode, onDragCanvas, onLinkStart, onLinkMove, onLinkComplete,
   onLinkCancel, onLinkMouseEnter, onLinkMouseLeave, onLinkClick,
-  onCanvasClick, onDeleteKey, onNodeClick,
-  onNodeSizeChange, onPortPositionChange, onCanvasDrop,
+  onCanvasClick, onDeleteKey, onNodeSizeChange, onPortPositionChange, onCanvasDrop,
 } from '../../container/actions';
 import { Input, Button, Select, Message } from '../../element';
 
@@ -39,7 +38,10 @@ const ModelBox = styled.div`
 
 const ModelContent = styled.div`
   position: relative;
-  width: 50%;
+  width: 600px;
+  max-width: 600px;
+  height: 260px;
+  max-height: 600px;
   background: #fff;
   margin: 10% auto;
   border-radius: 10px;
@@ -68,6 +70,7 @@ const InputBox = styled.div`
   
   & label {
     width: 20%;
+    font-size: medium;
   }
 
   & input {
@@ -87,7 +90,6 @@ export interface IFlowChartWithStateProps {
 };
 
 let timer:any = null;
-
 
 /**
  * Flow Chart With State
@@ -115,6 +117,28 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       alertMessageInfo: '',
       alertMessageStatus: 'init',
     };
+  };
+
+  onNodeClick: IOnNodeClick = ({ nodeId }) => {
+    let clickNodeProperties = this.state.nodes[nodeId];
+    let defaultSTRIDE = [''];
+    //clickNodeProperties = !!clickNodeProperties ? clickNodeProperties : {};
+    //console.log('Selected node props: ', clickNodeProperties);
+    switch (clickNodeProperties.type) {
+      case 'start':
+        defaultSTRIDE = ['S', 'T', 'R', 'I', 'D', 'E'];
+        break;
+      case 'process-point':
+        defaultSTRIDE = ['S', 'R'];
+        break;
+      case 'end':
+        defaultSTRIDE = ['T', 'R', 'I', 'D'];
+        break;
+      default:
+        defaultSTRIDE = ['S', 'T', 'R', 'I', 'D', 'E'];
+        break;
+    };
+    console.log('defaultSTRIDE: ', defaultSTRIDE);
   };
 
   onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => {
@@ -160,7 +184,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     onLinkClick,
     onCanvasClick,
     onDeleteKey,
-    onNodeClick,
+    onNodeClick: this.onNodeClick,
     onNodeSizeChange,
     onPortPositionChange,
     onCanvasDrop,
@@ -180,9 +204,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   handleCancelEditNode = () => {
     if (this.state.modelOption === 'addNode') {
       let _newNodeId = this.state.newNodeId;
-
-      console.log('\\//\\//\\// New Node ID: ', _newNodeId);
-
       let _nodes = {};
       let _preNodes: any = [];
 
@@ -227,14 +248,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   setNodeInfo = (): boolean => {
-    console.log('***&&&*** nodeName: ', this.state.nodeName);
-    console.log('***&&&*** newNodeId: ', this.state.newNodeId);
-    console.log('***&&&*** clickNodeId: ', this.state.clickNodeId);
     let nodeKey = '';
     for (var key of Object.keys(this.state.nodes)) {
-      console.log('***&&&*** current node.position: ', this.state.nodes[key].position);
       if (nodeKey !== '' && this.state.nodes[key].position === this.state.nodes[nodeKey].position) {
-        console.log('***&&&*** WE HAVE A MATCH ');
         delete this.state.nodes[key];
       }
       nodeKey = key;
@@ -296,7 +312,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
               <Input onChange={this.handleNameInput} value={this.state.nodeName} type="text" />
             </InputBox>
             <InputBox>
-              <label>Id:</label>
+              <label>Description:</label>
               <Input onChange={this.handleDescriptionInput} value={this.state.nodeId} type="text" />
             </InputBox>
             <InputBox>
