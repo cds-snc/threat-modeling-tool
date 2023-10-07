@@ -49,7 +49,7 @@ const useHasContent = () => {
     const sum = Object.values(details).some(x => x);
 
     return [sum, details];
-  }, [applicationInfo, architectureInfo, dataflowInfo, assumptionList, mitigationList, statementList]);
+  }, [applicationInfo, architectureInfo, dataflowInfo, assumptionList, mitigationList, statementList, diagramInfo]);
 
   return hasContent;
 };

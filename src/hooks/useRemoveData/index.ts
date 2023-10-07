@@ -76,7 +76,6 @@ const useRemoveData = () => {
       switchWorkspace(null);
     }
   }, [
-    composerMode,
     switchWorkspace,
     applicationInfoDeleteWorkspace,
     architectureInfoDeleteWorkspace,
@@ -86,6 +85,7 @@ const useRemoveData = () => {
     mitigationsDeleteWorkspace,
     assumptionLinksDeleteWorkspace,
     mitigationLinksDeleteWorkspace,
+    removeWorkspace,
   ]);
 
   return {

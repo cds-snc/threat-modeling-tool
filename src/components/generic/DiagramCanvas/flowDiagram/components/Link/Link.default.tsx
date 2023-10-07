@@ -48,7 +48,6 @@ export interface ILinkDefaultProps {
   isHovered: boolean;
   isSelected: boolean;
   isAllowAddLinkLabel: boolean;
-  defaultSTRIDE?: [];
 };
 
 export const LinkDefault = ({

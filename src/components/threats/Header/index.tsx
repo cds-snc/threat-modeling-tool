@@ -46,7 +46,7 @@ const Header: FC<HeaderProps> = ({
           {saveButtonText}
         </Button>
       </SpaceBetween>);
-  }, [onComplete, onCancel, onStartOver]);
+  }, [onComplete, onCancel, onStartOver, saveButtonText, statement.statement]);
 
   return (
     <HeaderComponent variant='h1' actions={actions}>{!statement.numericId || statement.numericId === -1 ? undefined : `Threat ${statement.numericId}`}</HeaderComponent>

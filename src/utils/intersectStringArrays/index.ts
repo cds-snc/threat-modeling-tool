@@ -13,14 +13,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { useMemo } from 'react';
-import Notifications from '../../components/Notifications';
 
-const toDisplayNotification = (process.env.REACT_APP_GITHUB_PAGES === 'true');
-
-const useNotifications = (addPadding?: boolean) => {
-  return useMemo(() => toDisplayNotification ? <Notifications addPadding={addPadding}/> : undefined, [addPadding]);
+const intersection = (arr1: string[], arr2: string[]) => {
+  const res: string[] = [];
+  for (let i = 0; i < arr1.length; i++) {
+    if (!arr2.includes(arr1[i])) {
+      continue;
+    };
+    res.push(arr1[i]);
+  };
+  return res;
 };
 
-export default useNotifications;
+const intersectStringArrays = (...arrs: string[][]) => {
+  let res = arrs[0].slice();
+  for (let i = 1; i < arrs.length; i++) {
+    res = intersection(res, arrs[i]);
+  };
+  return res;
+};
 
+export default intersectStringArrays;

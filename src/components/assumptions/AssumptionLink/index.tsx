@@ -63,7 +63,7 @@ const AssumptionLinkComponent: FC<AssumptionLinkProps> = ({
         assumptionId: newAssumption.id,
       });
     }
-  }, [assumptionList, linkedEntityId, addAssumptionLink, saveAssumption]);
+  }, [assumptionList, linkedEntityId, addAssumptionLink, saveAssumption, type]);
 
   return (<AssumptionLinkView
     assumptionList={assumptionList}

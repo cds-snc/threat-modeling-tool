@@ -16,9 +16,9 @@
 import { IPosition } from '../../../';
 
 const generateArrowPath = (startPos: IPosition, endPos: IPosition): string => {
-  console.log('----startPos: ', startPos);
-  console.log('----endPos: ', endPos);
-
+  //console.log('----startPos: ', startPos);
+  //console.log('----endPos: ', endPos);
+  startPos;
   if (!endPos.portType) {
     return '';
   }

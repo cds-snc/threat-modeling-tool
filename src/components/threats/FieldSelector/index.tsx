@@ -137,7 +137,7 @@ const FieldSelector: FC<FieldSelectorProps> = ({
       outputProcessor,
     });
 
-  }, [statement, setEditor, currentEditor, suggestions, expandedImpactedGoal, setExpandedImpactedGoal]);
+  }, [statement, setEditor, currentEditor, expandedImpactedGoal, setExpandedImpactedGoal]);
 
   const handleMoreActions: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> = useCallback(({ detail }) => {
     switch (detail.id) {

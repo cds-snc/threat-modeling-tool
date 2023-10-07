@@ -79,7 +79,7 @@ const FileUpload: FC<FileUploadProps> = ({
 
       onChange?.(newFiles);
     },
-    [files, onChange],
+    [onChange],
   );
 
   return (

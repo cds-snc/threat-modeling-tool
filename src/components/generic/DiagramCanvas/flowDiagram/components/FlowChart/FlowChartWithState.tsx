@@ -16,10 +16,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import mapValues from '../../container/utils/mapValues';
-import { FlowChart, IChart, IConfig, IFlowChartComponents, IOnNodeClick, IOnNodeDoubleClick, IOnLabelDoubleClick } from '../..';
+import { FlowChart, IChart, IConfig, IFlowChartComponents, IOnNodeClick, IOnNodeDoubleClick, IOnLabelDoubleClick, IOnLinkClick } from '../..';
 import {
   onDragNode, onDragCanvas, onLinkStart, onLinkMove, onLinkComplete,
-  onLinkCancel, onLinkMouseEnter, onLinkMouseLeave, onLinkClick,
+  onLinkCancel, onLinkMouseEnter, onLinkMouseLeave,
   onCanvasClick, onDeleteKey, onNodeSizeChange, onPortPositionChange, onCanvasDrop,
 } from '../../container/actions';
 import { Input, Button, Select, Message } from '../../element';
@@ -87,6 +87,7 @@ export interface IFlowChartWithStateProps {
   getWorkFlowChartValue?: (workFlowValue: any) => void;
   isAllowAddLinkLabel?: boolean;
   nodeRoleOptions: any[];
+  filterStatementsCallbaack?: (strideFilter: string, objectId: string) => void;
 };
 
 let timer:any = null;
@@ -96,9 +97,11 @@ let timer:any = null;
  */
 class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChart> {
   public state: IChart;
+  public filterStatementsCallbaack?: (strideFilter: string, objectId: string) => void;
 
   constructor (props: IFlowChartWithStateProps) {
     super(props);
+    this.filterStatementsCallbaack = props.filterStatementsCallbaack;
     this.state = {
       ...props.initialValue,
       preNodes: Object.keys(props.initialValue.nodes),
@@ -120,28 +123,35 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   onNodeClick: IOnNodeClick = ({ nodeId }) => {
-    let clickNodeProperties = this.state.nodes[nodeId];
-    let defaultSTRIDE = [''];
-    //clickNodeProperties = !!clickNodeProperties ? clickNodeProperties : {};
-    //console.log('Selected node props: ', clickNodeProperties);
-    switch (clickNodeProperties.type) {
-      case 'start':
-        defaultSTRIDE = ['S', 'T', 'R', 'I', 'D', 'E'];
-        break;
-      case 'process-point':
-        defaultSTRIDE = ['S', 'R'];
-        break;
-      case 'end':
-        defaultSTRIDE = ['T', 'R', 'I', 'D'];
-        break;
-      default:
-        defaultSTRIDE = ['S', 'T', 'R', 'I', 'D', 'E'];
-        break;
-    };
-    console.log('defaultSTRIDE: ', defaultSTRIDE);
+    let selectedNode = this.state.nodes[nodeId];
+    let filterSTRIDE: string;
+    if (selectedNode) {
+      console.log('selectedNode ', selectedNode);
+      switch (selectedNode.type) {
+        case 'start': // process node
+          filterSTRIDE = 'S,T,R,I,D,E';
+          break;
+        case 'process-point': // actor node
+          filterSTRIDE = 'S,R';
+          break;
+        case 'end': // datastore node
+          filterSTRIDE = 'T,I,D';
+          break;
+        default:
+          filterSTRIDE = '';
+      };
+
+      if (this.filterStatementsCallbaack) {
+        this.filterStatementsCallbaack(filterSTRIDE, nodeId);
+      };
+      this.setState({
+        clickNodeId: nodeId,
+      });
+    }
   };
 
   onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => {
+    console.log('onNodeDoubleClick', nodeId);
     let clickNodeProperties = this.state.nodes[nodeId].properties;
     clickNodeProperties = !!clickNodeProperties ? clickNodeProperties : {};
 
@@ -157,6 +167,16 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         isModelShow: true,
       });
     });
+  };
+
+  onLinkClick: IOnLinkClick = ({ linkId }) => {
+    console.log('linkId ', linkId);
+    this.setState({
+      clickLinkId: linkId,
+    });
+    if (this.filterStatementsCallbaack) {
+      this.filterStatementsCallbaack('T,I,D', linkId);
+    }
   };
 
   onLabelDoubleClick: IOnLabelDoubleClick = ({ linkId }) => {
@@ -181,7 +201,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     onLinkCancel,
     onLinkMouseEnter,
     onLinkMouseLeave,
-    onLinkClick,
+    onLinkClick: this.onLinkClick,
     onCanvasClick,
     onDeleteKey,
     onNodeClick: this.onNodeClick,
@@ -303,6 +323,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   renderAddNewNodeModel = () => {
     const { nodeRoleOptions = [] } = this.props;
     // console.log("nodeRoleOptions: ", nodeRoleOptions)
+
     return (
       <ModelBox className={this.state.isModelShow ? '' : 'hide'}>
         <ModelContent>
@@ -384,7 +405,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         delete node.position.node;
       }
     }
-    // console.log("flow data: ", JSON.stringify(flowData))
     if (!!this.props.getWorkFlowChartValue) {
       this.props.getWorkFlowChartValue(flowData);
     }

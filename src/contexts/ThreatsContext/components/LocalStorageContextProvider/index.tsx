@@ -51,6 +51,12 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     defaultValue: [],
   });
 
+  const [filteredStatementList,
+    setFilteredStatementList,
+    { removeItem: removeFilteredStatementList }] = useLocalStorageState<TemplateThreatStatement[]>(getLocalStorageKey(currentWorkspaceId), {
+    defaultValue: [],
+  });
+
   const { composerMode, hasVisitBefore } = useGlobalSetupContext();
 
   const {
@@ -72,6 +78,8 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
     composerMode,
     statementList,
     setStatementList,
+    filteredStatementList,
+    setFilteredStatementList,
     editingStatement,
     setEditingStatement,
     onThreatEditorView,
@@ -79,8 +87,9 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
 
   const handleRemoveAllStatements = useCallback(async () => {
     removeStatementList();
+    removeFilteredStatementList();
     removeEditingStatement();
-  }, [removeEditingStatement, removeStatementList]);
+  }, [removeEditingStatement, removeStatementList, removeFilteredStatementList]);
 
   const handleDeleteWorkspace = useCallback(async (workspaceId: string) => {
     setEditingStatement(null);
@@ -88,7 +97,7 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
       // to delete after the workspace is switched. Otherwise the default value is set again.
       removeLocalStorageKey(getLocalStorageKey(workspaceId));
     }, 1000);
-  }, [removeStatementList, removeEditingStatement]);
+  }, [setEditingStatement]);
 
   useEffect(() => {
     if ((composerMode === 'EditorOnly' && !editingStatementExist)
@@ -98,13 +107,15 @@ const ThreatsContextProvider: FC<PropsWithChildren<ThreatsContextProviderProps>>
         && lenStatementList === 0 && !currentWorkspaceId)) {
       handleAddStatement();
     }
-  }, [composerMode, editingStatementExist, hasVisitBefore, lenStatementList, currentWorkspaceId]);
+  }, [composerMode, editingStatementExist, hasVisitBefore, lenStatementList, currentWorkspaceId, handleAddStatement]);
 
   return (<ThreatsContext.Provider value={{
     view,
     editingStatement,
     statementList,
     setStatementList,
+    filteredStatementList,
+    setFilteredStatementList,
     threatStatementExamples: threatStatementExamples as TemplateThreatStatement[],
     perFieldExamples,
     previousInputs,

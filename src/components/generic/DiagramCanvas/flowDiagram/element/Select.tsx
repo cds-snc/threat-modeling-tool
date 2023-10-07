@@ -144,7 +144,7 @@ export const Select = ({ optionList = [], value, onChange }: ISelectProps) => {
     let selectRole = optionList.filter(role => role.rGuid === value);
     let selectRoleName = selectRole[0].rName;
     setSelectValue(selectRoleName);
-  }, [value]);
+  }, [value, optionList]);
 
   const handleClickOption = (optionValue: string) => {
     hideSelectBody();

@@ -64,7 +64,7 @@ const useImportExport = () => {
       schema: SCHEMA_VERSION,
       threats: statementList,
     };
-  }, [composerMode, currentWorkspace, applicationInfo,
+  }, [composerMode, applicationInfo,
     architectureInfo, dataflowInfo,
     assumptionList, mitigationList,
     assumptionLinkList, mitigationLinkList,
@@ -83,7 +83,7 @@ const useImportExport = () => {
       workspace: currentWorkspace,
       threats: selectedStatementList,
     }, exportFileName);
-  }, [currentWorkspace]);
+  }, [currentWorkspace, composerMode]);
 
   const parseImportedData = useCallback((data: any): DataExchangeFormat => {
     const parsedData = sanitizeHtml(data);

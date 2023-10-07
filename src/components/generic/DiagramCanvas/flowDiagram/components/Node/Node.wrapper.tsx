@@ -75,6 +75,16 @@ export const NodeWrapper = ({
 }: INodeWrapperProps) => {
   const [size, setSize] = React.useState<ISize>({ width: 0, height: 0 });
 
+  const onClick = React.useCallback(
+    (e: React.MouseEvent) => {
+      if (!config.readonly || config.selectable) {
+        e.stopPropagation();
+        onNodeClick({ config, nodeId: node.id });
+      }
+    },
+    [config, node.id, onNodeClick],
+  );
+
   const compRef = React.useRef<HTMLElement>(null);
 
   // TODO: probably should add an observer to track node component size changes
@@ -87,7 +97,7 @@ export const NodeWrapper = ({
         onNodeSizeChange({ config, nodeId: node.id, size: newSize });
       }
     }
-  }, [node, compRef.current, size.width, size.height]);
+  }, [node, size.width, size.height, config, onNodeSizeChange]);
 
   const children = (
     <>
@@ -150,12 +160,7 @@ export const NodeWrapper = ({
           onNodeDoubleClick({ config, nodeId: node.id });
           e.stopPropagation();
         }}
-        onClick={(e) => {
-          if (!config.readonly) {
-            onNodeClick({ config, nodeId: node.id });
-            e.stopPropagation();
-          }
-        }}
+        onClick={onClick}
         isSelected={isSelected}
         node={node}
       />

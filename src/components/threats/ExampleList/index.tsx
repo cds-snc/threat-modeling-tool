@@ -120,7 +120,7 @@ const ExampleList = <T extends string | PerFieldExample | string[]>({
     }
 
     return undefined;
-  }, [showFullExample, threatStatementExamples]);
+  }, [showFullExample, threatStatementExamples, onSelect]);
 
   return (<TextContent>
     <SpaceBetween direction='vertical' size='m'>

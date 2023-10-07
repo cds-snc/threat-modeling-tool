@@ -150,7 +150,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
       setSuggestions([]);
       setDisplayStatement([]);
     }
-  }, [editingStatement, composerMode]);
+  }, [editingStatement, composerMode, setEditingStatement]);
 
   const handleStartOver = useCallback(() => {
     addStatement();
@@ -210,7 +210,12 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     linkedMitigationIds,
     prevLinkedAssumptionIds,
     prevLinkedMitigationIds,
-    onThreatListView]);
+    onThreatListView,
+    addAssumptionLinks,
+    addMitigationLinks,
+    removeAssumptionLinks,
+    removeMitigationLinks,
+    setEditingStatement]);
 
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
     setEditingStatement({
@@ -224,7 +229,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
     fullExamplesRef.current?.collapse();
-  }, []);
+  }, [setEditingStatement]);
 
   const handleGiveExampleClicked = useCallback(() => {
     const len = threatStatementExamples.length;
@@ -243,7 +248,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     const recommendedEditor = getRecommendedEditor(statement);
     recommendedEditor && setEditor(recommendedEditor);
     scrollToTop();
-  }, []);
+  }, [setEditingStatement]);
 
   const saveButtonText = useMemo(() => {
     if (!currentWorkspace && workspaceList.length === 0) {
@@ -269,7 +274,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
         customTemplate: undefined,
       } as TemplateThreatStatement);
     }
-  }, [editingStatement]);
+  }, [editingStatement, setEditingStatement]);
 
   const handleAddAssumptionLink = useCallback((assumptionIdOrNewAssumption: string) => {
     if (assumptionList.find(a => a.id === assumptionIdOrNewAssumption)) {

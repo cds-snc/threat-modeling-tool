@@ -53,7 +53,7 @@ const GlobalSetupContextProvider: FC<PropsWithChildren<GlobalSetupContextProvide
       composerMode !== 'Full' && setInfoModalVisible(true);
       window.setTimeout(() => setHasVisitBefore(true), 1000);
     }
-  }, [hasVisitBefore, composerMode]);
+  }, [hasVisitBefore, composerMode, setHasVisitBefore]);
 
   return (<div>
     <GlobalSetupContext.Provider value={{

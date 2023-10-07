@@ -26,7 +26,6 @@ export interface INodeDefaultProps {
   onDoubleClick?: (e: React.MouseEvent) => void;
   style?: object;
   ref?: React.Ref<any>;
-  defaultSTRIDE?: [];
 };
 
 const StartPoint = styled.div`
@@ -106,31 +105,32 @@ export const NodeDefault = React.forwardRef(({ node, children, ...otherProps }: 
   switch (node.type) {
     case 'start':
       return (
-        <StartPoint ref={ref} defaultSTRIDE={otherProps.defaultSTRIDE} {...otherProps}>
+        <StartPoint ref={ref}
+          {...otherProps}>
           {children}
         </StartPoint>
       );
     case 'end':
       return (
-        <EndPoint ref={ref} defaultSTRIDE={otherProps.defaultSTRIDE} {...otherProps}>
+        <EndPoint ref={ref} {...otherProps}>
           {children}
         </EndPoint>
       );
     case 'process-queue':
       return (
-        <ProcessQueue ref={ref} defaultSTRIDE={otherProps.defaultSTRIDE} {...otherProps}>
+        <ProcessQueue ref={ref} {...otherProps}>
           {children}
         </ProcessQueue>
       );
     case 'process-point':
       return (
-        <ProcessPoint ref={ref} defaultSTRIDE={otherProps.defaultSTRIDE} {...otherProps}>
+        <ProcessPoint ref={ref} {...otherProps}>
           {children}
         </ProcessPoint>
       );
   }
   return (
-    <StartPoint ref={ref} defaultSTRIDE={otherProps.defaultSTRIDE} {...otherProps}>
+    <StartPoint ref={ref} {...otherProps}>
       {children}
     </StartPoint>
   );

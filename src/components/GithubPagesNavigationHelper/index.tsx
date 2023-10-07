@@ -39,7 +39,7 @@ const GithubPagesNavigationHelper: FC<PropsWithChildren<{}>> = ({
 
       navigate(ROUTE_BASE_PATH + '/' + decoded + l.hash);
     }
-  }, [window.location.search]);
+  }, [navigate]);
 
   return requiredRewriteUrl(window.location.search) ? <></> : <>{children}</>;
 };

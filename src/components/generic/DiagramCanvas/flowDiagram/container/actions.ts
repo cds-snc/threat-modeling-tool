@@ -16,7 +16,7 @@
 import { v4 } from 'uuid';
 import {
   IChart, IOnCanvasClick, IOnCanvasDrop, IOnDeleteKey, IOnDragCanvas, IOnDragNode, IOnLinkCancel,
-  IOnLinkComplete, IOnLinkMouseEnter, IOnLinkMouseLeave, IOnLinkMove, IOnLinkStart, IOnNodeClick,
+  IOnLinkComplete, IOnLinkMouseEnter, IOnLinkMouseLeave, IOnLinkMove, IOnLinkStart, IOnLinkClick, IOnNodeClick,
   IOnNodeDoubleClick, IOnNodeSizeChange, IOnPortPositionChange,
 } from '../';
 import { rotate } from './utils/rotate';
@@ -27,7 +27,8 @@ import { rotate } from './utils/rotate';
 
 export const onDragNode: IOnDragNode = ({ config, event, data, id }) => (chart: IChart) => {
   const nodechart = chart.nodes[id];
-  console.log('onDragNode event: ', event);
+  //console.log('onDragNode event: ', event);
+  event;
   if (nodechart) {
     chart.nodes[id] = {
       ...nodechart,
@@ -39,7 +40,8 @@ export const onDragNode: IOnDragNode = ({ config, event, data, id }) => (chart: 
 };
 
 export const onDragCanvas: IOnDragCanvas = ({ config, event, data }) => (chart: IChart): IChart => {
-  console.log('onDragNode event: ', event);
+  //console.log('onDragNode event: ', event);
+  event;
   chart.offset = config && config.snapToGrid ? { x: Math.round(data.x / 20) * 20, y: Math.round(data.y / 20) * 20 } : data;
   return chart;
 };
@@ -108,7 +110,8 @@ export const onLinkMouseLeave: IOnLinkMouseLeave = ({ linkId }) => (chart: IChar
   return chart;
 };
 
-export const onLinkClick: IOnLinkMouseLeave = ({ linkId }) => (chart: IChart) => {
+export const onLinkClick: IOnLinkClick = ({ linkId }) => (chart: IChart) => {
+  console.log('----actions.ts on link click----', linkId);
   if (chart.selected.id !== linkId || chart.selected.type !== 'link') {
     chart.selected = {
       type: 'link',
@@ -119,6 +122,7 @@ export const onLinkClick: IOnLinkMouseLeave = ({ linkId }) => (chart: IChart) =>
 };
 
 export const onCanvasClick: IOnCanvasClick = () => (chart: IChart) => {
+  console.log('----actions.ts on canvas click----', chart);
   if (chart.selected.id) {
     chart.selected = {};
   }
@@ -147,12 +151,13 @@ export const onDeleteKey: IOnDeleteKey = () => (chart: IChart) => {
 };
 
 export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
-  if (chart.selected.id !== nodeId || chart.selected.type !== 'node') {
-    chart.selected = {
-      type: 'node',
-      id: nodeId,
-    };
-  }
+  console.log('----actions.ts on node click----', nodeId);
+  //if (chart.selected.id !== nodeId || chart.selected.type !== 'node') {
+  //  chart.selected = {
+  //    type: 'node',
+  //    id: nodeId,
+  //  };
+  // }
   return chart;
 };
 

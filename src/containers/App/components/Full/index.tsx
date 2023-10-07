@@ -43,7 +43,7 @@ const AppInner: FC<{
   const [searchParms] = useSearchParams();
   useEffect(() => {
     setWorkspaceId(currentWorkspace?.id || 'default');
-  }, [currentWorkspace]);
+  }, [currentWorkspace, setWorkspaceId]);
 
   const workspaceHome = generateUrl(ROUTE_WORKSPACE_HOME, searchParms, currentWorkspace?.id || 'default');
 
@@ -69,11 +69,11 @@ const Full: FC = () => {
 
   const handleWorkspaceChanged = useCallback((newWorkspaceId: string) => {
     navigate(generateUrl(ROUTE_WORKSPACE_HOME, searchParms, newWorkspaceId));
-  }, [navigate, workspaceId, searchParms]);
+  }, [navigate, searchParms]);
 
   const handleNavigationView = useCallback((route: string) => {
     navigate(generateUrl(route, searchParms, workspaceId));
-  }, [navigate]);
+  }, [navigate, searchParms, workspaceId]);
 
   const handleThreatListView = useCallback((filter?: ThreatStatementListFilter) => {
     navigate(generateUrl(ROUTE_THREAT_LIST, searchParms, workspaceId), {

@@ -40,7 +40,7 @@ const AssumptionCreationCard: FC<AssumptionCreationCardProps> = ({ onSave }) => 
     setEditingEntity(DEFAULT_ENTITY);
     setLinkedMitigationIds([]);
     setLinkedThreatIds([]);
-  }, [editingEntity, linkedMitigationIds, linkedThreatIds]);
+  }, [editingEntity, linkedMitigationIds, linkedThreatIds, onSave]);
 
   const handleReset = useCallback(() => {
     setEditingEntity(DEFAULT_ENTITY);

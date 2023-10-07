@@ -143,7 +143,6 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
     exportAll,
     exportSelectedThreats,
     filteredThreats,
-    deleteCurrentWorkspace,
     currentWorkspace,
     setRemoveDataModalVisible,
     setRemoveWorkspaceModalVisible,
@@ -171,7 +170,7 @@ const WorkspaceSelector: FC<PropsWithChildren<WorkspaceSelectorProps>> = ({
       setRemoveWorkspaceModalVisible(false);
       setIsRemovingWorkspace(false);
     }
-  }, []);
+  }, [deleteCurrentWorkspace]);
 
   const handleImport = useCallback((data: DataExchangeFormat) => {
     importData(data);

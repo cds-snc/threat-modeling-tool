@@ -54,12 +54,12 @@ const GenericEntityCreationCard: FC<GenericEntityCreationCardProps> = ({
   const handleAddTagToEntity = useCallback((tag: string) => {
     const updated = addTagToEntity(editingEntity, tag);
     setEditingEntity(updated as ContentEntityBase);
-  }, [editingEntity]);
+  }, [editingEntity, setEditingEntity]);
 
   const handleRemoveTagFromEntity = useCallback((tag: string) => {
     const updated = removeTagFromEntity(editingEntity, tag);
     setEditingEntity(updated as ContentEntityBase);
-  }, [editingEntity]);
+  }, [editingEntity, setEditingEntity]);
 
   const handleEditMetadata = useEditMetadata(setEditingEntity as (updated: EntityBase) => void);
 

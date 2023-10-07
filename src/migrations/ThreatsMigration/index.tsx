@@ -55,7 +55,7 @@ const ThreatsMigration: FC<WorkspacesMigrationProps> = ({ children }) => {
 
       setMigrated(true);
     }
-  }, [statementList, migrated]);
+  }, [statementList, migrated, editingStatement, setEditingStatement, setMigrated, setStatementList]);
 
   return migrated && children ? <>{children}</> : null;
 };

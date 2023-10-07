@@ -23,7 +23,11 @@ import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect, forwardRef } from 'react';
-import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
+import {
+  BaseImageInfo,
+  //TemplateThreatStatement,
+  EditableComponentBaseProps,
+} from '../../../customTypes';
 
 import FlowChartWithState from './flowDiagram/components/FlowChart/FlowChartWithState';
 import { IPortDefaultProps, INodeDefaultProps, LinkDefault } from './flowDiagram';
@@ -34,6 +38,7 @@ import { generateLabelPosition } from './flowDiagram/utils';
 import ThreatStatementCard from '../../threats/ThreatStatementCard';
 import { useThreatsContext } from '../../../contexts';
 import useEditMetadata from '../../../hooks/useEditMetadata';
+import intersectStringArrays from '../../../utils/intersectStringArrays';
 
 const diagramWrapper = css({
   display: 'grid',
@@ -63,7 +68,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   useEffect(() => {
     onEditModeChange?.(editMode);
-  }, [editMode]);
+  }, [editMode, onEditModeChange]);
 
   const handleSaveDiagramCanvas = useCallback(() => {
     onConfirm({
@@ -197,13 +202,15 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     switch (node.type) {
       case 'start':
         return (
-          <StartPoint ref={ref} defaultSTRIDE={['S', 'T', 'R', 'I', 'D', 'E']} {...otherProps}>
+          <StartPoint
+            ref={ref}
+            {...otherProps} >
             {children}
           </StartPoint>
         );
       case 'end':
         return (
-          <EndPoint ref={ref} defaultSTRIDE={['T', 'R', 'I', 'D']} {...otherProps}>
+          <EndPoint ref={ref} {...otherProps}>
             {children}
           </EndPoint>
         );
@@ -215,7 +222,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
         );
       case 'process-point':
         return (
-          <ProcessPoint ref={ref} defaultSTRIDE={['S', 'R']} {...otherProps}>
+          <ProcessPoint ref={ref} {...otherProps}>
             {children}
           </ProcessPoint>
         );
@@ -228,7 +235,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   });
 
   const PortCustom = (props: IPortDefaultProps) => {
-    console.log('DiagramCanvas >>> PortCustom: ', props);
+    props;
     return <PortDefaultOuter />;
   };
 
@@ -238,7 +245,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     const { centerX, centerY } = generateLabelPosition(startPos, endPos);
     return (
       <>
-        <LinkDefault defaultSTRIDE={['T', 'I', 'D']} {...props} />
+        <LinkDefault {...props} />
         <Label
           style={{ left: centerX, top: centerY }}
           onDoubleClick={ () => { onLabelDoubleClick( { linkId: link.id } ); } }>
@@ -374,25 +381,11 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   let getWorkFlowChartValue = (newWorkFlowValue) => {
     workFlowValue = newWorkFlowValue;
-    console.log('work-flow: ', JSON.stringify(workFlowValue));
+    workFlowValue;
+    console.log('work-flow: ', workFlowValue);
   };
 
   const { statementList, saveStatement, removeStatement } = useThreatsContext();
-
-  const filteredStatementList = useMemo(() => {
-    let output = statementList;
-    console.log('statementList: ', statementList);
-    output = output.filter(st => {
-      const stride = st.metadata?.find(m => m.key === 'STRIDE');
-      if (!stride || !stride.value || stride.value.length === 0) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    return output;
-  }, [statementList],
-  );
 
   const handleEditMetadata = useEditMetadata(saveStatement);
 
@@ -400,6 +393,41 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     //update the threat by removing the selected DFD_Node_Id from dependencies
     removeStatement(statementId);
   }, [removeStatement]);
+
+  const [threatList, setThreatList] = useState(statementList);
+  const [clickedObjectId, setClickedObjectId] = useState('');
+  const [strideFilter, setStrideFilter] = useState('');
+
+  function filterStatementsCallback (filter: string, objectId: string) {
+    console.log('clickedObjectId1 ', clickedObjectId);
+    console.log('strideFilter1 ', strideFilter);
+    console.log('filter', filter);
+    setStrideFilter(filter);
+    setClickedObjectId(objectId);
+    console.log('objectId ', objectId);
+    console.log('filter ', filter);
+  };
+
+  useEffect( () => {
+    console.log('clickedObjectId2 ', clickedObjectId);
+    console.log('strideFilter2 ', strideFilter);
+    //let threats: TemplateThreatStatement[] = statementList;
+    //let fthreats: TemplateThreatStatement[] = statementList;
+
+    setThreatList(statementList.filter(statement => {
+      const stride = statement.metadata?.find(m => m.key === 'STRIDE');
+      let mergeSTRIDE: string[] = [];
+      if (stride && stride.value) {
+        mergeSTRIDE = intersectStringArrays(stride.value as string[], strideFilter.split(','));
+      }
+      if (mergeSTRIDE.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }));
+    //setThreatList(threatList);
+  }, [clickedObjectId, strideFilter, setThreatList, setStrideFilter, setClickedObjectId, statementList]);
 
   return (
     <SpaceBetween direction='vertical' size='s'>
@@ -427,6 +455,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
                     Link: LinkCustom,
                   }}
                   config={{ readonly: false }}
+                  filterStatementsCallbaack = {filterStatementsCallback}
                 />
               </div>
             </Grid>
@@ -441,13 +470,13 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       </Container>
       <Container>
         <SpaceBetween direction='horizontal' size='xxl'>
-          {filteredStatementList?.map(st => (
+          {threatList?.map(st => (
             <ThreatStatementCard
               key={st.id}
               statement={st}
               onRemove={handleRemoveThreat}
               onEditMetadata={handleEditMetadata}
-              showLinkedEntities={false}
+              showLinkedEntities={true}
             />))}
         </SpaceBetween>
       </Container>

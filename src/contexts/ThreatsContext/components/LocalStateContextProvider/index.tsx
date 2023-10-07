@@ -36,6 +36,9 @@ ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatS
   const [statementList,
     setStatementList] = useState<TemplateThreatStatement[]>(initialValue || []);
 
+  const [filteredStatementList,
+    setFilteredStatementList] = useState<TemplateThreatStatement[]>(initialValue || []);
+
   const { composerMode } = useGlobalSetupContext();
 
   const {
@@ -55,6 +58,8 @@ ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatS
     composerMode,
     statementList,
     setStatementList,
+    filteredStatementList,
+    setFilteredStatementList,
     editingStatement,
     setEditingStatement,
     onThreatEditorView,
@@ -75,6 +80,8 @@ ThreatsContextProviderProps & LocalStateContextProviderBaseProps<TemplateThreatS
     editingStatement,
     statementList,
     setStatementList,
+    filteredStatementList,
+    setFilteredStatementList,
     threatStatementExamples: threatStatementExamples as TemplateThreatStatement[],
     perFieldExamples,
     previousInputs,

@@ -76,7 +76,7 @@ const ImageEdit: FC<ImageUploadProps> = ({
       const _image = await handleImageUpload(_selectedFiles[0]);
       setImage(_image || '');
     }
-  }, []);
+  }, [handleImageUpload]);
 
   return <SpaceBetween direction='vertical' size='s'>
     <FormField
