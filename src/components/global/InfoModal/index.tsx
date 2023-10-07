@@ -67,7 +67,7 @@ const InfoModal: FC<InfoModalProps> = ({
 
   useEffect(() => {
     activeSlide >= TOTAL_SLIDES && setVisible(false);
-  }, [activeSlide]);
+  }, [activeSlide, setVisible]);
 
   const contentRefDimention = useMemo(() => {
     const clientWidth = contentRef.current?.clientWidth;
@@ -75,7 +75,7 @@ const InfoModal: FC<InfoModalProps> = ({
     return {
       width: clientWidth ? `${clientWidth - MARGIN_SLIDE_H}px` : `${DEFAULT_SLIDE_WIDTH}px`,
     };
-  }, [contentRef.current?.clientHeight, contentRef.current?.clientWidth, window?.innerHeight]);
+  }, []);
 
   return (<ClassNames>
     {({ css, cx }) => (

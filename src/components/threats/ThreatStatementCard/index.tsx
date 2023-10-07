@@ -70,7 +70,7 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
         variant="icon"
         onItemClick={handleMoreActions}
       />);
-  }, []);
+  }, [handleMoreActions]);
 
   const displayStatement = useMemo(() => {
     if (statement.displayedStatement) {

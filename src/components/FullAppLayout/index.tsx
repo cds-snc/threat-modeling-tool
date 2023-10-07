@@ -99,7 +99,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
     const mode = searchParams.get('mode');
     const href = 'href' in props ? props.href : '/';
     return mode ? `${href}/?mode=${mode}` : href;
-  }, [searchParams]);
+  }, [searchParams, props]);
 
   const [tools, setTools] = useState(props.tools);
   const [toolsHide, setToolsHide] = useState(props.toolsHide ?? true);
@@ -124,7 +124,7 @@ const AppLayout: FC<PropsWithChildren<AppLayoutProps>> = ({
           navigate(e.detail.href);
         }
       },
-      [navigate, setActiveBreadcrumbs, defaultBreadcrumb],
+      [navigate],
     );
 
   return (

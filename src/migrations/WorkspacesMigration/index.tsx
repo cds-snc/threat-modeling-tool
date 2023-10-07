@@ -53,7 +53,7 @@ const WorkspacesMigration: FC<WorkspacesMigrationProps> = ({ children }) => {
 
       setMigrated(true);
     }
-  }, [workspaceList, migrated]);
+  }, [workspaceList, setWorkspaceList, migrated, setMigrated]);
 
   return migrated && children ? <>{children}</> : null;
 };

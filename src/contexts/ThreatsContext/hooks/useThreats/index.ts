@@ -23,6 +23,8 @@ const useThreats = (
   composerMode: ComposerMode,
   statementList: TemplateThreatStatement[],
   setStatementList: React.Dispatch<React.SetStateAction<TemplateThreatStatement[]>>,
+  filteredStatementList: TemplateThreatStatement[],
+  setFilteredStatementList: React.Dispatch<React.SetStateAction<TemplateThreatStatement[]>>,
   editingStatement: TemplateThreatStatement | null,
   setEditingStatement: React.Dispatch<React.SetStateAction<TemplateThreatStatement | null>>,
   onThreatEditorView: ThreatsContextProviderProps['onThreatEditorView'],
@@ -62,7 +64,7 @@ const useThreats = (
     if (statement) {
       setEditingStatement(statement as TemplateThreatStatement);
     }
-  }, [statementList]);
+  }, [statementList, setEditingStatement]);
 
   const handleSaveStatement = useCallback((statement: TemplateThreatStatement) => {
     setStatementList((prevList) => {
@@ -116,6 +118,13 @@ const useThreats = (
   const lenStatementList = statementList.length;
   const editingStatementExist = !!editingStatement;
 
+  const handleFilterStatement = useCallback((strideFilter: '') => {
+    const filteredStatements = filteredStatementList.filter(s => s.id === strideFilter);
+    if (filteredStatements) {
+      setFilteredStatementList(filteredStatements as TemplateThreatStatement[]);
+    };
+  }, [filteredStatementList, setFilteredStatementList]);
+
   return {
     view,
     setView,
@@ -123,6 +132,7 @@ const useThreats = (
     handlRemoveStatement,
     handleEditStatement,
     handleSaveStatement,
+    handleFilterStatement,
     lenStatementList,
     editingStatementExist,
   };

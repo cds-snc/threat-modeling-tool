@@ -15,26 +15,38 @@
  ******************************************************************************************************************** */
 
 /** @jsxImportSource @emotion/react */
+import styled from 'styled-components';
+import { css } from '@emotion/react';
+import Grid from '@cloudscape-design/components/grid';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { css } from '@emotion/react';
-
-import createEngine, {
-  DefaultLinkModel,
-  //DefaultLabelModel,
-  DefaultNodeModel,
-  DiagramModel,
-} from '@projectstorm/react-diagrams';
-
+import { FC, useCallback, useState, useMemo, useEffect, forwardRef } from 'react';
 import {
-  CanvasWidget,
-} from '@projectstorm/react-canvas-core';
+  BaseImageInfo,
+  //TemplateThreatStatement,
+  EditableComponentBaseProps,
+} from '../../../customTypes';
 
-import { FC, useCallback, useState, useMemo, useEffect } from 'react';
-import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
+import FlowChartWithState from './flowDiagram/components/FlowChart/FlowChartWithState';
+import { IPortDefaultProps, INodeDefaultProps, LinkDefault } from './flowDiagram';
+import { Sidebar, SidebarItem } from './flowDiagram/layout';
+import { chartSimple } from './flowDiagram/exampleChartState';
+import { generateLabelPosition } from './flowDiagram/utils';
 
+import ThreatStatementCard from '../../threats/ThreatStatementCard';
+import { useThreatsContext } from '../../../contexts';
+import useEditMetadata from '../../../hooks/useEditMetadata';
+import intersectStringArrays from '../../../utils/intersectStringArrays';
+
+const diagramWrapper = css({
+  display: 'grid',
+  height: '75vh',
+  minHeight: '100%',
+  width: '100%',
+  maxWidth: '100%',
+});
 
 export interface DiagramCanvasProps extends EditableComponentBaseProps {
   entity: BaseImageInfo;
@@ -56,7 +68,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   useEffect(() => {
     onEditModeChange?.(editMode);
-  }, [editMode]);
+  }, [editMode, onEditModeChange]);
 
   const handleSaveDiagramCanvas = useCallback(() => {
     onConfirm({
@@ -79,59 +91,396 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveDiagramCanvas, handleEdit, setEditMode]);
 
-  const diagramWrapper = css({
-    display: 'grid',
-    height: '100vh',
-    minHeight: '100%',
-    width: '100vw',
+  /*
+  const Input = styled.input`
+    padding: 10px;
+    border: 1px solid cornflowerblue;
+    width: 100%;
+  `
+  */
+  const Label = styled.div`
+  position: absolute;
+  width: 120px;
+  `;
+
+  const LabelContent = styled.div`
+  padding: 5px 10px;
+  background: cornflowerblue;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: pointer;
+  `;
+
+  const PortDefaultOuter = styled.div`
+  width: 15px;
+  height: 15px;
+  border-radius: 20px;
+  background: #e1dfdf;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background: cornflowerblue;
+  }
+  & svg {
+    width: 15px;
+    height: 15px;
+  }
+  `;
+
+  const ProcessQueue = styled.div`
+  width: 120px;
+  height: 60px;
+  position: absolute;
+  text-align: center;
+  padding: 0px;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  color: black;
+  border-radius: 10px;
+  border: 2px dashed black;
+  & div {
+    padding: 0px;
+    margin: 0px;
+  }
+  `;
+
+  const ProcessPoint = styled.div`
+  width: 120px;
+  height: 60px;
+  text-align: center;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  background: white;
+  border: 2px solid black;
+  color: black;
+  & div {
+    padding: 0px;
+    margin: 0px;
+  }
+  `;
+
+  const StartPoint = styled.div`
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  padding: 0px;
+  display: flex;
+  border: 2px solid black;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  color: black;
+  border-radius: 50%;
+  `;
+
+  const EndPoint = styled.div`
+  position: absolute;
+  width: 120px;
+  height: 60px;
+  padding: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  color: black;
+  border-top: 4px solid black;
+  border-bottom: 4px solid black;
+  `;
+
+
+  const NodeCustom = forwardRef(({ node, children, ...otherProps }: INodeDefaultProps, ref: React.Ref<HTMLDivElement>) => {
+    switch (node.type) {
+      case 'start':
+        return (
+          <StartPoint
+            ref={ref}
+            {...otherProps} >
+            {children}
+          </StartPoint>
+        );
+      case 'end':
+        return (
+          <EndPoint ref={ref} {...otherProps}>
+            {children}
+          </EndPoint>
+        );
+      case 'process-queue':
+        return (
+          <ProcessQueue ref={ref} {...otherProps}>
+            {children}
+          </ProcessQueue>
+        );
+      case 'process-point':
+        return (
+          <ProcessPoint ref={ref} {...otherProps}>
+            {children}
+          </ProcessPoint>
+        );
+    }
+    return (
+      <StartPoint ref={ref} {...otherProps}>
+        {children}
+      </StartPoint>
+    );
   });
-  const canvasCSS = css({
-    height: '100vh',
-  });
 
-  const useReactDiagramEngine = () => {
-    const engine = createEngine();
-
-    const node1 = new DefaultNodeModel({
-      name: 'Node 1',
-      color: 'rgb(0,192,255)',
-    });
-    node1.setPosition(100, 100);
-    let port1 = node1.addOutPort('Out');
-
-    const node2 = new DefaultNodeModel({
-      name: 'Node 2',
-      color: 'rgb(192,255,0)',
-    });
-    node2.setPosition(400, 100);
-    let port2 = node2.addInPort('In');
-
-    const link = port1.link<DefaultLinkModel>(port2);
-    //link.addLabel(new DefaultLabelModel({ label: 'Label' }));
-
-    const model = new DiagramModel();
-    model.addAll(node1, node2, link);
-    engine.setModel(model);
-    return engine;
+  const PortCustom = (props: IPortDefaultProps) => {
+    props;
+    return <PortDefaultOuter />;
   };
 
-  return (
-    <Container header={<Header actions={actions}>{headerTitle}</Header>}>
-      {editMode ? (
-        <SpaceBetween direction='vertical' size='s'>
+  const LinkCustom = (props) => {
+    // console.log("----props---- ", props)
+    const { startPos, endPos, link, onLabelDoubleClick } = props;
+    const { centerX, centerY } = generateLabelPosition(startPos, endPos);
+    return (
+      <>
+        <LinkDefault {...props} />
+        <Label
+          style={{ left: centerX, top: centerY }}
+          onDoubleClick={ () => { onLabelDoubleClick( { linkId: link.id } ); } }>
+          { props.link.properties && props.link.properties.label && (
+            <LabelContent>{props.link.properties && props.link.properties.label}</LabelContent>
+          )}
+        </Label>
+      </>
+    );
+  };
 
-          <Header variant='h3'>{headerTitle} Diagram</Header>
-          <div css={diagramWrapper}>
-            <CanvasWidget engine={useReactDiagramEngine()} css={canvasCSS} />
-          </div>
-        </SpaceBetween>) :
-        (<SpaceBetween direction='vertical' size='s'>
-          <Header variant='h3' key='diagramInfo'>Description</Header>
-          <Header variant='h3' key='diagram'>{diagramTitle}</Header>
-        </SpaceBetween>)
+  /*
+  function validateLink({ linkId, fromNodeId, fromPortId, toNodeId, toPortId, chart }): boolean {
+
+  if (fromNodeId === toNodeId) {
+    return false
+  }
+
+  return true;
+  }
+  */
+
+  const startItemStyle = `
+  {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    border: 2px solid black;
+    background: white;
+    color: black;
+    line-height: 100px;
+    padding: 0;
+    text-align: center;
+  }
+  `;
+
+  const startPoint = {
+    port1: {
+      id: 'port1',
+      type: 'left',
+    },
+    port2: {
+      id: 'port2',
+      type: 'right',
+    },
+    port3: {
+      id: 'port3',
+      type: 'top',
+    },
+    port4: {
+      id: 'port4',
+      type: 'bottom',
+    },
+  };
+
+  const processQueuePoint = {
+    port1: {
+      id: 'port1',
+      type: 'top',
+    },
+    port2: {
+      id: 'port2',
+      type: 'right',
+    },
+    port3: {
+      id: 'port3',
+      type: 'bottom',
+    },
+    port4: {
+      id: 'port4',
+      type: 'left',
+    },
+  };
+
+  const processPoint = {
+    port1: {
+      id: 'port1',
+      type: 'top',
+    },
+    port2: {
+      id: 'port2',
+      type: 'right',
+    },
+    port3: {
+      id: 'port3',
+      type: 'bottom',
+    },
+    port4: {
+      id: 'port4',
+      type: 'left',
+    },
+  };
+
+  const endPoint = {
+    port1: {
+      id: 'port1',
+      type: 'left',
+    },
+    port2: {
+      id: 'port2',
+      type: 'right',
+    },
+    port3: {
+      id: 'port3',
+      type: 'top',
+    },
+    port4: {
+      id: 'port4',
+      type: 'bottom',
+    },
+  };
+
+  const nodeRoleOptions = [
+    {
+      rGuid: '001-guid',
+      rName: '001',
+    },
+    {
+      rGuid: '002-guid',
+      rName: '002',
+    },
+    {
+      rGuid: '003-guid',
+      rName: '003',
+    },
+    {
+      rGuid: '004-guid',
+      rName: '004',
+    },
+  ];
+
+  let workFlowValue = {};
+
+  let getWorkFlowChartValue = (newWorkFlowValue) => {
+    workFlowValue = newWorkFlowValue;
+    workFlowValue;
+    console.log('work-flow: ', workFlowValue);
+  };
+
+  const { statementList, saveStatement, removeStatement } = useThreatsContext();
+
+  const handleEditMetadata = useEditMetadata(saveStatement);
+
+  const handleRemoveThreat = useCallback(async (statementId: string) => {
+    //update the threat by removing the selected DFD_Node_Id from dependencies
+    removeStatement(statementId);
+  }, [removeStatement]);
+
+  const [threatList, setThreatList] = useState(statementList);
+  const [clickedObjectId, setClickedObjectId] = useState('');
+  const [strideFilter, setStrideFilter] = useState('');
+
+  function filterStatementsCallback (filter: string, objectId: string) {
+    console.log('clickedObjectId1 ', clickedObjectId);
+    console.log('strideFilter1 ', strideFilter);
+    console.log('filter', filter);
+    setStrideFilter(filter);
+    setClickedObjectId(objectId);
+    console.log('objectId ', objectId);
+    console.log('filter ', filter);
+  };
+
+  useEffect( () => {
+    console.log('clickedObjectId2 ', clickedObjectId);
+    console.log('strideFilter2 ', strideFilter);
+    //let threats: TemplateThreatStatement[] = statementList;
+    //let fthreats: TemplateThreatStatement[] = statementList;
+
+    setThreatList(statementList.filter(statement => {
+      const stride = statement.metadata?.find(m => m.key === 'STRIDE');
+      let mergeSTRIDE: string[] = [];
+      if (stride && stride.value) {
+        mergeSTRIDE = intersectStringArrays(stride.value as string[], strideFilter.split(','));
       }
+      if (mergeSTRIDE.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }));
+    //setThreatList(threatList);
+  }, [clickedObjectId, strideFilter, setThreatList, setStrideFilter, setClickedObjectId, statementList]);
 
-    </Container>
+  return (
+    <SpaceBetween direction='vertical' size='s'>
+      <Container header={<Header actions={actions}>{headerTitle}</Header>}>
+        {editMode ? (
+          <SpaceBetween direction='vertical' size='s'>
+            <Grid gridDefinition={[{ colspan: 2 }, { colspan: 10 }]}>
+              <SpaceBetween direction='vertical' size='s'>
+                <Sidebar>
+                  <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
+                  <SidebarItem type="process-point" ports={processPoint} />
+                  <SidebarItem type="end" ports={ endPoint } />
+                  <SidebarItem type="process-queue" ports={processQueuePoint} />
+                </Sidebar>
+              </SpaceBetween>
+              <div css={diagramWrapper}>
+                <FlowChartWithState
+                  isAllowAddLinkLabel = {true}
+                  initialValue={chartSimple}
+                  nodeRoleOptions={nodeRoleOptions}
+                  getWorkFlowChartValue={getWorkFlowChartValue}
+                  Components={{
+                    Port: PortCustom,
+                    Node: NodeCustom,
+                    Link: LinkCustom,
+                  }}
+                  config={{ readonly: false }}
+                  filterStatementsCallbaack = {filterStatementsCallback}
+                />
+              </div>
+            </Grid>
+          </SpaceBetween>
+
+        ) :
+          (<SpaceBetween direction='vertical' size='s'>
+            <Header variant='h3' key='diagramInfo'>Description</Header>
+            <Header variant='h3' key='diagram'>{diagramTitle}</Header>
+          </SpaceBetween>)
+        }
+      </Container>
+      <Container>
+        <SpaceBetween direction='horizontal' size='xxl'>
+          {threatList?.map(st => (
+            <ThreatStatementCard
+              key={st.id}
+              statement={st}
+              onRemove={handleRemoveThreat}
+              onEditMetadata={handleEditMetadata}
+              showLinkedEntities={true}
+            />))}
+        </SpaceBetween>
+      </Container>
+    </SpaceBetween>
   );
 };
 

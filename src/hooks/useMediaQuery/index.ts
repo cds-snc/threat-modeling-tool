@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { MOBILE_BREAKPOINT } from '../../configs';
 
 function useMediaQuery(query: string): boolean {
@@ -27,9 +27,9 @@ function useMediaQuery(query: string): boolean {
 
   const [matches, setMatches] = useState<boolean>(getMatches(query));
 
-  function handleChange() {
+  const handleChange = useCallback(() => {
     setMatches(getMatches(query));
-  }
+  }, [query]);
 
   useEffect(() => {
     const matchMedia = window.matchMedia(query);
@@ -51,7 +51,7 @@ function useMediaQuery(query: string): boolean {
         matchMedia.removeEventListener('change', handleChange);
       }
     };
-  }, [query]);
+  }, [query, handleChange]);
 
   return matches;
 }

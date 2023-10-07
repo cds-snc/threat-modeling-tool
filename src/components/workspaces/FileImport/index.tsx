@@ -84,22 +84,22 @@ const FileImport: FC<FileImportProps> = ({
 
       reader.readAsText(file);
     }
-  }, []);
+  }, [parseImportedData]);
 
   const handleConfirmImport = useCallback(() => {
     data && onImport(data);
     setSelectedFiles([]);
     setVisible(false);
     onPreviewClose?.();
-  }, [onImport, data, onPreviewClose]);
+  }, [onImport, data, onPreviewClose, setVisible]);
 
   useEffect(() => {
     selectedFiles && selectedFiles.length > 0 && handleImport(selectedFiles);
-  }, [selectedFiles]);
+  }, [selectedFiles, handleImport]);
 
   const handlePreview = useCallback(() => {
     data && onPreview?.(data);
-  }, [data]);
+  }, [data, onPreview]);
 
   const footer = useMemo(() => {
     return (<Box float="right">
@@ -114,7 +114,7 @@ const FileImport: FC<FileImportProps> = ({
         <Button variant="primary" disabled={!data} onClick={() => handleConfirmImport()}>Import</Button>
       </SpaceBetween>
     </Box>);
-  }, [setVisible, handleConfirmImport, onPreview, onPreviewClose]);
+  }, [setVisible, handleConfirmImport, onPreview, onPreviewClose, data, handlePreview]);
 
   return <Modal
     visible={visible}

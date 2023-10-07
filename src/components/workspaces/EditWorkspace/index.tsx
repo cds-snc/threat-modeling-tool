@@ -46,11 +46,11 @@ const EditWorkspace: FC<EditWorkspaceProps> = ({
   const handleConfirm = useCallback(() => {
     onConfirm(value);
     setVisible(false);
-  }, [onConfirm, value]);
+  }, [onConfirm, value, setVisible]);
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, [inputRef.current]);
+  }, []);
 
   const footer = useMemo(() => {
     return (<Box float="right">

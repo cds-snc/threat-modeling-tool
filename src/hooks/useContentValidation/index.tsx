@@ -46,7 +46,7 @@ const useContentValidation = (
 
     if (validateData) {
       const validation = validateData(newValue);
-      if (!validation.success) {
+      if (validation.success === false) {
         setErrorText(validation.error.issues.map(i => i.message).join('; '));
         return ;
       }

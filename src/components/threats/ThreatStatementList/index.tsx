@@ -154,7 +154,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   const handleRemoveTagFromStatement = useCallback((statement: TemplateThreatStatement, tag: string) => {
     const updated = removeTagFromEntity(statement, tag);
     saveStatement(updated);
-  }, []);
+  }, [saveStatement]);
 
   const filteredStatementList = useMemo(() => {
     let output = statementList;

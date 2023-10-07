@@ -47,7 +47,7 @@ ref) => {
 
     props.onKeyDown?.(event);
   },
-  [props.onKeyDown, errorText, value]);
+  [errorText, value, props]);
 
   return (
     <FormField

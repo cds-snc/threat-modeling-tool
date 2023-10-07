@@ -63,12 +63,12 @@ const AssumptionList: FC = () => {
   const handleAddTagToEntity = useCallback((assumption: Assumption, tag: string) => {
     const updated = addTagToEntity(assumption, tag);
     saveAssumption(updated as Assumption);
-  }, []);
+  }, [saveAssumption]);
 
   const handleRemoveTagFromEntity = useCallback((assumption: Assumption, tag: string) => {
     const updated = removeTagFromEntity(assumption, tag);
     saveAssumption(updated as Assumption);
-  }, []);
+  }, [saveAssumption]);
 
   const handleRemove = useCallback(async (assumptionId: string) => {
     removeAssumption(assumptionId);
@@ -116,7 +116,7 @@ const AssumptionList: FC = () => {
       && selectedLinkedMitigationFilter === ALL
       && selectedLinkedThreatsFilter === ALL
       && selectedTags.length === 0);
-  }, [filteringText, selectedTags, selectedLinkedThreatsFilter, selectedLinkedThreatsFilter]);
+  }, [filteringText, selectedTags, selectedLinkedThreatsFilter, selectedLinkedMitigationFilter]);
 
   const allTags = useMemo(() => {
     return assumptionList

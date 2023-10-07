@@ -85,7 +85,7 @@ const GenericCard: FC<PropsWithChildren<GenericCardProps>> = ({
       {onEdit && <Tooltip tooltip='Edit'><Button onClick={() => onEdit?.(entityId)} variant='icon' iconName='edit' /></Tooltip>}
       {moreActions}
     </SpaceBetween>);
-  }, [onRemove, onEdit, entityId]);
+  }, [onRemove, onEdit, entityId, moreActions]);
 
   return (<div ref={ref}>
     <Container

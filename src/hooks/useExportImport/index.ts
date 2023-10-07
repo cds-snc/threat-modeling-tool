@@ -64,7 +64,7 @@ const useImportExport = () => {
       schema: SCHEMA_VERSION,
       threats: statementList,
     };
-  }, [composerMode, currentWorkspace, applicationInfo,
+  }, [composerMode, applicationInfo,
     architectureInfo, dataflowInfo,
     assumptionList, mitigationList,
     assumptionLinkList, mitigationLinkList,
@@ -83,7 +83,7 @@ const useImportExport = () => {
       workspace: currentWorkspace,
       threats: selectedStatementList,
     }, exportFileName);
-  }, [currentWorkspace]);
+  }, [currentWorkspace, composerMode]);
 
   const parseImportedData = useCallback((data: any): DataExchangeFormat => {
     const parsedData = sanitizeHtml(data);
@@ -98,7 +98,7 @@ const useImportExport = () => {
 
     const validatedData = validateData(parsedData);
 
-    if (!validatedData.success) {
+    if (validatedData.success === false) {
       throw new Error(validatedData.error.issues.map(i => `${i.path}: ${i.message}`).join('\n'));
     }
 

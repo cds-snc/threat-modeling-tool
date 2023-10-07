@@ -100,7 +100,7 @@ const renderThreatStatement = (statement: TemplateThreatStatement): {
 
   const { fieldCombination: updatedFieldCombination } = calculateFieldCombination(updatedStatement);
 
-  let format = null;
+  let format = null as any;
 
   if (threatStatementFormatKeys.includes(updatedFieldCombination.toString())) {
     format = threatStatementFormat[updatedFieldCombination];

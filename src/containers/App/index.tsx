@@ -26,11 +26,9 @@ const isGithubPages = process.env.REACT_APP_GITHUB_PAGES === 'true';
  * Demo app for threat-composer
  */
 const App: FC = () => {
-  console.log('containers>>>App>>>index.tsx>>>constructor', 'calling...');
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
   const composerMode = mode || DEFAULT_MODE || 'Full';
-  console.log('containers>>>App>>>index.tsx>>>constructor', isGithubPages + ' <<< >>> ' + composerMode);
   return composerMode === 'ThreatsOnly' || composerMode === 'EditorOnly' ? (
     <Standalone composeMode={composerMode} />
   ) : (

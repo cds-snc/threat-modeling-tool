@@ -48,7 +48,7 @@ const BaseDiagramInfo: FC<BaseDiagramInfoProps> = ({
 
   useEffect(() => {
     onEditModeChange?.(editMode);
-  }, [editMode]);
+  }, [editMode, onEditModeChange]);
 
   const handleSaveDiagramInfo = useCallback(() => {
     onConfirm({

@@ -25,7 +25,7 @@ const DataflowInfo: FC<EditableComponentBaseProps> = (props) => {
   return <BaseDiagramInfo
     {...props}
     headerTitle='Dataflow'
-    diagramTitle='Dataflow Diagram'
+    diagramTitle=''
     entity={dataflowInfo}
     onConfirm={(diagram) => setDataflowInfo(diagram)}
     validateData={DataflowInfoSchema.shape.description.safeParse}

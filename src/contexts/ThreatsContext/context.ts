@@ -42,6 +42,8 @@ export interface ThreatsContextApi {
   editingStatement: TemplateThreatStatement | null;
   statementList: TemplateThreatStatement[];
   setStatementList: (statements: TemplateThreatStatement[]) => void;
+  filteredStatementList: TemplateThreatStatement[];
+  setFilteredStatementList?: (statements: TemplateThreatStatement[]) => void;
   threatStatementExamples: TemplateThreatStatement[];
   perFieldExamples: PerFieldExamplesType;
   previousInputs: PerFieldExamplesType;
@@ -62,6 +64,8 @@ const initialState: ThreatsContextApi = {
   editingStatement: null,
   statementList: [],
   setStatementList: () => { },
+  filteredStatementList: [],
+  setFilteredStatementList: () => { },
   threatStatementExamples: threatStatementExamplesData,
   perFieldExamples: DEFAULT_PER_FIELD_EXAMPLES,
   previousInputs: DEFAULT_PER_FIELD_EXAMPLES,

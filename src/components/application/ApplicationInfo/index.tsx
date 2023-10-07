@@ -36,7 +36,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
 
   useEffect(() => {
     onEditModeChange?.(editMode);
-  }, [editMode]);
+  }, [editMode, onEditModeChange]);
 
   const handleSaveApplicationInfo = useCallback(() => {
     setApplicationInfo(prev => ({
