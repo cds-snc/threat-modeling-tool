@@ -141,12 +141,17 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
           filterSTRIDE = '';
       };
 
+      this.setState({
+        clickNodeId: nodeId,
+        selected: {
+          type: 'node',
+          id: nodeId,
+        },
+      });
+
       if (this.filterStatementsCallbaack) {
         this.filterStatementsCallbaack(filterSTRIDE, nodeId);
       };
-      this.setState({
-        clickNodeId: nodeId,
-      });
     }
   };
 
@@ -161,6 +166,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       clickNodeId: nodeId,
       nodeName: clickNodeProperties.name,
       nodeId: clickNodeProperties.Id,
+      selected: {
+        type: 'node',
+        id: nodeId,
+      },
       nodeRoleOption: !!clickNodeProperties.nodeRole ? clickNodeProperties.nodeRole : '',
     }, () => {
       this.setState({

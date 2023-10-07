@@ -78,7 +78,7 @@ export interface IFlowChartProps {
 
 export const FlowChart = (props: IFlowChartProps) => {
   const [canvasSize, setCanvasSize] = React.useState<{ width: number; height: number }>({ width: 0, height: 0 });
-  // console.log("----flow chart prop---- ", props)
+  //console.log('----flow chart prop---- ', props);
 
   const {
     chart,
@@ -174,6 +174,7 @@ export const FlowChart = (props: IFlowChartProps) => {
       })}
       { nodesInView.map((nodeId) => {
         const isSelected = selected.type === 'node' && selected.id === nodeId;
+        console.log('SELECTED ', isSelected);
         const selectedLink = getSelectedLinkForNode(selected, nodeId, links);
         const hoveredLink = getSelectedLinkForNode(hovered, nodeId, links);
 

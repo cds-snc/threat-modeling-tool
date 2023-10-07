@@ -124,7 +124,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   display: flex;
   justify-content: center;
   align-items: center;
-
   &:hover {
     background: cornflowerblue;
   }
@@ -145,10 +144,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   background: white;
   color: black;
   border-radius: 10px;
-  border: 2px dashed black;
+  ${(props) => {return (props.property==='selected' ? 'border: 3px dashed black; background: #fdf0f0; ' : 'border: 2px dashed black; background: white;');}}
+  border-color: ${(isSelected: any) => (isSelected===false ? 'red':'black')};
   & div {
     padding: 0px;
     margin: 0px;
+  }
+  &:hover {
+    background: #c4d2f2;
   }
   `;
 
@@ -161,11 +164,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   align-items: center;
   padding: 0px;
   background: white;
-  border: 2px solid black;
+  ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
   color: black;
   & div {
     padding: 0px;
     margin: 0px;
+  }
+  &:hover {
+    background: #c4d2f2;
   }
   `;
 
@@ -175,12 +181,15 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   height: 100px;
   padding: 0px;
   display: flex;
-  border: 2px solid black;
   justify-content: center;
   align-items: center;
   background: white;
+  ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
   color: black;
   border-radius: 50%;
+  &:hover {
+    background: #c4d2f2;
+  }
   `;
 
   const EndPoint = styled.div`
@@ -195,34 +204,37 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   color: black;
   border-top: 4px solid black;
   border-bottom: 4px solid black;
+  ${(props) => {return (props.property==='selected' ? 'border-left: 2px solid black; border-right: 2px solid black; background: #fdf0f0;' : 'border-left: 0px solid black; border-right: 0px solid black; background: white;');}}
+  &:hover {
+    background: #c4d2f2;
+  }
   `;
 
 
-  const NodeCustom = forwardRef(({ node, children, ...otherProps }: INodeDefaultProps, ref: React.Ref<HTMLDivElement>) => {
+  const NodeCustom = forwardRef(({ node, isSelected, children, ...otherProps }: INodeDefaultProps, ref: React.Ref<HTMLDivElement>) => {
+    console.log('refff ', children);
     switch (node.type) {
       case 'start':
         return (
-          <StartPoint
-            ref={ref}
-            {...otherProps} >
+          <StartPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </StartPoint>
         );
       case 'end':
         return (
-          <EndPoint ref={ref} {...otherProps}>
+          <EndPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </EndPoint>
         );
       case 'process-queue':
         return (
-          <ProcessQueue ref={ref} {...otherProps}>
+          <ProcessQueue property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </ProcessQueue>
         );
       case 'process-point':
         return (
-          <ProcessPoint ref={ref} {...otherProps}>
+          <ProcessPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </ProcessPoint>
         );
@@ -399,21 +411,11 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   const [strideFilter, setStrideFilter] = useState('');
 
   function filterStatementsCallback (filter: string, objectId: string) {
-    console.log('clickedObjectId1 ', clickedObjectId);
-    console.log('strideFilter1 ', strideFilter);
-    console.log('filter', filter);
     setStrideFilter(filter);
     setClickedObjectId(objectId);
-    console.log('objectId ', objectId);
-    console.log('filter ', filter);
   };
 
   useEffect( () => {
-    console.log('clickedObjectId2 ', clickedObjectId);
-    console.log('strideFilter2 ', strideFilter);
-    //let threats: TemplateThreatStatement[] = statementList;
-    //let fthreats: TemplateThreatStatement[] = statementList;
-
     setThreatList(statementList.filter(statement => {
       const stride = statement.metadata?.find(m => m.key === 'STRIDE');
       let mergeSTRIDE: string[] = [];
@@ -426,7 +428,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
         return false;
       }
     }));
-    //setThreatList(threatList);
   }, [clickedObjectId, strideFilter, setThreatList, setStrideFilter, setClickedObjectId, statementList]);
 
   return (
