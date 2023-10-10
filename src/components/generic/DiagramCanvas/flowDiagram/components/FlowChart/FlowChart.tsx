@@ -152,6 +152,7 @@ export const FlowChart = (props: IFlowChartProps) => {
     >
       { linksInView.map((linkId) => {
         const isSelected = selected.type === 'link' && selected.id === linkId;
+        //console.log('IS LINK SELECTED ', isSelected);
         const isHovered = hovered.type === 'link' && hovered.id === linkId;
         const fromNodeId = links[linkId].from.nodeId;
         const toNodeId = links[linkId].to.nodeId;
@@ -174,7 +175,7 @@ export const FlowChart = (props: IFlowChartProps) => {
       })}
       { nodesInView.map((nodeId) => {
         const isSelected = selected.type === 'node' && selected.id === nodeId;
-        console.log('SELECTED ', isSelected);
+        //console.log('IS NODE SELECTED ', isSelected);
         const selectedLink = getSelectedLinkForNode(selected, nodeId, links);
         const hoveredLink = getSelectedLinkForNode(hovered, nodeId, links);
 

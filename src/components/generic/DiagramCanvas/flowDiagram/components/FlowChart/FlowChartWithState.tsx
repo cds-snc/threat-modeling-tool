@@ -20,15 +20,16 @@ import { FlowChart, IChart, IConfig, IFlowChartComponents, IOnNodeClick, IOnNode
 import {
   onDragNode, onDragCanvas, onLinkStart, onLinkMove, onLinkComplete,
   onLinkCancel, onLinkMouseEnter, onLinkMouseLeave,
-  onCanvasClick, onDeleteKey, onNodeSizeChange, onPortPositionChange, onCanvasDrop,
+  onDeleteKey, onNodeSizeChange, onPortPositionChange, onCanvasDrop,
 } from '../../container/actions';
 import { Input, Button, Select, Message } from '../../element';
+import { IOnCanvasClick } from 'react-work-flow';
 
 const ModelBox = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
-  background: rgba(0,0,0,0.8);
+  background: grey;
   z-index: 99;
 
   &.hide {
@@ -122,6 +123,12 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     };
   };
 
+  onCanvasClick: IOnCanvasClick = () => {
+    if (this.filterStatementsCallbaack) {
+      this.filterStatementsCallbaack('', '');
+    }
+  };
+
   onNodeClick: IOnNodeClick = ({ nodeId }) => {
     let selectedNode = this.state.nodes[nodeId];
     let filterSTRIDE: string;
@@ -182,6 +189,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     console.log('linkId ', linkId);
     this.setState({
       clickLinkId: linkId,
+      selected: {
+        type: 'link',
+        id: linkId,
+      },
     });
     if (this.filterStatementsCallbaack) {
       this.filterStatementsCallbaack('T,I,D', linkId);
@@ -197,6 +208,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         linkLabel: preLabel,
         modelOption: 'editLabel',
         clickLinkId: linkId,
+        selected: {
+          type: 'link',
+          id: linkId,
+        },
       };
     });
   };
@@ -211,7 +226,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     onLinkMouseEnter,
     onLinkMouseLeave,
     onLinkClick: this.onLinkClick,
-    onCanvasClick,
+    onCanvasClick: this.onCanvasClick,
     onDeleteKey,
     onNodeClick: this.onNodeClick,
     onNodeSizeChange,
@@ -323,7 +338,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   handleNodeRoleChange = (value: string): void => {
-    // console.log(value)
     this.setState({
       nodeRoleOption: value,
     });
@@ -331,7 +345,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
   renderAddNewNodeModel = () => {
     const { nodeRoleOptions = [] } = this.props;
-    // console.log("nodeRoleOptions: ", nodeRoleOptions)
 
     return (
       <ModelBox className={this.state.isModelShow ? '' : 'hide'}>
@@ -446,7 +459,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     }
 
     if (Object.keys(this.state.nodes).length > this.state.preNodes.length) {
-      // console.log("Add Node");
       let preNodes = this.state.preNodes;
       let currentNodes = Object.keys(this.state.nodes);
       let newNode = currentNodes.filter(node => !preNodes.includes(node));

@@ -91,13 +91,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveDiagramCanvas, handleEdit, setEditMode]);
 
-  /*
-  const Input = styled.input`
-    padding: 10px;
-    border: 1px solid cornflowerblue;
-    width: 100%;
-  `
-  */
+
   const Label = styled.div`
   position: absolute;
   width: 120px;
@@ -212,7 +206,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
 
   const NodeCustom = forwardRef(({ node, isSelected, children, ...otherProps }: INodeDefaultProps, ref: React.Ref<HTMLDivElement>) => {
-    console.log('refff ', children);
     switch (node.type) {
       case 'start':
         return (
