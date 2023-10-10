@@ -83,24 +83,24 @@ export const LinkDefault = ({
           <path
             d={points}
             stroke="cornflowerblue"
-            strokeWidth="3"
+            strokeWidth="2"
             fill="none"
           />
           {/* Arrow */}
           <path
             d={arrow}
             stroke="cornflowerblue"
-            strokeWidth="3"
+            strokeWidth="2"
             fill="cornflowerblue"
           />
           {/* Thick line to make selection easier */}
           <path
             d={points}
             stroke="cornflowerblue"
-            strokeWidth="20"
+            strokeWidth="15"
             fill="none"
             strokeLinecap="round"
-            strokeOpacity={(isHovered || isSelected) ? 0.1 : 0}
+            strokeOpacity={(isHovered || isSelected) ? 0.2 : 0}
             onMouseEnter={() => onLinkMouseEnter({ config, linkId: link.id })}
             onMouseLeave={() => onLinkMouseLeave({ config, linkId: link.id })}
             onDoubleClick={() => onLabelDoubleClick({ linkId: link.id })}

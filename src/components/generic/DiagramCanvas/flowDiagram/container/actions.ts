@@ -152,6 +152,10 @@ export const onDeleteKey: IOnDeleteKey = () => (chart: IChart) => {
 
 export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
   console.log('----actions.ts on node click----', nodeId);
+  chart.selected = {
+    type: 'node',
+    id: nodeId,
+  };
   //if (chart.selected.id !== nodeId || chart.selected.type !== 'node') {
   //  chart.selected = {
   //    type: 'node',
@@ -163,6 +167,10 @@ export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
 
 export const onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => (chart: IChart) => {
   console.log('----actions.ts on node double click----', nodeId);
+  chart.selected = {
+    type: 'node',
+    id: nodeId,
+  };
   // if (chart.selected.id !== nodeId || chart.selected.type !== 'node') {
   //   chart.selected = {
   //     type: 'node',

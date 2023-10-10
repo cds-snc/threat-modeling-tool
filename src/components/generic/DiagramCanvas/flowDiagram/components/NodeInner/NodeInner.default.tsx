@@ -23,14 +23,13 @@ export interface INodeInnerDefaultProps {
 }
 
 const Outer = styled.div`
-  padding: 30px;
+  padding: 0px;
 `;
 
 export const NodeInnerDefault = ({ node }: INodeInnerDefaultProps) => {
   return (
     <Outer>
       <p> {(!!node.properties && !!node.properties.name) && `${node.properties.name}`} </p>
-      <p> {(!!node.properties && !!node.properties.Id) && `${node.properties.Id}`} </p>
     </Outer>
   );
 };
