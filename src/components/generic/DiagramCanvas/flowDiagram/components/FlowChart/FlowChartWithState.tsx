@@ -111,6 +111,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       showModelName: '',
       nodeName: '',
       nodeId: '',
+      nodeDescription: '',
+      nodeOutOfScope: false,
+      nodeOutOfScopeReason: '',
       nodeRoleOption: '',
       linkLabel: '',
       newNodeId: '',
@@ -128,6 +131,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       isModelShow: false,
       nodeName: '',
       nodeId: '',
+      nodeDescription: '',
+      nodeOutOfScope: false,
+      nodeOutOfScopeReason: '',
       clickNodeId: '',
       linkLabel: '',
       clickLinkId: '',
@@ -142,6 +148,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
   onNodeClick: IOnNodeClick = ({ nodeId }) => {
     let selectedNode = this.state.nodes[nodeId];
+    let clickNodeProperties = this.state.nodes[nodeId].properties;
+    console.log('clickNodeProperties ', clickNodeProperties);
     let filterSTRIDE: string;
     if (selectedNode) {
       console.log('selectedNode ', selectedNode);
@@ -176,7 +184,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => {
-    console.log('onNodeDoubleClick', nodeId);
     let clickNodeProperties = this.state.nodes[nodeId].properties;
     clickNodeProperties = !!clickNodeProperties ? clickNodeProperties : {};
 
@@ -186,6 +193,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       clickNodeId: nodeId,
       nodeName: clickNodeProperties.name,
       nodeId: clickNodeProperties.Id,
+      nodeDescription: !!clickNodeProperties.description ? clickNodeProperties.description : '',
       selected: {
         type: 'node',
         id: nodeId,
@@ -201,11 +209,13 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   onLinkClick: IOnLinkClick = ({ linkId }) => {
-    console.log('linkId ', linkId);
     this.setState({
       clickLinkId: linkId,
       nodeName: '',
       nodeId: '',
+      nodeDescription: '',
+      nodeOutOfScope: false,
+      nodeOutOfScopeReason: '',
       clickNodeId: '',
       selected: {
         type: 'link',
@@ -232,6 +242,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         },
         nodeName: '',
         nodeId: '',
+        nodeDescription: '',
+        nodeOutOfScope: false,
+        nodeOutOfScopeReason: '',
         clickNodeId: '',
       };
     });
@@ -262,6 +275,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       isModelShow: false,
       nodeName: '',
       nodeId: '',
+      nodeDescription: '',
+      nodeOutOfScope: false,
+      nodeOutOfScopeReason: '',
       linkLabel: '',
     });
   };
@@ -303,6 +319,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   handleDescriptionInput = (e: any) => {
     this.setState({
       nodeId: e.currentTarget.value,
+      nodeDescription: e.currentTarget.value,
     });
   };
 
@@ -331,6 +348,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       name: this.state.nodeName,
       Id: this.state.nodeId,
       nodeRole: this.state.nodeRoleOption,
+      description: this.state.nodeDescription,
     };
     this.setState({
       nodes: _nodes,
@@ -377,7 +395,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
             </InputBox>
             <InputBox>
               <label>Description:</label>
-              <Input onChange={this.handleDescriptionInput} value={this.state.nodeId} type="text" />
+              <Input onChange={this.handleDescriptionInput} value={this.state.nodeDescription} type="text" />
             </InputBox>
             <InputBox>
               <label>Role:</label>

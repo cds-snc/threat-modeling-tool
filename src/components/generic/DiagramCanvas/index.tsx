@@ -42,6 +42,7 @@ import { useThreatsContext } from '../../../contexts';
 import intersectStringArrays from '../../../utils/intersectStringArrays';
 
 import ThreatList from './flowDiagram/components/Canvas/ThreatList/ThreatList';
+import PropertiesPanel from './flowDiagram/components/Canvas/PropertiesPanel/PropertiesPanel';
 
 const diagramWrapper = css({
   display: 'grid',
@@ -444,7 +445,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       }
     }));
     //console.log('threatList', threatList);
-  }, [clickedObjectId, strideFilter, setThreatList, setStrideFilter, setClickedObjectId, statementList]);
+  }, [strideFilter, setThreatList, statementList]);
 
   return (
     <ContentLayout
@@ -461,7 +462,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       {editMode ? (
         <SpaceBetween direction='vertical' size='s'>
           <Container header={<Header>{headerTitle}</Header>}>
-            <Grid gridDefinition={[{ colspan: 2 }, { colspan: clickedObjectId!=='' ? 7:10 }, { colspan: clickedObjectId!=='' ? 3:0 }]}>
+            <Grid gridDefinition={[{ colspan: 2 }, { colspan: clickedObjectId!=='' ? 10:10 }, { colspan: clickedObjectId!=='' ? 0:0 }]}>
               <Sidebar>
                 <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
                 <SidebarItem type="process-point" ports={processPoint} />
@@ -485,7 +486,11 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
               </div>
             </Grid>
           </Container>
-
+          <Container header={<Header>Properties</Header>}>
+            <PropertiesPanel clickedObjectProperties={ {
+              id: clickedObjectId,
+            } }/>
+          </Container>
           <ThreatList threats={threatList} clickedObjectId={clickedObjectId} />
         </SpaceBetween>
       ) :

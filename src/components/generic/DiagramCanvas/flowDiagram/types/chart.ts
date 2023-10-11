@@ -33,6 +33,9 @@ export interface IChart {
   showModelName: string;
   nodeName: string;
   nodeId: string;
+  nodeDescription: string;
+  nodeOutOfScope: boolean;
+  nodeOutOfScopeReason: string;
   nodeRoleOption: string;
   linkLabel: string;
   newNodeId: string;
