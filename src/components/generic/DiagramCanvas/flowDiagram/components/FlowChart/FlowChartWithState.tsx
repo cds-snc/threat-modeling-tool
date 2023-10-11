@@ -124,6 +124,17 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   onCanvasClick: IOnCanvasClick = () => {
+    this.setState({
+      isModelShow: false,
+      nodeName: '',
+      nodeId: '',
+      clickNodeId: '',
+      linkLabel: '',
+      clickLinkId: '',
+      selected: {
+      },
+    });
+
     if (this.filterStatementsCallbaack) {
       this.filterStatementsCallbaack('', '');
     }
@@ -154,6 +165,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
           type: 'node',
           id: nodeId,
         },
+        linkLabel: '',
+        clickLinkId: '',
       });
 
       if (this.filterStatementsCallbaack) {
@@ -177,6 +190,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         type: 'node',
         id: nodeId,
       },
+      linkLabel: '',
+      clickLinkId: '',
       nodeRoleOption: !!clickNodeProperties.nodeRole ? clickNodeProperties.nodeRole : '',
     }, () => {
       this.setState({
@@ -189,6 +204,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     console.log('linkId ', linkId);
     this.setState({
       clickLinkId: linkId,
+      nodeName: '',
+      nodeId: '',
+      clickNodeId: '',
       selected: {
         type: 'link',
         id: linkId,
@@ -212,6 +230,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
           type: 'link',
           id: linkId,
         },
+        nodeName: '',
+        nodeId: '',
+        clickNodeId: '',
       };
     });
   };

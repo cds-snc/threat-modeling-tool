@@ -29,7 +29,7 @@ export const hasArchitectureInfo = (archInfo: ArchitectureInfo) => {
 };
 
 export const hasDiagramInfo = (diagramInfo: DiagramInfo) => {
-  return !!(diagramInfo.description || diagramInfo.image);
+  return !!(diagramInfo.description || diagramInfo.name);
 };
 
 export const hasDataflowInfo = (dataflowInfo: DataflowInfo) => {

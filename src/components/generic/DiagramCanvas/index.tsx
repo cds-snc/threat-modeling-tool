@@ -17,6 +17,7 @@
 /** @jsxImportSource @emotion/react */
 import styled from 'styled-components';
 import { css } from '@emotion/react';
+import ContentLayout from '@cloudscape-design/components/content-layout';
 import Grid from '@cloudscape-design/components/grid';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
@@ -24,7 +25,7 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect, forwardRef } from 'react';
 import {
-  BaseImageInfo,
+  DiagramInfo,
   //TemplateThreatStatement,
   EditableComponentBaseProps,
 } from '../../../customTypes';
@@ -35,24 +36,27 @@ import { Sidebar, SidebarItem } from './flowDiagram/layout';
 import { chartSimple } from './flowDiagram/exampleChartState';
 import { generateLabelPosition } from './flowDiagram/utils';
 
-import ThreatStatementCard from '../../threats/ThreatStatementCard';
+//import ThreatStatementCard from '../../threats/ThreatStatementCard';
 import { useThreatsContext } from '../../../contexts';
-import useEditMetadata from '../../../hooks/useEditMetadata';
+//import useEditMetadata from '../../../hooks/useEditMetadata';
 import intersectStringArrays from '../../../utils/intersectStringArrays';
+
+import ThreatList from './flowDiagram/components/Canvas/ThreatList/ThreatList';
 
 const diagramWrapper = css({
   display: 'grid',
-  height: '75vh',
-  minHeight: '100%',
+  height: '50vh',
+  maxHeight: '100%',
+  minHeight: '50%',
   width: '100%',
   maxWidth: '100%',
 });
 
 export interface DiagramCanvasProps extends EditableComponentBaseProps {
-  entity: BaseImageInfo;
+  entity: DiagramInfo;
   headerTitle: string;
   diagramTitle: string;
-  onConfirm: (info: BaseImageInfo) => void;
+  onConfirm: (info: DiagramInfo) => void;
 }
 
 const DiagramCanvas: FC<DiagramCanvasProps> = ({
@@ -62,8 +66,9 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   onConfirm,
   onEditModeChange,
 }) => {
-  const [editMode, setEditMode] = useState(!entity.description && !entity.image);
-  const [image, setImage] = useState<string>('');
+  const [editMode, setEditMode] = useState(!entity.description && !entity.name);
+  const [id, setId] = useState('');
+  const [name, setName] = useState('');
   const [content, setContent] = useState('');
 
   useEffect(() => {
@@ -72,17 +77,20 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const handleSaveDiagramCanvas = useCallback(() => {
     onConfirm({
-      image,
+      id,
+      name,
       description: content,
     });
     setEditMode(false);
-  }, [image, content, onConfirm]);
+  }, [id, name, content, onConfirm]);
 
   const handleEdit = useCallback(() => {
+    setId(entity.id || '');
     setContent(entity.description || '');
-    setImage(entity.image || '');
+    setName(entity.name || '');
     setEditMode(true);
-  }, [entity, setContent, setEditMode, setImage]);
+  }, [entity, setContent, setEditMode, setName]);
+
 
   const actions = useMemo(() => {
     return editMode ? (<SpaceBetween direction='horizontal' size='s'>
@@ -91,7 +99,19 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveDiagramCanvas, handleEdit, setEditMode]);
 
+  /*
+  const handleAddStatement = useCallback(() => {
+    //addStatement(idToCopy);
+  }, []);
 
+  const actionsThreats = useMemo(() => {
+    return editMode ? (<SpaceBetween direction='horizontal' size='s'>
+      <Button variant="primary" onClick={() => handleAddStatement()}>
+      Add threat
+      </Button>
+    </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
+  }, [editMode, handleEdit, handleAddStatement]);
+  */
   const Label = styled.div`
   position: absolute;
   width: 120px;
@@ -176,6 +196,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   padding: 0px;
   display: flex;
   justify-content: center;
+  text-align: center;
   align-items: center;
   background: white;
   ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
@@ -387,18 +408,19 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   let getWorkFlowChartValue = (newWorkFlowValue) => {
     workFlowValue = newWorkFlowValue;
     workFlowValue;
-    console.log('work-flow: ', workFlowValue);
+    console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
-  const { statementList, saveStatement, removeStatement } = useThreatsContext();
+  const { statementList/*, saveStatement, removeStatement*/ } = useThreatsContext();
 
+  /*
   const handleEditMetadata = useEditMetadata(saveStatement);
 
   const handleRemoveThreat = useCallback(async (statementId: string) => {
     //update the threat by removing the selected DFD_Node_Id from dependencies
     removeStatement(statementId);
   }, [removeStatement]);
-
+  */
   const [threatList, setThreatList] = useState(statementList);
   const [clickedObjectId, setClickedObjectId] = useState('');
   const [strideFilter, setStrideFilter] = useState('');
@@ -421,22 +443,31 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
         return false;
       }
     }));
+    //console.log('threatList', threatList);
   }, [clickedObjectId, strideFilter, setThreatList, setStrideFilter, setClickedObjectId, statementList]);
 
   return (
-    <SpaceBetween direction='vertical' size='s'>
-      <Container header={<Header actions={actions}>{headerTitle}</Header>}>
-        {editMode ? (
-          <SpaceBetween direction='vertical' size='s'>
-            <Grid gridDefinition={[{ colspan: 2 }, { colspan: 10 }]}>
-              <SpaceBetween direction='vertical' size='s'>
-                <Sidebar>
-                  <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
-                  <SidebarItem type="process-point" ports={processPoint} />
-                  <SidebarItem type="end" ports={ endPoint } />
-                  <SidebarItem type="process-queue" ports={processQueuePoint} />
-                </Sidebar>
-              </SpaceBetween>
+    <ContentLayout
+      header={
+        <SpaceBetween size='s'>
+          <Header
+            variant='h2'
+            actions={actions}
+          >
+          </Header>
+        </SpaceBetween>
+      }
+    >
+      {editMode ? (
+        <SpaceBetween direction='vertical' size='s'>
+          <Container header={<Header>{headerTitle}</Header>}>
+            <Grid gridDefinition={[{ colspan: 2 }, { colspan: clickedObjectId!=='' ? 7:10 }, { colspan: clickedObjectId!=='' ? 3:0 }]}>
+              <Sidebar>
+                <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
+                <SidebarItem type="process-point" ports={processPoint} />
+                <SidebarItem type="end" ports={ endPoint } />
+                <SidebarItem type="process-queue" ports={processQueuePoint} />
+              </Sidebar>
               <div css={diagramWrapper}>
                 <FlowChartWithState
                   isAllowAddLinkLabel = {true}
@@ -448,33 +479,22 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
                     Node: NodeCustom,
                     Link: LinkCustom,
                   }}
-                  config={{ readonly: false }}
+                  config={{ readonly: !editMode }}
                   filterStatementsCallbaack = {filterStatementsCallback}
                 />
               </div>
             </Grid>
-          </SpaceBetween>
+          </Container>
 
-        ) :
-          (<SpaceBetween direction='vertical' size='s'>
-            <Header variant='h3' key='diagramInfo'>Description</Header>
-            <Header variant='h3' key='diagram'>{diagramTitle}</Header>
-          </SpaceBetween>)
-        }
-      </Container>
-      <Container>
-        <SpaceBetween direction='horizontal' size='xxl'>
-          {threatList?.map(st => (
-            <ThreatStatementCard
-              key={st.id}
-              statement={st}
-              onRemove={handleRemoveThreat}
-              onEditMetadata={handleEditMetadata}
-              showLinkedEntities={true}
-            />))}
+          <ThreatList threats={threatList} clickedObjectId={clickedObjectId} />
         </SpaceBetween>
-      </Container>
-    </SpaceBetween>
+      ) :
+        (<SpaceBetween direction='vertical' size='s'>
+          <Header variant='h3' key='diagramInfo'>Description</Header>
+          <Header variant='h3' key='diagram'>{diagramTitle}</Header>
+        </SpaceBetween>)
+      }
+    </ContentLayout>
   );
 };
 
