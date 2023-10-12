@@ -24,25 +24,16 @@ import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect, forwardRef } from 'react';
-import {
-  DiagramInfo,
-  //TemplateThreatStatement,
-  EditableComponentBaseProps,
-} from '../../../customTypes';
-
+import { DiagramInfo, EditableComponentBaseProps } from '../../../customTypes';
 import FlowChartWithState from './flowDiagram/components/FlowChart/FlowChartWithState';
 import { IPortDefaultProps, INodeDefaultProps, LinkDefault, IChart } from './flowDiagram';
 import { Sidebar, SidebarItem } from './flowDiagram/layout';
 import { chartSimple } from './flowDiagram/exampleChartState';
 import { generateLabelPosition } from './flowDiagram/utils';
-
-//import ThreatStatementCard from '../../threats/ThreatStatementCard';
 import { useThreatsContext } from '../../../contexts';
-//import useEditMetadata from '../../../hooks/useEditMetadata';
 import intersectStringArrays from '../../../utils/intersectStringArrays';
-
 import ThreatList from './flowDiagram/components/Canvas/ThreatList/ThreatList';
-import PropertiesPanel, { IPropertiesPanelProps } from './flowDiagram/components/Canvas/PropertiesPanel/PropertiesPanel';
+import PropertiesPanel from './flowDiagram/components/Canvas/PropertiesPanel/PropertiesPanel';
 
 const diagramWrapper = css({
   display: 'grid',
@@ -100,19 +91,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveDiagramCanvas, handleEdit, setEditMode]);
 
-  /*
-  const handleAddStatement = useCallback(() => {
-    //addStatement(idToCopy);
-  }, []);
-
-  const actionsThreats = useMemo(() => {
-    return editMode ? (<SpaceBetween direction='horizontal' size='s'>
-      <Button variant="primary" onClick={() => handleAddStatement()}>
-      Add threat
-      </Button>
-    </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
-  }, [editMode, handleEdit, handleAddStatement]);
-  */
   const Label = styled.div`
   position: absolute;
   width: 120px;
@@ -156,6 +134,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   padding: 0px;
   justify-content: center;
   align-items: center;
+  text-align: center;
   background: white;
   color: black;
   border-radius: 10px;
@@ -177,6 +156,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   position: absolute;
   justify-content: center;
   align-items: center;
+  text-align: center;
   padding: 0px;
   background: white;
   ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
@@ -215,6 +195,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   padding: 0px;
   display: flex;
   justify-content: center;
+  text-align: center;
   align-items: center;
   background: white;
   color: black;
@@ -283,17 +264,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       </>
     );
   };
-
-  /*
-  function validateLink({ linkId, fromNodeId, fromPortId, toNodeId, toPortId, chart }): boolean {
-
-  if (fromNodeId === toNodeId) {
-    return false
-  }
-
-  return true;
-  }
-  */
 
   const startItemStyle = `
   {
@@ -405,47 +375,43 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   ];
 
   const [workFlowValue, setWorkFlowValue] = useState<IChart>(chartSimple);
+  const { statementList } = useThreatsContext();
+  const [threatList, setThreatList] = useState(statementList);
+  const [strideFilter, setStrideFilter] = useState('');
+  const [clickedObjectId, setClickedObjectId] = useState('');
+  const [clickedObjectName, setClickedObjectName] = useState('');
+  const [clickedObjectDescription, setClickedObjectDescription] = useState('');
+  const [clickedObjectOutOfScope, setClickedObjectOutOfScope] = useState(false);
+  const [clickedObjectOutOfScopeReason, setClickedObjectOutOfScopeReason] = useState('');
+  const handleObjectNameChange = useCallback((newValue) => {
+    setClickedObjectName(newValue);
+  }, []);
+  const handleObjectDescriptionChange = useCallback((newValue) => {
+    setClickedObjectDescription(newValue);
+  }, []);
+  const handleObjectOutOfScopeChange = useCallback((newValue) => {
+    setClickedObjectOutOfScope(newValue);
+  }, []);
+  const handleObjectOutOfScopeReasonChange = useCallback((newValue) => {
+    setClickedObjectOutOfScopeReason(newValue);
+  }, []);
 
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
-    //console.log('work-flow: ', JSON.stringify(workFlowValue));
+    console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
-
-  const { statementList/*, saveStatement, removeStatement*/ } = useThreatsContext();
-
-  /*
-  const handleEditMetadata = useEditMetadata(saveStatement);
-
-  const handleRemoveThreat = useCallback(async (statementId: string) => {
-    //update the threat by removing the selected DFD_Node_Id from dependencies
-    removeStatement(statementId);
-  }, [removeStatement]);
-  */
-  const [threatList, setThreatList] = useState(statementList);
-  const [clickedObjectId, setClickedObjectId] = useState('');
-  const [strideFilter, setStrideFilter] = useState('');
-  const [clickedObjectProperties, setClickedObjectProperties] = useState<IPropertiesPanelProps>({
-    id: '',
-    name: '',
-    description: '',
-    outOfScope: false,
-    outOfScopeReason: '',
-  });
 
   function filterStatementsCallback (filter: string, objectId: string, objectName?: string,
     objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) {
     setStrideFilter(filter);
     setClickedObjectId(objectId);
-    setClickedObjectProperties({
-      id: objectId,
-      name: objectName,
-      description: objectDescription || '',
-      outOfScope: objectOutOfScope || false,
-      outOfScopeReason: objectOutOfScopeReason || '',
-    } as IPropertiesPanelProps);
+    setClickedObjectName(objectName!);
+    setClickedObjectDescription(objectDescription!);
+    setClickedObjectOutOfScope(objectOutOfScope!);
+    setClickedObjectOutOfScopeReason(objectOutOfScopeReason!);
   };
 
-  useEffect( () => {
+  useEffect( () => { // update list of threats panel
     setThreatList(statementList.filter(statement => {
       const stride = statement.metadata?.find(m => m.key === 'STRIDE');
       let mergeSTRIDE: string[] = [];
@@ -458,8 +424,16 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
         return false;
       }
     }));
-    //console.log('threatList', threatList);
   }, [strideFilter, setThreatList, statementList]);
+
+  useEffect( () => { // update properties panel
+    if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
+      workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
+      workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
+      workFlowValue.nodes[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
+      workFlowValue.nodes[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+    }
+  }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription, clickedObjectOutOfScope, clickedObjectOutOfScopeReason]);
 
   return (
     <ContentLayout
@@ -502,12 +476,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
           </Container>
           <Container header={<Header>Properties</Header>}>
             <PropertiesPanel
-              id={clickedObjectProperties.id}
-              name={clickedObjectProperties.name}
-              description={clickedObjectProperties.description}
-              outOfScope={clickedObjectProperties.outOfScope}
-              outOfScopeReason={clickedObjectProperties.outOfScopeReason}
-              chartData={workFlowValue}
+              name={clickedObjectName}
+              description={clickedObjectDescription}
+              outOfScope={clickedObjectOutOfScope}
+              outOfScopeReason={clickedObjectOutOfScopeReason}
+              onChangeName={handleObjectNameChange}
+              onChangeDescription={handleObjectDescriptionChange}
+              onChangeOutOfScope={handleObjectOutOfScopeChange}
+              onChangeOutOfScopeReason={handleObjectOutOfScopeReasonChange}
             />
           </Container>
           <ThreatList threats={threatList} clickedObjectId={clickedObjectId} />

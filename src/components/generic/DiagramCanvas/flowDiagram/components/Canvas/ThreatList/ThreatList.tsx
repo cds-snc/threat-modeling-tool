@@ -42,7 +42,8 @@ function EmptyState({ title, subtitle, action }) {
 
 export default function ThreatList( { threats, clickedObjectId } ) {
   const [selectedDFDObjectId] = useState(clickedObjectId);
-  console.log('selectedDFDObjectId', selectedDFDObjectId);
+  selectedDFDObjectId;
+  //console.log('selectedDFDObjectId', selectedDFDObjectId);
   const [preferences] = useState({
     pageSize: 100,
     visibleContent: ['statement', 'priority', 'stride'],

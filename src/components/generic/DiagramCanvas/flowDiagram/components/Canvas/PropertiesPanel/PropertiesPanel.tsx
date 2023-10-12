@@ -18,30 +18,23 @@
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Form from '@cloudscape-design/components/form';
 import FormField from '@cloudscape-design/components/form-field';
-//import Input from '@cloudscape-design/components/input';
 import Textarea from '@cloudscape-design/components/textarea';
 import Checkbox from '@cloudscape-design/components/checkbox';
-//import { cloneDeep, mapValues } from 'lodash';
-import { IChart } from '../../../../flowDiagram';
-//import { useState } from 'react';
 
-export interface IPropertiesPanelProps {
-  id: string;
-  name: string;
-  description?: string;
-  outOfScope?: boolean;
-  outOfScopeReason?: string;
-  chartData?: IChart;
-};
-
-export default function PropertiesPanel(props: IPropertiesPanelProps) {
-  console.log('clickedObjectProperties ', props);
-  const { name, description, outOfScope, outOfScopeReason } = props;
-
-  //const [name, setName] = React.useState(props.name || '');
-  //const [description, setDescription] = React.useState(props.description || '');
-  //const [outOfScope, setOutOfScope] = React.useState(props.outOfScope || false);
-  //const [outOfScopeReason, setOutOfScopeReason] = React.useState(props.outOfScopeReason || '');
+export default function PropertiesPanel(props) {
+  //console.log('clickedObjectProperties ', props);
+  function handleNameChange(event) {
+    props.onChangeName(event.detail.value);
+  };
+  function handleDescriptionChange(event) {
+    props.onChangeDescription(event.detail.value);
+  };
+  function handleOutOfScopeChange(event) {
+    props.onChangeOutOfScope(event.detail.checked);
+  };
+  function handleOutOfScopeReasonChange(event) {
+    props.onChangeOutOfScopeReason(event.detail.value);
+  };
 
   return (
     <form onSubmit={e => e.preventDefault()} >
@@ -55,8 +48,8 @@ export default function PropertiesPanel(props: IPropertiesPanelProps) {
             label="Name"
             stretch={true} >
             <Textarea
-              value={name}
-              //onChange={({ detail }) => setName(detail.value)}
+              value={props.name}
+              onChange={handleNameChange}
               placeholder="Name"
               rows={3} />
           </FormField>
@@ -64,8 +57,8 @@ export default function PropertiesPanel(props: IPropertiesPanelProps) {
             label="Description"
             stretch={true} >
             <Textarea
-              value={description||''}
-              //onChange={({ detail }) => setDescription(detail.value)}
+              value={props.description}
+              onChange={handleDescriptionChange}
               placeholder="Description"
               rows={3} />
           </FormField>
@@ -73,14 +66,14 @@ export default function PropertiesPanel(props: IPropertiesPanelProps) {
             label="Scope"
             stretch={true} >
             <Checkbox
-              checked={outOfScope||false}
-              //onChange={({ detail }) => setOutOfScope(detail.checked)}
+              checked={props.outOfScope}
+              onChange={handleOutOfScopeChange}
             >
                     Out of scope
             </Checkbox>
             <Textarea
-              value={outOfScopeReason||''}
-              //onChange={({ detail }) => setOutOfScopeReason(detail.value)}
+              value={props.outOfScopeReason}
+              onChange={handleOutOfScopeReasonChange}
               placeholder="Reason for out of scope"
               rows={2} />
           </FormField>

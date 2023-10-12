@@ -151,10 +151,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   onNodeClick: IOnNodeClick = ({ nodeId }) => {
     let selectedNode = this.state.nodes[nodeId];
     let clickNodeProperties = this.state.nodes[nodeId].properties;
-    console.log('clickNodeProperties ', clickNodeProperties);
+    //console.log('clickNodeProperties ', clickNodeProperties);
     let filterSTRIDE: string;
     if (selectedNode) {
-      console.log('selectedNode ', selectedNode);
+      //console.log('selectedNode ', selectedNode);
       switch (selectedNode.type) {
         case 'start': // process node
           filterSTRIDE = 'S,T,R,I,D,E';
