@@ -29,6 +29,7 @@ DiagramContextProviderProps & LocalStateContextProviderBaseProps<DiagramInfo>>> 
     id: '',
     name: '',
     description: '',
+    clickedObjectName: '',
   });
 
   const handleRemoveDiagramInfo = useCallback(async () => {
@@ -36,6 +37,7 @@ DiagramContextProviderProps & LocalStateContextProviderBaseProps<DiagramInfo>>> 
       id: '',
       name: '',
       description: '',
+      clickedObjectName: '',
     });
   }, []);
 
@@ -44,6 +46,7 @@ DiagramContextProviderProps & LocalStateContextProviderBaseProps<DiagramInfo>>> 
       id: '',
       name: '',
       description: '',
+      clickedObjectName: '',
     });
   }, []);
 

@@ -30,6 +30,7 @@ const initialState: DiagramInfoContextApi = {
     id: uuidV4(),
     name: '',
     description: '',
+    clickedObjectName: '',
   },
   setDiagramInfo: () => { },
   removeDiagramInfo: () => Promise.resolve(),

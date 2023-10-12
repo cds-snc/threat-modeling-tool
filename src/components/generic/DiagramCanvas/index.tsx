@@ -31,7 +31,7 @@ import {
 } from '../../../customTypes';
 
 import FlowChartWithState from './flowDiagram/components/FlowChart/FlowChartWithState';
-import { IPortDefaultProps, INodeDefaultProps, LinkDefault } from './flowDiagram';
+import { IPortDefaultProps, INodeDefaultProps, LinkDefault, IChart } from './flowDiagram';
 import { Sidebar, SidebarItem } from './flowDiagram/layout';
 import { chartSimple } from './flowDiagram/exampleChartState';
 import { generateLabelPosition } from './flowDiagram/utils';
@@ -42,7 +42,7 @@ import { useThreatsContext } from '../../../contexts';
 import intersectStringArrays from '../../../utils/intersectStringArrays';
 
 import ThreatList from './flowDiagram/components/Canvas/ThreatList/ThreatList';
-import PropertiesPanel from './flowDiagram/components/Canvas/PropertiesPanel/PropertiesPanel';
+import PropertiesPanel, { IPropertiesPanelProps } from './flowDiagram/components/Canvas/PropertiesPanel/PropertiesPanel';
 
 const diagramWrapper = css({
   display: 'grid',
@@ -404,12 +404,11 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     },
   ];
 
-  let workFlowValue = {};
+  const [workFlowValue, setWorkFlowValue] = useState<IChart>(chartSimple);
 
-  let getWorkFlowChartValue = (newWorkFlowValue) => {
-    workFlowValue = newWorkFlowValue;
-    workFlowValue;
-    console.log('work-flow: ', JSON.stringify(workFlowValue));
+  const getWorkFlowChartValue = (newWorkFlowValue) => {
+    setWorkFlowValue(newWorkFlowValue);
+    //console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
   const { statementList/*, saveStatement, removeStatement*/ } = useThreatsContext();
@@ -425,10 +424,25 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   const [threatList, setThreatList] = useState(statementList);
   const [clickedObjectId, setClickedObjectId] = useState('');
   const [strideFilter, setStrideFilter] = useState('');
+  const [clickedObjectProperties, setClickedObjectProperties] = useState<IPropertiesPanelProps>({
+    id: '',
+    name: '',
+    description: '',
+    outOfScope: false,
+    outOfScopeReason: '',
+  });
 
-  function filterStatementsCallback (filter: string, objectId: string) {
+  function filterStatementsCallback (filter: string, objectId: string, objectName?: string,
+    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) {
     setStrideFilter(filter);
     setClickedObjectId(objectId);
+    setClickedObjectProperties({
+      id: objectId,
+      name: objectName,
+      description: objectDescription || '',
+      outOfScope: objectOutOfScope || false,
+      outOfScopeReason: objectOutOfScopeReason || '',
+    } as IPropertiesPanelProps);
   };
 
   useEffect( () => {
@@ -472,7 +486,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
               <div css={diagramWrapper}>
                 <FlowChartWithState
                   isAllowAddLinkLabel = {true}
-                  initialValue={chartSimple}
+                  initialValue={workFlowValue}
                   nodeRoleOptions={nodeRoleOptions}
                   getWorkFlowChartValue={getWorkFlowChartValue}
                   Components={{
@@ -487,9 +501,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
             </Grid>
           </Container>
           <Container header={<Header>Properties</Header>}>
-            <PropertiesPanel clickedObjectProperties={ {
-              id: clickedObjectId,
-            } }/>
+            <PropertiesPanel
+              id={clickedObjectProperties.id}
+              name={clickedObjectProperties.name}
+              description={clickedObjectProperties.description}
+              outOfScope={clickedObjectProperties.outOfScope}
+              outOfScopeReason={clickedObjectProperties.outOfScopeReason}
+              chartData={workFlowValue}
+            />
           </Container>
           <ThreatList threats={threatList} clickedObjectId={clickedObjectId} />
         </SpaceBetween>

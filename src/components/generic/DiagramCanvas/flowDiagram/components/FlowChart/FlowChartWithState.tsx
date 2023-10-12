@@ -88,7 +88,8 @@ export interface IFlowChartWithStateProps {
   getWorkFlowChartValue?: (workFlowValue: any) => void;
   isAllowAddLinkLabel?: boolean;
   nodeRoleOptions: any[];
-  filterStatementsCallbaack?: (strideFilter: string, objectId: string) => void;
+  filterStatementsCallbaack?: (strideFilter: string, objectId: string, objectName?: string,
+    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) => void;
 };
 
 let timer:any = null;
@@ -98,7 +99,8 @@ let timer:any = null;
  */
 class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChart> {
   public state: IChart;
-  public filterStatementsCallbaack?: (strideFilter: string, objectId: string) => void;
+  public filterStatementsCallbaack?: (strideFilter: string, objectId: string, objectName?: string,
+    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) => void;
 
   constructor (props: IFlowChartWithStateProps) {
     super(props);
@@ -142,7 +144,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     });
 
     if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('', '');
+      this.filterStatementsCallbaack('', '', '', '', false, '');
     }
   };
 
@@ -178,7 +180,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       });
 
       if (this.filterStatementsCallbaack) {
-        this.filterStatementsCallbaack(filterSTRIDE, nodeId);
+        this.filterStatementsCallbaack(filterSTRIDE, nodeId, clickNodeProperties.name,
+          clickNodeProperties.description, clickNodeProperties.outOfScope, clickNodeProperties.outOfScopeReason);
       };
     }
   };
@@ -223,7 +226,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       },
     });
     if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('T,I,D', linkId);
+      this.filterStatementsCallbaack('T,I,D', linkId, '', '', false, '');
     }
   };
 

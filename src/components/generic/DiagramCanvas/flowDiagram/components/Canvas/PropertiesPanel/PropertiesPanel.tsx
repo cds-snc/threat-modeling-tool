@@ -14,20 +14,35 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import * as React from 'react';
+//import * as React from 'react';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Form from '@cloudscape-design/components/form';
 import FormField from '@cloudscape-design/components/form-field';
 //import Input from '@cloudscape-design/components/input';
 import Textarea from '@cloudscape-design/components/textarea';
 import Checkbox from '@cloudscape-design/components/checkbox';
+//import { cloneDeep, mapValues } from 'lodash';
+import { IChart } from '../../../../flowDiagram';
+//import { useState } from 'react';
 
-export default function PropertiesPanel({ clickedObjectProperties }) {
-  console.log('clickedObjectProperties ', clickedObjectProperties);
-  const [name, setName] = React.useState(clickedObjectProperties?.id);
-  const [description, setDescription] = React.useState('');
-  const [outOfScope, setOutOfScope] = React.useState(false);
-  const [outOfScopeReason, setOutOfScopeReason] = React.useState('');
+export interface IPropertiesPanelProps {
+  id: string;
+  name: string;
+  description?: string;
+  outOfScope?: boolean;
+  outOfScopeReason?: string;
+  chartData?: IChart;
+};
+
+export default function PropertiesPanel(props: IPropertiesPanelProps) {
+  console.log('clickedObjectProperties ', props);
+  const { name, description, outOfScope, outOfScopeReason } = props;
+
+  //const [name, setName] = React.useState(props.name || '');
+  //const [description, setDescription] = React.useState(props.description || '');
+  //const [outOfScope, setOutOfScope] = React.useState(props.outOfScope || false);
+  //const [outOfScopeReason, setOutOfScopeReason] = React.useState(props.outOfScopeReason || '');
+
   return (
     <form onSubmit={e => e.preventDefault()} >
       <Form
@@ -41,7 +56,7 @@ export default function PropertiesPanel({ clickedObjectProperties }) {
             stretch={true} >
             <Textarea
               value={name}
-              onChange={({ detail }) => setName(detail.value)}
+              //onChange={({ detail }) => setName(detail.value)}
               placeholder="Name"
               rows={3} />
           </FormField>
@@ -49,8 +64,8 @@ export default function PropertiesPanel({ clickedObjectProperties }) {
             label="Description"
             stretch={true} >
             <Textarea
-              value={description}
-              onChange={({ detail }) => setDescription(detail.value)}
+              value={description||''}
+              //onChange={({ detail }) => setDescription(detail.value)}
               placeholder="Description"
               rows={3} />
           </FormField>
@@ -58,13 +73,14 @@ export default function PropertiesPanel({ clickedObjectProperties }) {
             label="Scope"
             stretch={true} >
             <Checkbox
-              checked={outOfScope}
-              onChange={({ detail }) => setOutOfScope(detail.checked)} >
+              checked={outOfScope||false}
+              //onChange={({ detail }) => setOutOfScope(detail.checked)}
+            >
                     Out of scope
             </Checkbox>
             <Textarea
-              value={outOfScopeReason}
-              onChange={({ detail }) => setOutOfScopeReason(detail.value)}
+              value={outOfScopeReason||''}
+              //onChange={({ detail }) => setOutOfScopeReason(detail.value)}
               placeholder="Reason for out of scope"
               rows={2} />
           </FormField>

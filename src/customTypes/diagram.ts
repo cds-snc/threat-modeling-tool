@@ -20,6 +20,7 @@ export const DiagramInfoSchema = z.object({
   id: z.string().length(36),
   name: z.string().min(3).max(64),
   description: z.string().max(4000).optional(),
+  clickedObjectName: z.string().max(64).optional(),
 });
 
 export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;

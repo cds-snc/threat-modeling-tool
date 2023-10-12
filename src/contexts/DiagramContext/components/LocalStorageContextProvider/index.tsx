@@ -40,6 +40,7 @@ const DiagramLocalStorageContextProvider: FC<PropsWithChildren<DiagramContextPro
       id: uuidV4(),
       name: '',
       description: '',
+      clickedObjectName: '',
     },
   });
 
