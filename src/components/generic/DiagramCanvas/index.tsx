@@ -398,7 +398,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
-    console.log('work-flow: ', JSON.stringify(workFlowValue));
+    //console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
   function filterStatementsCallback (filter: string, objectId: string, objectName?: string,
@@ -426,12 +426,18 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     }));
   }, [strideFilter, setThreatList, statementList]);
 
+
   useEffect( () => { // update properties panel
-    if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
+    if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId] && workFlowValue.clickNodeId === clickedObjectId) {
       workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.nodes[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
       workFlowValue.nodes[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+    } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.links[clickedObjectId] && workFlowValue.clickLinkId === clickedObjectId) {
+      workFlowValue.links[clickedObjectId].properties.label = clickedObjectName;
+      workFlowValue.links[clickedObjectId].properties.description = clickedObjectDescription;
+      workFlowValue.links[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
+      workFlowValue.links[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
     }
   }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription, clickedObjectOutOfScope, clickedObjectOutOfScopeReason]);
 

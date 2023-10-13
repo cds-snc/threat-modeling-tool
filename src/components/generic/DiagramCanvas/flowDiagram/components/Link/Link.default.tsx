@@ -55,8 +55,8 @@ export const LinkDefault = ({
   link,
   startPos,
   endPos,
-  onLinkMouseEnter,
-  onLinkMouseLeave,
+  //onLinkMouseEnter,
+  //onLinkMouseLeave,
   onLabelDoubleClick,
   onLinkClick,
   isHovered,
@@ -101,8 +101,8 @@ export const LinkDefault = ({
             fill="none"
             strokeLinecap="round"
             strokeOpacity={(isHovered || isSelected) ? 0.2 : 0}
-            onMouseEnter={() => onLinkMouseEnter({ config, linkId: link.id })}
-            onMouseLeave={() => onLinkMouseLeave({ config, linkId: link.id })}
+            //onMouseEnter={() => onLinkMouseEnter({ config, linkId: link.id })}
+            //onMouseLeave={() => onLinkMouseLeave({ config, linkId: link.id })}
             onDoubleClick={() => onLabelDoubleClick({ linkId: link.id })}
             onClick={(e) => {
               onLinkClick({ config, linkId: link.id });
@@ -155,8 +155,8 @@ export const LinkDefault = ({
           fill="none"
           strokeLinecap="round"
           strokeOpacity={(isHovered || isSelected) ? 0.1 : 0}
-          onMouseEnter={() => onLinkMouseEnter({ config, linkId: link.id })}
-          onMouseLeave={() => onLinkMouseLeave({ config, linkId: link.id })}
+          //onMouseEnter={() => onLinkMouseEnter({ config, linkId: link.id })}
+          //onMouseLeave={() => onLinkMouseLeave({ config, linkId: link.id })}
           onDoubleClick={() => onLabelDoubleClick({ linkId: link.id })}
           onClick={(e) => {
             onLinkClick({ config, linkId: link.id });

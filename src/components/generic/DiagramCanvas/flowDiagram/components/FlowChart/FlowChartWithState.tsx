@@ -212,6 +212,9 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   onLinkClick: IOnLinkClick = ({ linkId }) => {
+    let linkProperties = this.state.links[linkId].properties;
+    linkProperties = !!linkProperties ? linkProperties : {};
+
     this.setState({
       clickLinkId: linkId,
       nodeName: '',
@@ -226,7 +229,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       },
     });
     if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('T,I,D', linkId, '', '', false, '');
+      this.filterStatementsCallbaack('T,I,D', linkId, linkProperties.label, linkProperties.description, linkProperties.outOfScope, linkProperties.outOfScopeReason);
     }
   };
 
