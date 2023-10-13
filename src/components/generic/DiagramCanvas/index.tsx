@@ -428,12 +428,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
 
   useEffect( () => { // update properties panel
-    if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId] && workFlowValue.clickNodeId === clickedObjectId) {
+    if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
+      console.log('clickNodeProperties4 ', workFlowValue.nodes[clickedObjectId]);
       workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
+      console.log('clickNodeProperties5 ');
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.nodes[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
       workFlowValue.nodes[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
-    } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.links[clickedObjectId] && workFlowValue.clickLinkId === clickedObjectId) {
+    } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.links[clickedObjectId]) {
       workFlowValue.links[clickedObjectId].properties.label = clickedObjectName;
       workFlowValue.links[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.links[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;

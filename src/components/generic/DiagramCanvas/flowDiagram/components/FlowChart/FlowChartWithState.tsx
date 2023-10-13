@@ -101,6 +101,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   public state: IChart;
   public filterStatementsCallbaack?: (strideFilter: string, objectId: string, objectName?: string,
     objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) => void;
+  public emptyProperties: any;
 
   constructor (props: IFlowChartWithStateProps) {
     super(props);
@@ -126,6 +127,12 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       alertMessageInfo: '',
       alertMessageStatus: 'init',
     };
+    this.emptyProperties= {
+      name: '',
+      description: '',
+      outOfScope: false,
+      outOfScopeReason: '',
+    };
   };
 
   onCanvasClick: IOnCanvasClick = () => {
@@ -150,8 +157,12 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
   onNodeClick: IOnNodeClick = ({ nodeId }) => {
     let selectedNode = this.state.nodes[nodeId];
-    let clickNodeProperties = this.state.nodes[nodeId].properties;
-    //console.log('clickNodeProperties ', clickNodeProperties);
+    let nodeProperties = !!selectedNode.properties ? selectedNode.properties : this.emptyProperties;
+    if (!selectedNode.properties) {
+      this.state.nodes[nodeId].properties = this.emptyProperties;
+      nodeProperties = this.emptyProperties;
+    }
+
     let filterSTRIDE: string;
     if (selectedNode) {
       //console.log('selectedNode ', selectedNode);
@@ -180,8 +191,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       });
 
       if (this.filterStatementsCallbaack) {
-        this.filterStatementsCallbaack(filterSTRIDE, nodeId, clickNodeProperties.name,
-          clickNodeProperties.description, clickNodeProperties.outOfScope, clickNodeProperties.outOfScopeReason);
+        this.filterStatementsCallbaack(filterSTRIDE, nodeId, nodeProperties.name,
+          nodeProperties.description, nodeProperties.outOfScope, nodeProperties.outOfScopeReason);
       };
     }
   };
@@ -213,8 +224,11 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
   onLinkClick: IOnLinkClick = ({ linkId }) => {
     let linkProperties = this.state.links[linkId].properties;
-    linkProperties = !!linkProperties ? linkProperties : {};
-
+    if (!this.state.links[linkId].properties) {
+      this.state.links[linkId].properties = this.emptyProperties;
+      linkProperties = this.emptyProperties;
+    }
+    linkProperties = !!linkProperties ? linkProperties : this.emptyProperties;
     this.setState({
       clickLinkId: linkId,
       nodeName: '',
@@ -351,7 +365,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     let _nodes = this.state.nodes;
     let _nodeId = this.state.modelOption === 'addNode' ? this.state.newNodeId : this.state.clickNodeId;
     _nodes[_nodeId].properties = {
-      name: this.state.nodeName,
+      name: !!this.state.nodeName ? this.state.nodeName : '',
       Id: this.state.nodeId,
       nodeRole: this.state.nodeRoleOption,
       description: this.state.nodeDescription,
