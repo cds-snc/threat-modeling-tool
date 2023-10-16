@@ -36,6 +36,7 @@ export interface IChart {
   nodeDescription: string;
   nodeOutOfScope: boolean;
   nodeOutOfScopeReason: string;
+  threats: {id: string}[];
   nodeRoleOption: string;
   linkLabel: string;
   newNodeId: string;

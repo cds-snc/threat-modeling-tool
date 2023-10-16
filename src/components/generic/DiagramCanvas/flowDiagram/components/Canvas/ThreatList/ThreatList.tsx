@@ -19,12 +19,14 @@ import {
   Box,
   Button,
   CollectionPreferences,
+  CollectionPreferencesProps,
   Header,
   Pagination,
   Table,
   TextFilter,
 } from '@cloudscape-design/components';
 import { columnDefinitions, getMatchesCountText, paginationLabels, collectionPreferencesProps } from './table-config';
+//import intersectStringArrays from '../../../../../../../utils/intersectStringArrays';
 
 function EmptyState({ title, subtitle, action }) {
   return (
@@ -40,12 +42,15 @@ function EmptyState({ title, subtitle, action }) {
   );
 }
 
-export default function ThreatList( { threats, clickedObjectId } ) {
-  const [selectedDFDObjectId] = useState(clickedObjectId);
+export default function ThreatList( props ) {
+  function handleThreatsSelectionChange(event) {
+    props.onThreatsSelectionChange(event.detail.selectedItems);
+  };
+  const [selectedDFDObjectId] = useState(props.clickedObjectId);
   selectedDFDObjectId;
   //console.log('selectedDFDObjectId', selectedDFDObjectId);
-  const [preferences] = useState({
-    pageSize: 100,
+  const [preferences, setPreferences] = useState<CollectionPreferencesProps.Preferences>({
+    pageSize: 10,
     visibleContent: ['statement', 'priority', 'stride'],
     wrapLines: true,
   });
@@ -56,7 +61,7 @@ export default function ThreatList( { threats, clickedObjectId } ) {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(threats, {
+  } = useCollection(props.threats, {
     filtering: {
       empty: (
         <EmptyState
@@ -81,7 +86,8 @@ export default function ThreatList( { threats, clickedObjectId } ) {
     sorting: {},
     selection: {},
   });
-  const { selectedItems } = collectionProps;
+
+  //const { selectedItems } = collectionProps;
   return (
     <Table
       {...collectionProps}
@@ -89,9 +95,9 @@ export default function ThreatList( { threats, clickedObjectId } ) {
       header={
         <Header
           counter={
-            selectedItems?.length
-              ? `(${selectedItems.length}/${threats.length})`
-              : `(${threats.length})`
+            props.selectedThreats?.length
+              ? `(${props.selectedThreats.length}/${props.threats.length})`
+              : `(${props.threats.length})`
           }
         >
           Threats
@@ -100,6 +106,9 @@ export default function ThreatList( { threats, clickedObjectId } ) {
       columnDefinitions={columnDefinitions}
       visibleColumns={preferences.visibleContent}
       items={items}
+      trackBy="id"
+      selectedItems={props.selectedThreats}
+      onSelectionChange={handleThreatsSelectionChange}
       stickyHeader
       resizableColumns
       wrapLines
@@ -118,6 +127,7 @@ export default function ThreatList( { threats, clickedObjectId } ) {
         <CollectionPreferences
           {...collectionPreferencesProps}
           preferences={preferences}
+          onConfirm={({ detail }) => setPreferences(detail)}
         />
       }
     />

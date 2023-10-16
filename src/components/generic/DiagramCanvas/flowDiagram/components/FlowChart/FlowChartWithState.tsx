@@ -89,7 +89,8 @@ export interface IFlowChartWithStateProps {
   isAllowAddLinkLabel?: boolean;
   nodeRoleOptions: any[];
   filterStatementsCallbaack?: (strideFilter: string, objectId: string, objectName?: string,
-    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) => void;
+    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string,
+    threats?: {id: string}[]) => void;
 };
 
 let timer:any = null;
@@ -100,7 +101,8 @@ let timer:any = null;
 class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChart> {
   public state: IChart;
   public filterStatementsCallbaack?: (strideFilter: string, objectId: string, objectName?: string,
-    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) => void;
+    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string,
+    threats?: {id: string}[]) => void;
   public emptyProperties: any;
 
   constructor (props: IFlowChartWithStateProps) {
@@ -117,6 +119,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       nodeDescription: '',
       nodeOutOfScope: false,
       nodeOutOfScopeReason: '',
+      threats: [],
       nodeRoleOption: '',
       linkLabel: '',
       newNodeId: '',
@@ -132,6 +135,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       description: '',
       outOfScope: false,
       outOfScopeReason: '',
+      threats: [],
     };
   };
 
@@ -143,6 +147,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       nodeDescription: '',
       nodeOutOfScope: false,
       nodeOutOfScopeReason: '',
+      threats: [],
       clickNodeId: '',
       linkLabel: '',
       clickLinkId: '',
@@ -151,7 +156,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     });
 
     if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('', '', '', '', false, '');
+      this.filterStatementsCallbaack('', '', '', '', false, '', []);
     }
   };
 
@@ -192,7 +197,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
       if (this.filterStatementsCallbaack) {
         this.filterStatementsCallbaack(filterSTRIDE, nodeId, nodeProperties.name,
-          nodeProperties.description, nodeProperties.outOfScope, nodeProperties.outOfScopeReason);
+          nodeProperties.description, nodeProperties.outOfScope, nodeProperties.outOfScopeReason,
+          nodeProperties.threats);
       };
     }
   };
@@ -243,7 +249,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       },
     });
     if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('T,I,D', linkId, linkProperties.label, linkProperties.description, linkProperties.outOfScope, linkProperties.outOfScopeReason);
+      this.filterStatementsCallbaack('T,I,D', linkId, linkProperties.label, linkProperties.description, linkProperties.outOfScope, linkProperties.outOfScopeReason,
+        linkProperties.threats);
     }
   };
 

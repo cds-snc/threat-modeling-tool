@@ -396,6 +396,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   const [workFlowValue, setWorkFlowValue] = useState<IChart>(chartSimple);
   const { statementList } = useThreatsContext();
   const [threatList, setThreatList] = useState(statementList);
+  const [selectedThreatList, setSelectedThreatList] = useState<{id: string}[]>([]);
   const [strideFilter, setStrideFilter] = useState('');
   const [clickedObjectId, setClickedObjectId] = useState('');
   const [clickedObjectName, setClickedObjectName] = useState('');
@@ -415,22 +416,29 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     setClickedObjectOutOfScopeReason(newValue);
   }, []);
 
+  const handleThreatsSelectionChange = useCallback((newValue) => {
+    setSelectedThreatList(newValue);
+  }, []);
+
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
     //console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
   function filterStatementsCallback (filter: string, objectId: string, objectName?: string,
-    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string) {
+    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string,
+    threats?: {id: string}[]) {
     setStrideFilter(filter);
     setClickedObjectId(objectId);
     setClickedObjectName(objectName!);
     setClickedObjectDescription(objectDescription!);
     setClickedObjectOutOfScope(objectOutOfScope!);
     setClickedObjectOutOfScopeReason(objectOutOfScopeReason!);
+    setSelectedThreatList(threats!);
   };
 
   useEffect( () => { // update list of threats panel
+    console.log('statementList', statementList);
     setThreatList(statementList.filter(statement => {
       const stride = statement.metadata?.find(m => m.key === 'STRIDE');
       let mergeSTRIDE: string[] = [];
@@ -452,13 +460,16 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.nodes[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
       workFlowValue.nodes[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.nodes[clickedObjectId].properties.threats = selectedThreatList;
     } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.links[clickedObjectId]) {
       workFlowValue.links[clickedObjectId].properties.label = clickedObjectName;
       workFlowValue.links[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.links[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
       workFlowValue.links[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.links[clickedObjectId].properties.threats = selectedThreatList;
     }
-  }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription, clickedObjectOutOfScope, clickedObjectOutOfScopeReason]);
+  }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription,
+    clickedObjectOutOfScope, clickedObjectOutOfScopeReason, selectedThreatList]);
 
   return (
     <ContentLayout
@@ -511,7 +522,11 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
               onChangeOutOfScopeReason={handleObjectOutOfScopeReasonChange}
             />
           </Container>
-          <ThreatList threats={threatList} clickedObjectId={clickedObjectId} />
+          <ThreatList
+            threats={threatList}
+            clickedObjectId={clickedObjectId}
+            selectedThreats={selectedThreatList}
+            onThreatsSelectionChange={handleThreatsSelectionChange} />
         </SpaceBetween>
       ) :
         (<SpaceBetween direction='vertical' size='s'>
