@@ -422,7 +422,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
-    //console.log('work-flow: ', JSON.stringify(workFlowValue));
+    console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
   function filterStatementsCallback (filter: string, objectId: string, objectName?: string,

@@ -44,7 +44,7 @@ function EmptyState({ title, subtitle, action }) {
 
 export default function ThreatList( props ) {
   function handleThreatsSelectionChange(event) {
-    props.onThreatsSelectionChange(event.detail.selectedItems);
+    props.onThreatsSelectionChange(event.detail.selectedItems.map( ({ id }) => ( { id: id } ) ));
   };
   const [selectedDFDObjectId] = useState(props.clickedObjectId);
   selectedDFDObjectId;
