@@ -126,7 +126,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   `;
 
-  const ProcessQueue = styled.div`
+  const ProcessQueue = styled.div<{ outOfScope }>`
   width: 120px;
   height: 60px;
   position: absolute;
@@ -135,11 +135,15 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: white;
-  color: black;
   border-radius: 10px;
-  ${(props) => {return (props.property==='selected' ? 'border: 3px dashed black; background: #fdf0f0; ' : 'border: 2px dashed black; background: white;');}}
-  border-color: ${(isSelected: any) => (isSelected===false ? 'red':'black')};
+  ${(props) => {return (props.property==='selected' ? 'border: 3px dashed black; background: #fdf0f0;' : 'border: 2px dashed black; background: white;');}}
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   & div {
     padding: 0px;
     margin: 0px;
@@ -149,7 +153,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   `;
 
-  const ProcessPoint = styled.div`
+  const ProcessPoint = styled.div<{ outOfScope }>`
   width: 120px;
   height: 60px;
   text-align: center;
@@ -158,9 +162,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   align-items: center;
   text-align: center;
   padding: 0px;
-  background: white;
   ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
-  color: black;
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   & div {
     padding: 0px;
     margin: 0px;
@@ -170,7 +179,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   `;
 
-  const StartPoint = styled.div`
+  const StartPoint = styled.div<{ outOfScope }>`
   position: absolute;
   width: 100px;
   height: 100px;
@@ -179,16 +188,21 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   justify-content: center;
   text-align: center;
   align-items: center;
-  background: white;
-  ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
-  color: black;
   border-radius: 50%;
+  ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   &:hover {
     background: #c4d2f2;
   }
   `;
 
-  const EndPoint = styled.div`
+  const EndPoint = styled.div<{ outOfScope }>`
   position: absolute;
   width: 120px;
   height: 60px;
@@ -197,11 +211,16 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   justify-content: center;
   text-align: center;
   align-items: center;
-  background: white;
-  color: black;
   border-top: 4px solid black;
   border-bottom: 4px solid black;
   ${(props) => {return (props.property==='selected' ? 'border-left: 2px solid black; border-right: 2px solid black; background: #fdf0f0;' : 'border-left: 0px solid black; border-right: 0px solid black; background: white;');}}
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   &:hover {
     background: #c4d2f2;
   }
@@ -212,31 +231,31 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     switch (node.type) {
       case 'start':
         return (
-          <StartPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <StartPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </StartPoint>
         );
       case 'end':
         return (
-          <EndPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <EndPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </EndPoint>
         );
       case 'process-queue':
         return (
-          <ProcessQueue property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <ProcessQueue outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </ProcessQueue>
         );
       case 'process-point':
         return (
-          <ProcessPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <ProcessPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </ProcessPoint>
         );
     }
     return (
-      <StartPoint ref={ref} {...otherProps}>
+      <StartPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} ref={ref} {...otherProps}>
         {children}
       </StartPoint>
     );
@@ -429,9 +448,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   useEffect( () => { // update properties panel
     if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
-      console.log('clickNodeProperties4 ', workFlowValue.nodes[clickedObjectId]);
       workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
-      console.log('clickNodeProperties5 ');
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.nodes[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
       workFlowValue.nodes[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;

@@ -26,6 +26,7 @@ export interface INodeDefaultProps {
   onDoubleClick?: (e: React.MouseEvent) => void;
   style?: object;
   ref?: React.Ref<any>;
+  outOfScope?: boolean;
 };
 
 const StartPoint = styled.div`
