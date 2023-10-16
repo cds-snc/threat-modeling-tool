@@ -15,17 +15,23 @@
  ******************************************************************************************************************** */
 
 import { useContext, createContext } from 'react';
-import { ArchitectureInfo } from '../../customTypes';
+import { DiagramInfo } from '../../customTypes';
+import { v4 as uuidV4 } from 'uuid';
 
 export interface DiagramInfoContextApi {
-  diagramInfo: ArchitectureInfo;
-  setDiagramInfo: React.Dispatch<React.SetStateAction<ArchitectureInfo>>;
+  diagramInfo: DiagramInfo;
+  setDiagramInfo: React.Dispatch<React.SetStateAction<DiagramInfo>>;
   removeDiagramInfo: () => Promise<void>;
   onDeleteWorkspace: (workspaceId: string) => Promise<void>;
 }
 
 const initialState: DiagramInfoContextApi = {
-  diagramInfo: {},
+  diagramInfo: {
+    id: uuidV4(),
+    name: '',
+    description: '',
+    clickedObjectName: '',
+  },
   setDiagramInfo: () => { },
   removeDiagramInfo: () => Promise.resolve(),
   onDeleteWorkspace: () => Promise.resolve(),

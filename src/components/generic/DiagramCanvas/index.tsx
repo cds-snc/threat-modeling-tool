@@ -17,42 +17,38 @@
 /** @jsxImportSource @emotion/react */
 import styled from 'styled-components';
 import { css } from '@emotion/react';
+import ContentLayout from '@cloudscape-design/components/content-layout';
 import Grid from '@cloudscape-design/components/grid';
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect, forwardRef } from 'react';
-import {
-  BaseImageInfo,
-  //TemplateThreatStatement,
-  EditableComponentBaseProps,
-} from '../../../customTypes';
-
+import { DiagramInfo, EditableComponentBaseProps } from '../../../customTypes';
 import FlowChartWithState from './flowDiagram/components/FlowChart/FlowChartWithState';
-import { IPortDefaultProps, INodeDefaultProps, LinkDefault } from './flowDiagram';
+import { IPortDefaultProps, INodeDefaultProps, LinkDefault, IChart } from './flowDiagram';
 import { Sidebar, SidebarItem } from './flowDiagram/layout';
 import { chartSimple } from './flowDiagram/exampleChartState';
 import { generateLabelPosition } from './flowDiagram/utils';
-
-import ThreatStatementCard from '../../threats/ThreatStatementCard';
 import { useThreatsContext } from '../../../contexts';
-import useEditMetadata from '../../../hooks/useEditMetadata';
 import intersectStringArrays from '../../../utils/intersectStringArrays';
+import ThreatList from './flowDiagram/components/Canvas/ThreatList/ThreatList';
+import PropertiesPanel from './flowDiagram/components/Canvas/PropertiesPanel/PropertiesPanel';
 
 const diagramWrapper = css({
   display: 'grid',
-  height: '75vh',
-  minHeight: '100%',
+  height: '50vh',
+  maxHeight: '100%',
+  minHeight: '50%',
   width: '100%',
   maxWidth: '100%',
 });
 
 export interface DiagramCanvasProps extends EditableComponentBaseProps {
-  entity: BaseImageInfo;
+  entity: DiagramInfo;
   headerTitle: string;
   diagramTitle: string;
-  onConfirm: (info: BaseImageInfo) => void;
+  onConfirm: (info: DiagramInfo) => void;
 }
 
 const DiagramCanvas: FC<DiagramCanvasProps> = ({
@@ -62,8 +58,9 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   onConfirm,
   onEditModeChange,
 }) => {
-  const [editMode, setEditMode] = useState(!entity.description && !entity.image);
-  const [image, setImage] = useState<string>('');
+  const [editMode, setEditMode] = useState(!entity.description && !entity.name);
+  const [id, setId] = useState('');
+  const [name, setName] = useState('');
   const [content, setContent] = useState('');
 
   useEffect(() => {
@@ -72,17 +69,20 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const handleSaveDiagramCanvas = useCallback(() => {
     onConfirm({
-      image,
+      id,
+      name,
       description: content,
     });
     setEditMode(false);
-  }, [image, content, onConfirm]);
+  }, [id, name, content, onConfirm]);
 
   const handleEdit = useCallback(() => {
+    setId(entity.id || '');
     setContent(entity.description || '');
-    setImage(entity.image || '');
+    setName(entity.name || '');
     setEditMode(true);
-  }, [entity, setContent, setEditMode, setImage]);
+  }, [entity, setContent, setEditMode, setName]);
+
 
   const actions = useMemo(() => {
     return editMode ? (<SpaceBetween direction='horizontal' size='s'>
@@ -90,7 +90,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       <Button key='confirmBtn' variant='primary' onClick={handleSaveDiagramCanvas}>Confirm</Button>
     </SpaceBetween>) : (<Button onClick={handleEdit}>Edit</Button>);
   }, [editMode, handleSaveDiagramCanvas, handleEdit, setEditMode]);
-
 
   const Label = styled.div`
   position: absolute;
@@ -127,7 +126,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   `;
 
-  const ProcessQueue = styled.div`
+  const ProcessQueue = styled.div<{ outOfScope }>`
   width: 120px;
   height: 60px;
   position: absolute;
@@ -135,11 +134,16 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   padding: 0px;
   justify-content: center;
   align-items: center;
-  background: white;
-  color: black;
+  text-align: center;
   border-radius: 10px;
-  ${(props) => {return (props.property==='selected' ? 'border: 3px dashed black; background: #fdf0f0; ' : 'border: 2px dashed black; background: white;');}}
-  border-color: ${(isSelected: any) => (isSelected===false ? 'red':'black')};
+  ${(props) => {return (props.property==='selected' ? 'border: 3px dashed black; background: #fdf0f0;' : 'border: 2px dashed black; background: white;');}}
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   & div {
     padding: 0px;
     margin: 0px;
@@ -149,17 +153,23 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   `;
 
-  const ProcessPoint = styled.div`
+  const ProcessPoint = styled.div<{ outOfScope }>`
   width: 120px;
   height: 60px;
   text-align: center;
   position: absolute;
   justify-content: center;
   align-items: center;
+  text-align: center;
   padding: 0px;
-  background: white;
   ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
-  color: black;
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   & div {
     padding: 0px;
     margin: 0px;
@@ -169,36 +179,48 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   `;
 
-  const StartPoint = styled.div`
+  const StartPoint = styled.div<{ outOfScope }>`
   position: absolute;
   width: 100px;
   height: 100px;
   padding: 0px;
   display: flex;
   justify-content: center;
+  text-align: center;
   align-items: center;
-  background: white;
-  ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
-  color: black;
   border-radius: 50%;
+  ${(props) => {return (props.property==='selected' ? 'border: 3px solid black; background: #fdf0f0;' : 'border: 2px solid black; background: white;');}}
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   &:hover {
     background: #c4d2f2;
   }
   `;
 
-  const EndPoint = styled.div`
+  const EndPoint = styled.div<{ outOfScope }>`
   position: absolute;
   width: 120px;
   height: 60px;
   padding: 0px;
   display: flex;
   justify-content: center;
+  text-align: center;
   align-items: center;
-  background: white;
-  color: black;
   border-top: 4px solid black;
   border-bottom: 4px solid black;
   ${(props) => {return (props.property==='selected' ? 'border-left: 2px solid black; border-right: 2px solid black; background: #fdf0f0;' : 'border-left: 0px solid black; border-right: 0px solid black; background: white;');}}
+  ${(props) => {
+    return (
+      props.outOfScope==='yes' ?
+        'filter: invert(.3); mix-blend-mode: normal;' :
+        'filter: invert(0); mix-blend-mode: normal;'
+    );
+  }}
   &:hover {
     background: #c4d2f2;
   }
@@ -209,31 +231,31 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     switch (node.type) {
       case 'start':
         return (
-          <StartPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <StartPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </StartPoint>
         );
       case 'end':
         return (
-          <EndPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <EndPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </EndPoint>
         );
       case 'process-queue':
         return (
-          <ProcessQueue property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <ProcessQueue outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </ProcessQueue>
         );
       case 'process-point':
         return (
-          <ProcessPoint property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
+          <ProcessPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} property={(isSelected===true ? 'selected':'')} ref={ref} {...otherProps}>
             {children}
           </ProcessPoint>
         );
     }
     return (
-      <StartPoint ref={ref} {...otherProps}>
+      <StartPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} ref={ref} {...otherProps}>
         {children}
       </StartPoint>
     );
@@ -261,17 +283,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       </>
     );
   };
-
-  /*
-  function validateLink({ linkId, fromNodeId, fromPortId, toNodeId, toPortId, chart }): boolean {
-
-  if (fromNodeId === toNodeId) {
-    return false
-  }
-
-  return true;
-  }
-  */
 
   const startItemStyle = `
   {
@@ -382,33 +393,52 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     },
   ];
 
-  let workFlowValue = {};
+  const [workFlowValue, setWorkFlowValue] = useState<IChart>(chartSimple);
+  const { statementList } = useThreatsContext();
+  const [threatList, setThreatList] = useState(statementList);
+  const [selectedThreatList, setSelectedThreatList] = useState<{id: string}[]>([]);
+  const [strideFilter, setStrideFilter] = useState('');
+  const [clickedObjectId, setClickedObjectId] = useState('');
+  const [clickedObjectName, setClickedObjectName] = useState('');
+  const [clickedObjectDescription, setClickedObjectDescription] = useState('');
+  const [clickedObjectOutOfScope, setClickedObjectOutOfScope] = useState(false);
+  const [clickedObjectOutOfScopeReason, setClickedObjectOutOfScopeReason] = useState('');
+  const handleObjectNameChange = useCallback((newValue) => {
+    setClickedObjectName(newValue);
+  }, []);
+  const handleObjectDescriptionChange = useCallback((newValue) => {
+    setClickedObjectDescription(newValue);
+  }, []);
+  const handleObjectOutOfScopeChange = useCallback((newValue) => {
+    setClickedObjectOutOfScope(newValue);
+  }, []);
+  const handleObjectOutOfScopeReasonChange = useCallback((newValue) => {
+    setClickedObjectOutOfScopeReason(newValue);
+  }, []);
 
-  let getWorkFlowChartValue = (newWorkFlowValue) => {
-    workFlowValue = newWorkFlowValue;
-    workFlowValue;
-    console.log('work-flow: ', workFlowValue);
+  const handleThreatsSelectionChange = useCallback((newValue) => {
+    setSelectedThreatList(newValue);
+  }, []);
+
+  const getWorkFlowChartValue = (newWorkFlowValue) => {
+    setWorkFlowValue(newWorkFlowValue);
+    //console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
-  const { statementList, saveStatement, removeStatement } = useThreatsContext();
-
-  const handleEditMetadata = useEditMetadata(saveStatement);
-
-  const handleRemoveThreat = useCallback(async (statementId: string) => {
-    //update the threat by removing the selected DFD_Node_Id from dependencies
-    removeStatement(statementId);
-  }, [removeStatement]);
-
-  const [threatList, setThreatList] = useState(statementList);
-  const [clickedObjectId, setClickedObjectId] = useState('');
-  const [strideFilter, setStrideFilter] = useState('');
-
-  function filterStatementsCallback (filter: string, objectId: string) {
+  function filterStatementsCallback (filter: string, objectId: string, objectName?: string,
+    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string,
+    threats?: {id: string}[]) {
     setStrideFilter(filter);
     setClickedObjectId(objectId);
+    setClickedObjectName(objectName!);
+    setClickedObjectDescription(objectDescription!);
+    setClickedObjectOutOfScope(objectOutOfScope!);
+    setClickedObjectOutOfScopeReason(objectOutOfScopeReason!);
+    setSelectedThreatList(threats!);
   };
 
-  useEffect( () => {
+  useEffect( () => { // update list of threats panel
+    console.log('statementList', statementList);
     setThreatList(statementList.filter(statement => {
       const stride = statement.metadata?.find(m => m.key === 'STRIDE');
       let mergeSTRIDE: string[] = [];
@@ -421,26 +451,52 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
         return false;
       }
     }));
-  }, [clickedObjectId, strideFilter, setThreatList, setStrideFilter, setClickedObjectId, statementList]);
+  }, [strideFilter, setThreatList, statementList]);
+
+
+  useEffect( () => { // update properties panel
+    if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
+      workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
+      workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
+      workFlowValue.nodes[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
+      workFlowValue.nodes[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.nodes[clickedObjectId].properties.threats = selectedThreatList;
+    } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.links[clickedObjectId]) {
+      workFlowValue.links[clickedObjectId].properties.label = clickedObjectName;
+      workFlowValue.links[clickedObjectId].properties.description = clickedObjectDescription;
+      workFlowValue.links[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
+      workFlowValue.links[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.links[clickedObjectId].properties.threats = selectedThreatList;
+    }
+  }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription,
+    clickedObjectOutOfScope, clickedObjectOutOfScopeReason, selectedThreatList]);
 
   return (
-    <SpaceBetween direction='vertical' size='s'>
-      <Container header={<Header actions={actions}>{headerTitle}</Header>}>
-        {editMode ? (
-          <SpaceBetween direction='vertical' size='s'>
-            <Grid gridDefinition={[{ colspan: 2 }, { colspan: 10 }]}>
-              <SpaceBetween direction='vertical' size='s'>
-                <Sidebar>
-                  <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
-                  <SidebarItem type="process-point" ports={processPoint} />
-                  <SidebarItem type="end" ports={ endPoint } />
-                  <SidebarItem type="process-queue" ports={processQueuePoint} />
-                </Sidebar>
-              </SpaceBetween>
+    <ContentLayout
+      header={
+        <SpaceBetween size='s'>
+          <Header
+            variant='h2'
+            actions={actions}
+          >
+          </Header>
+        </SpaceBetween>
+      }
+    >
+      {editMode ? (
+        <SpaceBetween direction='vertical' size='s'>
+          <Container header={<Header>{headerTitle}</Header>}>
+            <Grid gridDefinition={[{ colspan: 2 }, { colspan: clickedObjectId!=='' ? 10:10 }, { colspan: clickedObjectId!=='' ? 0:0 }]}>
+              <Sidebar>
+                <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
+                <SidebarItem type="process-point" ports={processPoint} />
+                <SidebarItem type="end" ports={ endPoint } />
+                <SidebarItem type="process-queue" ports={processQueuePoint} />
+              </Sidebar>
               <div css={diagramWrapper}>
                 <FlowChartWithState
                   isAllowAddLinkLabel = {true}
-                  initialValue={chartSimple}
+                  initialValue={workFlowValue}
                   nodeRoleOptions={nodeRoleOptions}
                   getWorkFlowChartValue={getWorkFlowChartValue}
                   Components={{
@@ -448,33 +504,37 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
                     Node: NodeCustom,
                     Link: LinkCustom,
                   }}
-                  config={{ readonly: false }}
+                  config={{ readonly: !editMode }}
                   filterStatementsCallbaack = {filterStatementsCallback}
                 />
               </div>
             </Grid>
-          </SpaceBetween>
-
-        ) :
-          (<SpaceBetween direction='vertical' size='s'>
-            <Header variant='h3' key='diagramInfo'>Description</Header>
-            <Header variant='h3' key='diagram'>{diagramTitle}</Header>
-          </SpaceBetween>)
-        }
-      </Container>
-      <Container>
-        <SpaceBetween direction='horizontal' size='xxl'>
-          {threatList?.map(st => (
-            <ThreatStatementCard
-              key={st.id}
-              statement={st}
-              onRemove={handleRemoveThreat}
-              onEditMetadata={handleEditMetadata}
-              showLinkedEntities={true}
-            />))}
+          </Container>
+          <Container header={<Header>Properties</Header>}>
+            <PropertiesPanel
+              name={clickedObjectName}
+              description={clickedObjectDescription}
+              outOfScope={clickedObjectOutOfScope}
+              outOfScopeReason={clickedObjectOutOfScopeReason}
+              onChangeName={handleObjectNameChange}
+              onChangeDescription={handleObjectDescriptionChange}
+              onChangeOutOfScope={handleObjectOutOfScopeChange}
+              onChangeOutOfScopeReason={handleObjectOutOfScopeReasonChange}
+            />
+          </Container>
+          <ThreatList
+            threats={threatList}
+            clickedObjectId={clickedObjectId}
+            selectedThreats={selectedThreatList}
+            onThreatsSelectionChange={handleThreatsSelectionChange} />
         </SpaceBetween>
-      </Container>
-    </SpaceBetween>
+      ) :
+        (<SpaceBetween direction='vertical' size='s'>
+          <Header variant='h3' key='diagramInfo'>Description</Header>
+          <Header variant='h3' key='diagram'>{diagramTitle}</Header>
+        </SpaceBetween>)
+      }
+    </ContentLayout>
   );
 };
 

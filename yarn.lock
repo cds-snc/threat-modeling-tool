@@ -1762,7 +1762,7 @@
     "@dnd-kit/utilities" "^3.2.1"
     clsx "^1.2.1"
 
-"@cloudscape-design/collection-hooks@^1.0.0", "@cloudscape-design/collection-hooks@^1.0.21":
+"@cloudscape-design/collection-hooks@^1.0.0", "@cloudscape-design/collection-hooks@^1.0.21", "@cloudscape-design/collection-hooks@^1.0.23":
   version "1.0.23"
   resolved "https://registry.yarnpkg.com/@cloudscape-design/collection-hooks/-/collection-hooks-1.0.23.tgz#f51d27821d32ad137c9ea9ccbb589130dc68bee9"
   integrity sha512-6sj4Oqgue9vKKwA0djKwEaCEf1iwCNR1A89r1f77YSoG9OwoN/vjQgANJgNkCE3oBx9mldzHDxe5xJx9vDehwQ==

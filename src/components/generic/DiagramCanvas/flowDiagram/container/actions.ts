@@ -111,7 +111,7 @@ export const onLinkMouseLeave: IOnLinkMouseLeave = ({ linkId }) => (chart: IChar
 };
 
 export const onLinkClick: IOnLinkClick = ({ linkId }) => (chart: IChart) => {
-  console.log('----actions.ts on link click----', linkId);
+  //console.log('----actions.ts on link click----', linkId);
   if (chart.selected.id !== linkId || chart.selected.type !== 'link') {
     chart.selected = {
       type: 'link',
@@ -122,7 +122,7 @@ export const onLinkClick: IOnLinkClick = ({ linkId }) => (chart: IChart) => {
 };
 
 export const onCanvasClick: IOnCanvasClick = () => (chart: IChart) => {
-  console.log('----actions.ts on canvas click----', chart);
+  //console.log('----actions.ts on canvas click----', chart);
   if (chart.selected.id) {
     chart.selected = {};
   }
@@ -151,7 +151,7 @@ export const onDeleteKey: IOnDeleteKey = () => (chart: IChart) => {
 };
 
 export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
-  console.log('----actions.ts on node click----', nodeId);
+  //console.log('----actions.ts on node click----', nodeId);
   chart.selected = {
     type: 'node',
     id: nodeId,
@@ -166,7 +166,7 @@ export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
 };
 
 export const onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => (chart: IChart) => {
-  console.log('----actions.ts on node double click----', nodeId);
+  //console.log('----actions.ts on node double click----', nodeId);
   chart.selected = {
     type: 'node',
     id: nodeId,

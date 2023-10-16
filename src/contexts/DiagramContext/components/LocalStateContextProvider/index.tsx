@@ -16,7 +16,6 @@
 
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { DiagramInfo } from '../../../../customTypes';
-import { INFO_DEFAULT_VALUE } from '../../../constants';
 import { LocalStateContextProviderBaseProps } from '../../../types';
 import { DiagramInfoContext } from '../../context';
 import { DiagramContextProviderProps } from '../../types';
@@ -26,14 +25,29 @@ DiagramContextProviderProps & LocalStateContextProviderBaseProps<DiagramInfo>>> 
   children,
   initialValue,
 }) => {
-  const [diagramInfo, setDiagramInfo] = useState<DiagramInfo>(initialValue || INFO_DEFAULT_VALUE);
+  const [diagramInfo, setDiagramInfo] = useState<DiagramInfo>(initialValue || {
+    id: '',
+    name: '',
+    description: '',
+    clickedObjectName: '',
+  });
 
   const handleRemoveDiagramInfo = useCallback(async () => {
-    setDiagramInfo(INFO_DEFAULT_VALUE);
+    setDiagramInfo({
+      id: '',
+      name: '',
+      description: '',
+      clickedObjectName: '',
+    });
   }, []);
 
   const handleDeleteWorkspace = useCallback(async (_workspaceId: string) => {
-    setDiagramInfo(INFO_DEFAULT_VALUE);
+    setDiagramInfo({
+      id: '',
+      name: '',
+      description: '',
+      clickedObjectName: '',
+    });
   }, []);
 
   return (<DiagramInfoContext.Provider value={{

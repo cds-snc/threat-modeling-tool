@@ -13,14 +13,4 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
-import { z } from 'zod';
-
-export const DiagramInfoSchema = z.object({
-  id: z.string().length(36),
-  name: z.string().min(3).max(64),
-  description: z.string().max(4000).optional(),
-  clickedObjectName: z.string().max(64).optional(),
-});
-
-export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;
+export * from './PropertiesPanel';
