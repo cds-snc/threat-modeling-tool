@@ -34,5 +34,5 @@ jobs:
 
       - name: Deploy and invalidate cache
         run: |
-          aws s3 sync ~/build s3://threat-modeling.cdssandbox.xyz-f3pn8icp/ --delete
+          aws s3 sync ./build s3://threat-modeling.cdssandbox.xyz-f3pn8icp/ --delete
           aws cloudfront create-invalidation --cli-input-json "{\"DistributionId\":\"E3989RAVFXNM48\",\"InvalidationBatch\":{\"Paths\":{\"Quantity\":1,\"Items\":[\"/*\"]},\"CallerReference\":\"$(date +%s)\"}}"
