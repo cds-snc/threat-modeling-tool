@@ -45,36 +45,36 @@ export default function PropertiesPanel(props) {
           columns={3}
           variant="text-grid" >
           <FormField
-            label="Name"
+            label="name"
             stretch={true} >
             <Textarea
               value={props.name}
               onChange={handleNameChange}
-              placeholder="Name"
+              placeholder="name"
               rows={3} />
           </FormField>
           <FormField
-            label="Description"
+            label="description"
             stretch={true} >
             <Textarea
               value={props.description}
               onChange={handleDescriptionChange}
-              placeholder="Description"
+              placeholder="description"
               rows={3} />
           </FormField>
           <FormField
-            label="Scope"
+            label="scope"
             stretch={true} >
             <Checkbox
               checked={props.outOfScope}
               onChange={handleOutOfScopeChange}
             >
-                    Out of scope
+            out of scope
             </Checkbox>
             <Textarea
               value={props.outOfScopeReason}
               onChange={handleOutOfScopeReasonChange}
-              placeholder="Reason for out of scope"
+              placeholder="reason for out of scope"
               rows={2} />
           </FormField>
         </ColumnLayout>

@@ -23,10 +23,9 @@ import {
   Header,
   Pagination,
   Table,
-  TextFilter,
+  PropertyFilter,
 } from '@cloudscape-design/components';
-import { columnDefinitions, getMatchesCountText, paginationLabels, collectionPreferencesProps } from './table-config';
-//import intersectStringArrays from '../../../../../../../utils/intersectStringArrays';
+import { columnDefinitions, getMatchesCountText, paginationLabels, collectionPreferencesProps, filteringConstants, filteringProperties } from './table-config';
 
 function EmptyState({ title, subtitle, action }) {
   return (
@@ -59,35 +58,48 @@ export default function ThreatList( props ) {
     actions,
     filteredItemsCount,
     collectionProps,
-    filterProps,
     paginationProps,
-  } = useCollection(props.threats, {
-    filtering: {
-      empty: (
-        <EmptyState
-          title="No threats defined"
-          subtitle=""
-          action={<Button>Add threat</Button>}
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title="No matches"
-          subtitle=""
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-            Clear filter
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: { pageSize: preferences.pageSize },
-    sorting: {},
-    selection: {},
-  });
+    propertyFilterProps,
+  } = useCollection(
+    props.threats.map((item) => {
+      const output: any = {};
+      output.id = item.id;
+      output.statement = item.statement;
+      output.priority = item.metadata?.find(m => m.key === 'Priority')?.value;
+      output.stride = item.metadata?.find(m => m.key === 'STRIDE')?.value.sort().join(',');
+      return output;
+    }),
+    {
+      propertyFiltering: {
+        filteringProperties: filteringProperties,
+        empty: (
+          <EmptyState
+            title="No threats defined"
+            subtitle=""
+            action={<Button>Add threat</Button>}
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title="No matches"
+            subtitle=""
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+              Clear filter
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      pagination: { pageSize: preferences.pageSize },
+      selection: {
+        defaultSelectedItems: props.selectedThreats,
+        keepSelection: true,
+        trackBy: 'id',
+      },
+    });
 
-  //const { selectedItems } = collectionProps;
   return (
     <Table
       {...collectionProps}
@@ -116,18 +128,19 @@ export default function ThreatList( props ) {
       pagination={
         <Pagination {...paginationProps} ariaLabels={paginationLabels} />
       }
-      filter={
-        <TextFilter
-          {...filterProps}
-          countText={getMatchesCountText(filteredItemsCount)}
-          filteringAriaLabel="Filter instances"
-        />
-      }
       preferences={
         <CollectionPreferences
           {...collectionPreferencesProps}
           preferences={preferences}
           onConfirm={({ detail }) => setPreferences(detail)}
+        />
+      }
+      filter={
+        <PropertyFilter
+          {...propertyFilterProps}
+          countText={getMatchesCountText(filteredItemsCount)}
+          expandToViewport={true}
+          i18nStrings={filteringConstants}
         />
       }
     />
