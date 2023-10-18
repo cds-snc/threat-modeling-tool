@@ -1,8 +1,9 @@
 module "website" {
-  source = "github.com/cds-snc/terraform-modules//simple_static_website?ref=v7.2.0"
+  source = "github.com/cds-snc/terraform-modules//simple_static_website?ref=v7.2.1"
 
   domain_name_source = "threat-modeling.cdssandbox.xyz"
   billing_tag_value  = "threat-modeling-tool"
+  single_page_app    = true
 
   providers = {
     aws           = aws
