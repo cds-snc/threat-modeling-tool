@@ -1,5 +1,5 @@
 module "website" {
-  source = "github.com/cds-snc/terraform-modules//simple_static_website?ref=d715582b2de62bc37ea65213f9bc05c19312422f"
+  source = "github.com/cds-snc/terraform-modules//simple_static_website?ref=v7.2.1"
 
   domain_name_source = "threat-modeling.cdssandbox.xyz"
   billing_tag_value  = "threat-modeling-tool"
