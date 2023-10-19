@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import { IPosition, ISize } from './generics';
 
 export interface IChart {
@@ -36,6 +37,10 @@ export interface IChart {
   nodeDescription: string;
   nodeOutOfScope: boolean;
   nodeOutOfScopeReason: string;
+  tags: string[];
+  dataFeatures: ReadonlyArray<OptionDefinition>;
+  techFeatures: ReadonlyArray<OptionDefinition>;
+  securityFeatures: ReadonlyArray<OptionDefinition>;
   threats: {id: string}[];
   nodeRoleOption: string;
   linkLabel: string;

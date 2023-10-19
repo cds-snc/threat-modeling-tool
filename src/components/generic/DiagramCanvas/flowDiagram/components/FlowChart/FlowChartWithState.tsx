@@ -24,6 +24,7 @@ import {
 } from '../../container/actions';
 import { Input, Button, Select, Message } from '../../element';
 import { IOnCanvasClick } from 'react-work-flow';
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 
 const ModelBox = styled.div`
   width: 100%;
@@ -88,8 +89,18 @@ export interface IFlowChartWithStateProps {
   getWorkFlowChartValue?: (workFlowValue: any) => void;
   isAllowAddLinkLabel?: boolean;
   nodeRoleOptions: any[];
-  filterStatementsCallbaack?: (strideFilter: string, objectId: string, objectName?: string,
-    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string,
+  filterStatementsCallbaack?: (
+    strideFilter: string,
+    objectId: string,
+    objectType: string,
+    objectName?: string,
+    objectDescription?: string,
+    objectOutOfScope?: boolean,
+    objectOutOfScopeReason?: string,
+    objectTags?: string[],
+    dataFeatures?: ReadonlyArray<OptionDefinition>,
+    techFeatures?: ReadonlyArray<OptionDefinition>,
+    securityFeatures?: ReadonlyArray<OptionDefinition>,
     threats?: {id: string}[]) => void;
 };
 
@@ -100,8 +111,18 @@ let timer:any = null;
  */
 class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChart> {
   public state: IChart;
-  public filterStatementsCallbaack?: (strideFilter: string, objectId: string, objectName?: string,
-    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string,
+  public filterStatementsCallbaack?: (
+    strideFilter: string,
+    objectId: string,
+    objectType: string,
+    objectName?: string,
+    objectDescription?: string,
+    objectOutOfScope?: boolean,
+    objectOutOfScopeReason?: string,
+    objectTags?: string[],
+    dataFeatures?: ReadonlyArray<OptionDefinition>,
+    techFeatures?: ReadonlyArray<OptionDefinition>,
+    securityFeatures?: ReadonlyArray<OptionDefinition>,
     threats?: {id: string}[]) => void;
   public emptyProperties: any;
 
@@ -119,6 +140,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       nodeDescription: '',
       nodeOutOfScope: false,
       nodeOutOfScopeReason: '',
+      tags: [],
+      dataFeatures: [],
+      techFeatures: [],
+      securityFeatures: [],
       threats: [],
       nodeRoleOption: '',
       linkLabel: '',
@@ -135,6 +160,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       description: '',
       outOfScope: false,
       outOfScopeReason: '',
+      tags: [],
+      dataFeatures: [],
+      techFeatures: [],
+      securityFeatures: [],
       threats: [],
     };
   };
@@ -147,6 +176,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       nodeDescription: '',
       nodeOutOfScope: false,
       nodeOutOfScopeReason: '',
+      tags: [],
+      dataFeatures: [],
+      techFeatures: [],
+      securityFeatures: [],
       threats: [],
       clickNodeId: '',
       linkLabel: '',
@@ -156,7 +189,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     });
 
     if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('', '', '', '', false, '', []);
+      this.filterStatementsCallbaack('', '', 'canvas', '', '', false, '', [], [], [], []);
     }
   };
 
@@ -196,9 +229,20 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       });
 
       if (this.filterStatementsCallbaack) {
-        this.filterStatementsCallbaack(filterSTRIDE, nodeId, nodeProperties.name,
-          nodeProperties.description, nodeProperties.outOfScope, nodeProperties.outOfScopeReason,
-          nodeProperties.threats);
+        this.filterStatementsCallbaack(
+          filterSTRIDE,
+          nodeId,
+          selectedNode.type,
+          nodeProperties.name,
+          nodeProperties.description,
+          nodeProperties.outOfScope,
+          nodeProperties.outOfScopeReason,
+          nodeProperties.tags,
+          nodeProperties.dataFeatures,
+          nodeProperties.techFeatures,
+          nodeProperties.securityFeatures,
+          nodeProperties.threats,
+        );
       };
     }
   };
@@ -249,7 +293,18 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       },
     });
     if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('T,I,D', linkId, linkProperties.label, linkProperties.description, linkProperties.outOfScope, linkProperties.outOfScopeReason,
+      this.filterStatementsCallbaack(
+        'T,I,D',
+        linkId,
+        'link',
+        linkProperties.label,
+        linkProperties.description,
+        linkProperties.outOfScope,
+        linkProperties.outOfScopeReason,
+        linkProperties.tags,
+        linkProperties.dataFeatures,
+        linkProperties.techFeatures,
+        linkProperties.securityFeatures,
         linkProperties.threats);
     }
   };

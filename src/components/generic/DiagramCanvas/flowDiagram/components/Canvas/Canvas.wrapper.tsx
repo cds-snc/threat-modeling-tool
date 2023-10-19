@@ -61,6 +61,9 @@ export class CanvasWrapper extends React.Component<ICanvasWrapperProps, IState> 
   private ref = React.createRef<HTMLElement>();
 
   public componentDidMount () {
+    window.addEventListener('error', function (e) {
+      console.error(e);
+    });
     this.updateSize();
 
     if (this.ref.current) {

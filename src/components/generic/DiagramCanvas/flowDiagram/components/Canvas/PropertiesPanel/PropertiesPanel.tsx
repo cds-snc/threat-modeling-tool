@@ -15,14 +15,11 @@
  ******************************************************************************************************************** */
 
 //import * as React from 'react';
-import ColumnLayout from '@cloudscape-design/components/column-layout';
-import Form from '@cloudscape-design/components/form';
-import FormField from '@cloudscape-design/components/form-field';
-import Textarea from '@cloudscape-design/components/textarea';
-import Checkbox from '@cloudscape-design/components/checkbox';
+import { ColumnLayout, Form, FormField, Textarea, Checkbox, TagEditor, ExpandableSection, Multiselect } from '@cloudscape-design/components';
+import { dataFeaturesOptions, securityFeaturesOptions, techFeaturesOptions } from './panel-config';
+//import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 
 export default function PropertiesPanel(props) {
-  //console.log('clickedObjectProperties ', props);
   function handleNameChange(event) {
     props.onChangeName(event.detail.value);
   };
@@ -34,6 +31,18 @@ export default function PropertiesPanel(props) {
   };
   function handleOutOfScopeReasonChange(event) {
     props.onChangeOutOfScopeReason(event.detail.value);
+  };
+  function handleTagsChange(event) {
+    props.onChangeTags(event.detail.tags);
+  };
+  function handleDataFeaturesChange(event) {
+    props.onChangeDataFeatures(event.detail.selectedOptions);
+  };
+  function handleTechFeaturesChange(event) {
+    props.onChangeTechFeatures(event.detail.selectedOptions);
+  };
+  function handleSecurityFeaturesChange(event) {
+    props.onChangeSecurityFeatures(event.detail.selectedOptions);
   };
 
   return (
@@ -74,9 +83,65 @@ export default function PropertiesPanel(props) {
             <Textarea
               value={props.outOfScopeReason}
               onChange={handleOutOfScopeReasonChange}
-              placeholder="reason for out of scope"
+              placeholder="a kind reminder for future-you"
               rows={2} />
           </FormField>
+        </ColumnLayout>
+        <ColumnLayout
+          borders="vertical"
+          columns={3}
+          variant="text-grid" >
+          <Multiselect
+            selectedOptions={props.dataFeatures}
+            onChange={handleDataFeaturesChange}
+            placeholder='Data features that apply to selected component'
+            tokenLimit={3} // number of visible selected options
+            disabled={props.outOfScope}
+            options={dataFeaturesOptions(props.type)}
+          />
+          <Multiselect
+            selectedOptions={props.techFeatures}
+            onChange={handleTechFeaturesChange}
+            placeholder='Tech features that apply to selected component'
+            tokenLimit={3} // number of visible selected options
+            disabled={props.outOfScope}
+            options={techFeaturesOptions(props.type)}
+          />
+          <Multiselect
+            selectedOptions={props.securityFeatures}
+            onChange={handleSecurityFeaturesChange}
+            placeholder='Security features that apply to selected component'
+            tokenLimit={3} // number of visible selected options
+            disabled={props.outOfScope}
+            options={securityFeaturesOptions(props.type)}
+          />
+        </ColumnLayout>
+        <ColumnLayout
+          borders="vertical"
+          columns={1}
+          variant="text-grid" >
+          <ExpandableSection headerText={`Tags (${props.tags?.length || 0})`}>
+            <TagEditor
+              i18nStrings={{
+                tagLimit: (availableTags, tagLimit) =>
+                  availableTags === tagLimit
+                    ? 'You can add up to ' + tagLimit + ' tags.'
+                    : availableTags === 1
+                      ? 'You can add up to 1 more tag.'
+                      : 'You can add up to ' + availableTags + ' more tags.',
+                keyHeader: 'Key',
+                valueHeader: 'Value (optional)',
+                addButton: 'Add new tag',
+                removeButton: 'Remove',
+                keyPlaceholder: 'Enter key',
+                valuePlaceholder: 'Enter value',
+                emptyKeyError: 'You must specify a tag key',
+              }}
+              tags={props.tags}
+              onChange={handleTagsChange}
+              tagLimit={5}
+            />
+          </ExpandableSection>
         </ColumnLayout>
       </Form>
     </form>

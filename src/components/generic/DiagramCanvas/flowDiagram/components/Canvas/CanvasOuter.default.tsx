@@ -25,6 +25,7 @@ export interface ICanvasOuterDefaultProps {
 
 export const CanvasOuterDefault = styled.div<ICanvasOuterDefaultProps>`
   position: relative;
+  border-radius: 15px;
   background-size: 20px 20px;
   background-color: rgba(0,0,0,0.08);
   background-image:

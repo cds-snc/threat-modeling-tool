@@ -34,6 +34,7 @@ import { useThreatsContext } from '../../../contexts';
 import intersectStringArrays from '../../../utils/intersectStringArrays';
 import ThreatList from './flowDiagram/components/Canvas/ThreatList/ThreatList';
 import PropertiesPanel from './flowDiagram/components/Canvas/PropertiesPanel/PropertiesPanel';
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 
 const diagramWrapper = css({
   display: 'grid',
@@ -42,6 +43,7 @@ const diagramWrapper = css({
   minHeight: '50%',
   width: '100%',
   maxWidth: '100%',
+  borderRadius: '10px',
 });
 
 export interface DiagramCanvasProps extends EditableComponentBaseProps {
@@ -62,6 +64,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
+  const [workFlowValue, setWorkFlowValue] = useState<IChart>(chartSimple);
 
   useEffect(() => {
     onEditModeChange?.(editMode);
@@ -72,9 +75,10 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       id,
       name,
       description: content,
+      diagramData: JSON.stringify(workFlowValue),
     });
     setEditMode(false);
-  }, [id, name, content, onConfirm]);
+  }, [id, name, content, workFlowValue, onConfirm]);
 
   const handleEdit = useCallback(() => {
     setId(entity.id || '');
@@ -284,20 +288,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     );
   };
 
-  const startItemStyle = `
-  {
-    width: 100px;
-    height: 100px;
-    border-radius: 50px;
-    border: 2px solid black;
-    background: white;
-    color: black;
-    line-height: 100px;
-    padding: 0;
-    text-align: center;
-  }
-  `;
-
   const startPoint = {
     port1: {
       id: 'port1',
@@ -393,16 +383,22 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     },
   ];
 
-  const [workFlowValue, setWorkFlowValue] = useState<IChart>(chartSimple);
+  /* START>>> TO BE REFACTORED */
   const { statementList } = useThreatsContext();
   const [threatList, setThreatList] = useState(statementList);
   const [selectedThreatList, setSelectedThreatList] = useState<{id: string}[]>([]);
   const [strideFilter, setStrideFilter] = useState('');
   const [clickedObjectId, setClickedObjectId] = useState('');
+  const [clickedObjectType, setClickedObjectType] = useState('');
   const [clickedObjectName, setClickedObjectName] = useState('');
   const [clickedObjectDescription, setClickedObjectDescription] = useState('');
   const [clickedObjectOutOfScope, setClickedObjectOutOfScope] = useState(false);
   const [clickedObjectOutOfScopeReason, setClickedObjectOutOfScopeReason] = useState('');
+  const [clickedObjectTags, setClickedObjectTags] = useState<string[]>([]);
+  const [clickedObjectDataFeatures, setClickedObjectDataFeatures] = useState<ReadonlyArray<OptionDefinition>>();
+  const [clickedObjectTechFeatures, setClickedObjectTechFeatures] = useState<ReadonlyArray<OptionDefinition>>();
+  const [clickedObjectSecurityFeatures, setClickedObjectSecurityFeatures] = useState<ReadonlyArray<OptionDefinition>>();
+
   const handleObjectNameChange = useCallback((newValue) => {
     setClickedObjectName(newValue);
   }, []);
@@ -415,6 +411,18 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   const handleObjectOutOfScopeReasonChange = useCallback((newValue) => {
     setClickedObjectOutOfScopeReason(newValue);
   }, []);
+  const handleObjectTagsChange = useCallback((newValue) => {
+    setClickedObjectTags(newValue);
+  }, []);
+  const handleObjectDataFeaturesChange = useCallback((newValue) => {
+    setClickedObjectDataFeatures(newValue);
+  }, []);
+  const handleObjectTechFeaturesChange = useCallback((newValue) => {
+    setClickedObjectTechFeatures(newValue);
+  }, []);
+  const handleObjectSecurityFeaturesChange = useCallback((newValue) => {
+    setClickedObjectSecurityFeatures(newValue);
+  }, []);
 
   const handleThreatsSelectionChange = useCallback((newValue) => {
     setSelectedThreatList(newValue);
@@ -422,23 +430,37 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
-    console.log('work-flow: ', JSON.stringify(workFlowValue));
+    //console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
-  function filterStatementsCallback (filter: string, objectId: string, objectName?: string,
-    objectDescription?: string, objectOutOfScope?: boolean, objectOutOfScopeReason?: string,
+  function filterStatementsCallback (
+    filter: string,
+    objectId: string,
+    objectType: string,
+    objectName?: string,
+    objectDescription?: string,
+    objectOutOfScope?: boolean,
+    objectOutOfScopeReason?: string,
+    objectTags?: string[],
+    dataFeatures?: ReadonlyArray<OptionDefinition>,
+    techFeatures?: ReadonlyArray<OptionDefinition>,
+    securityFeatures?: ReadonlyArray<OptionDefinition>,
     threats?: {id: string}[]) {
     setStrideFilter(filter);
     setClickedObjectId(objectId);
+    setClickedObjectType(objectType);
     setClickedObjectName(objectName!);
     setClickedObjectDescription(objectDescription!);
     setClickedObjectOutOfScope(objectOutOfScope!);
     setClickedObjectOutOfScopeReason(objectOutOfScopeReason!);
+    setClickedObjectTags(objectTags!);
+    setClickedObjectDataFeatures(dataFeatures!);
+    setClickedObjectTechFeatures(techFeatures!);
+    setClickedObjectSecurityFeatures(securityFeatures!);
     setSelectedThreatList(threats!);
   };
 
   useEffect( () => { // update list of threats panel
-    console.log('statementList', statementList);
     setThreatList(statementList.filter(statement => {
       const stride = statement.metadata?.find(m => m.key === 'STRIDE');
       let mergeSTRIDE: string[] = [];
@@ -460,16 +482,26 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.nodes[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
       workFlowValue.nodes[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.nodes[clickedObjectId].properties.tags = clickedObjectTags;
+      workFlowValue.nodes[clickedObjectId].properties.dataFeatures = clickedObjectDataFeatures;
+      workFlowValue.nodes[clickedObjectId].properties.techFeatures = clickedObjectTechFeatures;
+      workFlowValue.nodes[clickedObjectId].properties.securityFeatures = clickedObjectSecurityFeatures;
       workFlowValue.nodes[clickedObjectId].properties.threats = selectedThreatList;
     } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.links[clickedObjectId]) {
       workFlowValue.links[clickedObjectId].properties.label = clickedObjectName;
       workFlowValue.links[clickedObjectId].properties.description = clickedObjectDescription;
       workFlowValue.links[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
       workFlowValue.links[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.links[clickedObjectId].properties.tags = clickedObjectTags;
+      workFlowValue.links[clickedObjectId].properties.dataFeatures = clickedObjectDataFeatures;
+      workFlowValue.links[clickedObjectId].properties.techFeatures = clickedObjectTechFeatures;
+      workFlowValue.links[clickedObjectId].properties.securityFeatures = clickedObjectSecurityFeatures;
       workFlowValue.links[clickedObjectId].properties.threats = selectedThreatList;
     }
   }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription,
-    clickedObjectOutOfScope, clickedObjectOutOfScopeReason, selectedThreatList]);
+    clickedObjectOutOfScope, clickedObjectOutOfScopeReason, clickedObjectTags, selectedThreatList,
+    clickedObjectDataFeatures, clickedObjectTechFeatures, clickedObjectSecurityFeatures]);
+  /* END>>> TO BE REFACTORED */
 
   return (
     <ContentLayout
@@ -486,9 +518,9 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       {editMode ? (
         <SpaceBetween direction='vertical' size='s'>
           <Container header={<Header>{headerTitle}</Header>}>
-            <Grid gridDefinition={[{ colspan: 2 }, { colspan: clickedObjectId!=='' ? 10:10 }, { colspan: clickedObjectId!=='' ? 0:0 }]}>
+            <Grid gridDefinition={[{ colspan: 1 }, { colspan: 11 }]}>
               <Sidebar>
-                <SidebarItem type="start" ports={startPoint} itemStyle={startItemStyle} />
+                <SidebarItem type="start" ports={startPoint} />
                 <SidebarItem type="process-point" ports={processPoint} />
                 <SidebarItem type="end" ports={ endPoint } />
                 <SidebarItem type="process-queue" ports={processQueuePoint} />
@@ -512,14 +544,23 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
           </Container>
           <Container header={<Header>Properties</Header>}>
             <PropertiesPanel
+              type={clickedObjectType}
               name={clickedObjectName}
               description={clickedObjectDescription}
               outOfScope={clickedObjectOutOfScope}
               outOfScopeReason={clickedObjectOutOfScopeReason}
+              tags={clickedObjectTags}
+              dataFeatures={clickedObjectDataFeatures}
+              techFeatures={clickedObjectTechFeatures}
+              securityFeatures={clickedObjectSecurityFeatures}
               onChangeName={handleObjectNameChange}
               onChangeDescription={handleObjectDescriptionChange}
               onChangeOutOfScope={handleObjectOutOfScopeChange}
               onChangeOutOfScopeReason={handleObjectOutOfScopeReasonChange}
+              onChangeTags={handleObjectTagsChange}
+              onChangeDataFeatures={handleObjectDataFeaturesChange}
+              onChangeTechFeatures={handleObjectTechFeaturesChange}
+              onChangeSecurityFeatures={handleObjectSecurityFeaturesChange}
             />
           </Container>
           <ThreatList
@@ -532,6 +573,19 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
         (<SpaceBetween direction='vertical' size='s'>
           <Header variant='h3' key='diagramInfo'>Description</Header>
           <Header variant='h3' key='diagram'>{diagramTitle}</Header>
+          <div css={diagramWrapper}>
+            <FlowChartWithState
+              isAllowAddLinkLabel = {false}
+              initialValue={workFlowValue}
+              nodeRoleOptions={nodeRoleOptions}
+              Components={{
+                Port: PortCustom,
+                Node: NodeCustom,
+                Link: LinkCustom,
+              }}
+              config={{ readonly: true }}
+            />
+          </div>
         </SpaceBetween>)
       }
     </ContentLayout>

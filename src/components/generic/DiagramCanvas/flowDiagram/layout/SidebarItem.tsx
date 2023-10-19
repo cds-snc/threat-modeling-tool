@@ -44,11 +44,11 @@ const Outer = styled.div<IOuterProps>`
         }
         return `
           &.start {
-            width: 100px;
-            height: 100px;
-            border-radius: 50px;
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
             background: white;
-            line-height: 100px;
+            line-height: 80px;
             padding: 0;
             text-align: center;
             color: black;
@@ -61,9 +61,9 @@ const Outer = styled.div<IOuterProps>`
         }
         return `
           &.process-queue {
-            width: 120px;
-            height: 60px;
-            line-height: 60px;
+            width: 80px;
+            height: 45px;
+            line-height: 22px;
             text-align: center;
             border-radius: 10px;
             background: white;
@@ -78,9 +78,9 @@ const Outer = styled.div<IOuterProps>`
         }
         return `
           &.process-point {
-            width: 120px;
-            height: 60px;
-            line-height: 60px;
+            width: 80px;
+            height: 40px;
+            line-height: 40px;
             text-align: center;
             background: white;
             color: black;
@@ -94,10 +94,10 @@ const Outer = styled.div<IOuterProps>`
         }
         return `
           &.end {
-            width: 120px;
-            height: 60px;
+            width: 80px;
+            height: 40px;
             background: white;
-            line-height: 60px;
+            line-height: 40px;
             padding: 0;
             text-align: center;
             color: black;
