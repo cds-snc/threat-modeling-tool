@@ -1,0 +1,592 @@
+{
+  "offset": {
+    "x": -1922,
+    "y": -935,
+    "deltaX": 1,
+    "deltaY": 0,
+    "lastX": -1923,
+    "lastY": -935
+  },
+  "nodes": {
+    "44eadd5f-82ff-4471-97f8-08d191ac2759": {
+      "id": "44eadd5f-82ff-4471-97f8-08d191ac2759",
+      "position": {
+        "x": 2047,
+        "y": 953,
+        "deltaX": 0,
+        "deltaY": 1,
+        "lastX": 2047,
+        "lastY": 952
+      },
+      "orientation": 0,
+      "type": "process-point",
+      "ports": {
+        "port1": {
+          "id": "port1",
+          "type": "top",
+          "position": {
+            "x": 60.5,
+            "y": -4.5
+          }
+        },
+        "port2": {
+          "id": "port2",
+          "type": "right",
+          "position": {
+            "x": 124.5,
+            "y": 30.5
+          }
+        },
+        "port3": {
+          "id": "port3",
+          "type": "bottom",
+          "position": {
+            "x": 60.5,
+            "y": 64.5
+          }
+        },
+        "port4": {
+          "id": "port4",
+          "type": "left",
+          "position": {
+            "x": -4.5,
+            "y": 30.5
+          }
+        }
+      },
+      "properties": {
+        "name": "Browser",
+        "Id": "Web browser",
+        "nodeRole": "",
+        "description": "Web browser"
+      },
+      "size": {
+        "width": 126,
+        "height": 66
+      }
+    },
+    "e1d51543-b36d-4633-ac61-c2066eae7fd8": {
+      "id": "e1d51543-b36d-4633-ac61-c2066eae7fd8",
+      "position": {
+        "x": 2204,
+        "y": 1123,
+        "deltaX": -1,
+        "deltaY": 0,
+        "lastX": 2205,
+        "lastY": 1123
+      },
+      "orientation": 0,
+      "type": "start",
+      "ports": {
+        "port1": {
+          "id": "port1",
+          "type": "left",
+          "position": {
+            "x": -4.5,
+            "y": 50.5
+          }
+        },
+        "port2": {
+          "id": "port2",
+          "type": "right",
+          "position": {
+            "x": 104.5,
+            "y": 50.5
+          }
+        },
+        "port3": {
+          "id": "port3",
+          "type": "top",
+          "position": {
+            "x": 50.5,
+            "y": -4.5
+          }
+        },
+        "port4": {
+          "id": "port4",
+          "type": "bottom",
+          "position": {
+            "x": 50.5,
+            "y": 104.5
+          }
+        }
+      },
+      "properties": {
+        "name": "Web application",
+        "Id": "Web application process",
+        "nodeRole": "",
+        "description": "Web application process descriptio",
+        "outOfScope": true,
+        "outOfScopeReason": "because",
+        "threats": [
+          {
+            "id": "7b49bdbd-25e9-446f-b44a-46fa2807e182"
+          },
+          {
+            "id": "782adefc-b480-4e8f-83ee-64f6d680df0a"
+          }
+        ]
+      },
+      "size": {
+        "width": 104,
+        "height": 104
+      }
+    },
+    "cf59a623-ae24-4cf7-b113-92899a563d49": {
+      "id": "cf59a623-ae24-4cf7-b113-92899a563d49",
+      "position": {
+        "x": 1962,
+        "y": 1244.5,
+        "deltaX": -1,
+        "deltaY": 0,
+        "lastX": 1963,
+        "lastY": 1244.5
+      },
+      "orientation": 0,
+      "type": "end",
+      "ports": {
+        "port1": {
+          "id": "port1",
+          "type": "left",
+          "position": {
+            "x": -4.5,
+            "y": 30.5
+          }
+        },
+        "port2": {
+          "id": "port2",
+          "type": "right",
+          "position": {
+            "x": 124.5,
+            "y": 30.5
+          }
+        },
+        "port3": {
+          "id": "port3",
+          "type": "top",
+          "position": {
+            "x": 60.5,
+            "y": -4.5
+          }
+        },
+        "port4": {
+          "id": "port4",
+          "type": "bottom",
+          "position": {
+            "x": 60.5,
+            "y": 64.5
+          }
+        }
+      },
+      "properties": {
+        "name": "Web app config",
+        "Id": "Web application process configuration data store",
+        "nodeRole": "",
+        "description": "Web application process configuration data store",
+        "outOfScope": true,
+        "threats": [
+          {
+            "id": "7b49bdbd-25e9-446f-b44a-46fa2807e182"
+          },
+          {
+            "id": "cbba3276-5ce2-47e0-bc77-aebc162c519f"
+          }
+        ]
+      },
+      "size": {
+        "width": 124,
+        "height": 68
+      }
+    },
+    "ce294822-879a-4d8c-91d4-2add4cb08751": {
+      "id": "ce294822-879a-4d8c-91d4-2add4cb08751",
+      "position": {
+        "x": 2546,
+        "y": 996
+      },
+      "orientation": 0,
+      "type": "end",
+      "ports": {
+        "port1": {
+          "id": "port1",
+          "type": "left",
+          "position": {
+            "x": -4.5,
+            "y": 30.5
+          }
+        },
+        "port2": {
+          "id": "port2",
+          "type": "right",
+          "position": {
+            "x": 124.5,
+            "y": 30.5
+          }
+        },
+        "port3": {
+          "id": "port3",
+          "type": "top",
+          "position": {
+            "x": 60.5,
+            "y": -4.5
+          }
+        },
+        "port4": {
+          "id": "port4",
+          "type": "bottom",
+          "position": {
+            "x": 60.5,
+            "y": 64.5
+          }
+        }
+      },
+      "properties": {
+        "name": "Message Queue",
+        "Id": "Message queue",
+        "nodeRole": "",
+        "description": "Message queue"
+      },
+      "size": {
+        "width": 120,
+        "height": 68
+      }
+    },
+    "65fbdcde-d86a-4a59-b707-3f32344ab770": {
+      "id": "65fbdcde-d86a-4a59-b707-3f32344ab770",
+      "position": {
+        "x": 2452,
+        "y": 1298.5
+      },
+      "orientation": 0,
+      "type": "end",
+      "ports": {
+        "port1": {
+          "id": "port1",
+          "type": "left",
+          "position": {
+            "x": -4.5,
+            "y": 30.5
+          }
+        },
+        "port2": {
+          "id": "port2",
+          "type": "right",
+          "position": {
+            "x": 124.5,
+            "y": 30.5
+          }
+        },
+        "port3": {
+          "id": "port3",
+          "type": "top",
+          "position": {
+            "x": 60.5,
+            "y": -4.5
+          }
+        },
+        "port4": {
+          "id": "port4",
+          "type": "bottom",
+          "position": {
+            "x": 60.5,
+            "y": 64.5
+          }
+        }
+      },
+      "properties": {
+        "name": "Database",
+        "Id": "Dynamo DB store",
+        "nodeRole": "",
+        "description": "Dynamo DB store"
+      },
+      "size": {
+        "width": 120,
+        "height": 68
+      }
+    },
+    "e3a034e2-9e3f-48b9-99fe-9b4aeb04c6c0": {
+      "id": "e3a034e2-9e3f-48b9-99fe-9b4aeb04c6c0",
+      "position": {
+        "x": 2767,
+        "y": 1184.5
+      },
+      "orientation": 0,
+      "type": "start",
+      "ports": {
+        "port1": {
+          "id": "port1",
+          "type": "left",
+          "position": {
+            "x": -4.5,
+            "y": 50.5
+          }
+        },
+        "port2": {
+          "id": "port2",
+          "type": "right",
+          "position": {
+            "x": 104.5,
+            "y": 50.5
+          }
+        },
+        "port3": {
+          "id": "port3",
+          "type": "top",
+          "position": {
+            "x": 50.5,
+            "y": -4.5
+          }
+        },
+        "port4": {
+          "id": "port4",
+          "type": "bottom",
+          "position": {
+            "x": 50.5,
+            "y": 104.5
+          }
+        }
+      },
+      "properties": {
+        "name": "Background Worker Process",
+        "Id": "Background Worker Process",
+        "nodeRole": "",
+        "description": "Background Worker Process",
+        "threats": [
+          {
+            "id": "7b49bdbd-25e9-446f-b44a-46fa2807e182"
+          },
+          {
+            "id": "782adefc-b480-4e8f-83ee-64f6d680df0a"
+          },
+          {
+            "id": "a0f523b0-bbc0-4e6a-9064-500af1f3836e"
+          },
+          {
+            "id": "99648023-86fe-4b7d-829a-7011be545fa4"
+          },
+          {
+            "id": "6529dd8d-0b40-4eec-b4c4-5ee4f06619c0"
+          },
+          {
+            "id": "1649e8e4-f100-45f2-8c13-51dafc8a8251"
+          },
+          {
+            "id": "fec8777c-68b3-4569-84ce-9b9b1b9f5e9c"
+          },
+          {
+            "id": "0a264de2-c2e5-45c0-9075-0d437b9defa0"
+          },
+          {
+            "id": "7820db4a-1043-4dfa-bbc2-59774bb1f2fc"
+          },
+          {
+            "id": "19b98451-70ee-4814-af80-c1293b90cb9f"
+          }
+        ]
+      },
+      "size": {
+        "width": 104,
+        "height": 104
+      }
+    },
+    "23d9a34f-0fe7-4403-bffd-8878158b14cb": {
+      "id": "23d9a34f-0fe7-4403-bffd-8878158b14cb",
+      "position": {
+        "x": 2759,
+        "y": 1400.5,
+        "deltaX": 0,
+        "deltaY": -1,
+        "lastX": 2759,
+        "lastY": 1401.5
+      },
+      "orientation": 0,
+      "type": "end",
+      "ports": {
+        "port1": {
+          "id": "port1",
+          "type": "left",
+          "position": {
+            "x": -4.5,
+            "y": 30.5
+          }
+        },
+        "port2": {
+          "id": "port2",
+          "type": "right",
+          "position": {
+            "x": 124.5,
+            "y": 30.5
+          }
+        },
+        "port3": {
+          "id": "port3",
+          "type": "top",
+          "position": {
+            "x": 60.5,
+            "y": -4.5
+          }
+        },
+        "port4": {
+          "id": "port4",
+          "type": "bottom",
+          "position": {
+            "x": 60.5,
+            "y": 64.5
+          }
+        }
+      },
+      "properties": {
+        "name": "Worker Config",
+        "Id": "Background worker process configuration datastore",
+        "nodeRole": "",
+        "description": "Background worker process configuration datastore"
+      },
+      "size": {
+        "width": 120,
+        "height": 68
+      }
+    }
+  },
+  "links": {
+    "9a1392bd-6962-4ff3-b75c-c49523806b5a": {
+      "id": "9a1392bd-6962-4ff3-b75c-c49523806b5a",
+      "from": {
+        "nodeId": "44eadd5f-82ff-4471-97f8-08d191ac2759",
+        "portId": "port3"
+      },
+      "to": {
+        "nodeId": "e1d51543-b36d-4633-ac61-c2066eae7fd8",
+        "portId": "port3"
+      },
+      "properties": {
+        "label": "HTTPS Req",
+        "threats": [
+          {
+            "id": "7b49bdbd-25e9-446f-b44a-46fa2807e182"
+          },
+          {
+            "id": "a0f523b0-bbc0-4e6a-9064-500af1f3836e"
+          },
+          {
+            "id": "6529dd8d-0b40-4eec-b4c4-5ee4f06619c0"
+          },
+          {
+            "id": "fec8777c-68b3-4569-84ce-9b9b1b9f5e9c"
+          }
+        ]
+      }
+    },
+    "c96f97ce-db7b-425e-bd0b-9a19007ffebe": {
+      "id": "c96f97ce-db7b-425e-bd0b-9a19007ffebe",
+      "from": {
+        "nodeId": "e1d51543-b36d-4633-ac61-c2066eae7fd8",
+        "portId": "port1"
+      },
+      "to": {
+        "nodeId": "cf59a623-ae24-4cf7-b113-92899a563d49",
+        "portId": "port3"
+      },
+      "properties": {
+        "label": "Read config"
+      }
+    },
+    "0063b9b3-3d07-40d5-af1f-35bd8256d688": {
+      "id": "0063b9b3-3d07-40d5-af1f-35bd8256d688",
+      "from": {
+        "nodeId": "e1d51543-b36d-4633-ac61-c2066eae7fd8",
+        "portId": "port2"
+      },
+      "to": {
+        "nodeId": "ce294822-879a-4d8c-91d4-2add4cb08751",
+        "portId": "port1"
+      },
+      "properties": {
+        "label": "PUT Message"
+      }
+    },
+    "21cf03c4-5550-4508-af90-69f4458490ef": {
+      "id": "21cf03c4-5550-4508-af90-69f4458490ef",
+      "from": {
+        "nodeId": "e1d51543-b36d-4633-ac61-c2066eae7fd8",
+        "portId": "port4"
+      },
+      "to": {
+        "nodeId": "65fbdcde-d86a-4a59-b707-3f32344ab770",
+        "portId": "port3"
+      },
+      "properties": {
+        "label": "Queries"
+      }
+    },
+    "76a4f21a-a62c-44d3-bf86-1ac3806b35fa": {
+      "id": "76a4f21a-a62c-44d3-bf86-1ac3806b35fa",
+      "from": {
+        "nodeId": "ce294822-879a-4d8c-91d4-2add4cb08751",
+        "portId": "port4"
+      },
+      "to": {
+        "nodeId": "e3a034e2-9e3f-48b9-99fe-9b4aeb04c6c0",
+        "portId": "port3"
+      },
+      "properties": {
+        "label": "Message"
+      }
+    },
+    "e42e4ce7-7409-4dda-a70d-005e9fd0ab5f": {
+      "id": "e42e4ce7-7409-4dda-a70d-005e9fd0ab5f",
+      "from": {
+        "nodeId": "e3a034e2-9e3f-48b9-99fe-9b4aeb04c6c0",
+        "portId": "port4"
+      },
+      "to": {
+        "nodeId": "23d9a34f-0fe7-4403-bffd-8878158b14cb",
+        "portId": "port3"
+      },
+      "properties": {
+        "label": "Configuration"
+      }
+    }
+  },
+  "selected": {
+    "type": "node",
+    "id": "44eadd5f-82ff-4471-97f8-08d191ac2759"
+  },
+  "hovered": {
+    "type": "link",
+    "id": "c96f97ce-db7b-425e-bd0b-9a19007ffebe"
+  },
+  "preNodes": [
+    "44eadd5f-82ff-4471-97f8-08d191ac2759",
+    "e1d51543-b36d-4633-ac61-c2066eae7fd8",
+    "cf59a623-ae24-4cf7-b113-92899a563d49",
+    "ce294822-879a-4d8c-91d4-2add4cb08751",
+    "65fbdcde-d86a-4a59-b707-3f32344ab770",
+    "e3a034e2-9e3f-48b9-99fe-9b4aeb04c6c0",
+    "23d9a34f-0fe7-4403-bffd-8878158b14cb"
+  ],
+  "isModelShow": false,
+  "nodeName": "",
+  "nodeId": "",
+  "newNodeId": "",
+  "preLinks": [
+    "9a1392bd-6962-4ff3-b75c-c49523806b5a",
+    "c96f97ce-db7b-425e-bd0b-9a19007ffebe",
+    "0063b9b3-3d07-40d5-af1f-35bd8256d688",
+    "21cf03c4-5550-4508-af90-69f4458490ef",
+    "76a4f21a-a62c-44d3-bf86-1ac3806b35fa",
+    "e42e4ce7-7409-4dda-a70d-005e9fd0ab5f"
+  ],
+  "showModelName": "",
+  "linkLabel": "",
+  "newLinkId": "",
+  "clickNodeId": "44eadd5f-82ff-4471-97f8-08d191ac2759",
+  "modelOption": "addNode",
+  "nodeRoleOption": "",
+  "clickLinkId": "",
+  "alertMessageInfo": "",
+  "alertMessageStatus": "init",
+  "nodeDescription": "",
+  "nodeOutOfScope": false,
+  "nodeOutOfScopeReason": "",
+  "threats": []
+}
