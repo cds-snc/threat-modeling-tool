@@ -229,7 +229,7 @@ export function techFeaturesOptions(objectType: string): SelectProps.Options {
         {
           label: 'Ruby on Rails',
           value: 'bf_ruby',
-          description: 'This component uses Ruby on Rais',
+          description: 'This component uses Ruby on Rails',
         },
         {
           label: 'Django',
@@ -242,7 +242,7 @@ export function techFeaturesOptions(objectType: string): SelectProps.Options {
           description: 'This component uses Spring (Java)',
         },
         {
-          label: 'Ruby on .NET',
+          label: '.NET',
           value: 'bf_dotnet',
           description: 'This component uses .NET',
         },
