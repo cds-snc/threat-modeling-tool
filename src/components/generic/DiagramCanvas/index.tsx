@@ -154,6 +154,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   &:hover {
     background: #c4d2f2;
+    filter: opacity(50%);
   }
   `;
 
@@ -180,6 +181,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   &:hover {
     background: #c4d2f2;
+    filter: opacity(50%);
   }
   `;
 
@@ -203,6 +205,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }}
   &:hover {
     background: #c4d2f2;
+    filter: opacity(50%);
   }
   `;
 
@@ -227,6 +230,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }}
   &:hover {
     background: #c4d2f2;
+    filter: opacity(50%);
   }
   `;
 
@@ -430,7 +434,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
-    //console.log('work-flow: ', JSON.stringify(workFlowValue));
+    console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
   function filterStatementsCallback (
