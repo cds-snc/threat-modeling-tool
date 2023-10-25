@@ -23,6 +23,7 @@ export interface ViewNavigationEvent {
   onDiagramView?: () => void;
   onAssumptionListView?: () => void;
   onMitigationListView?: () => void;
+  onControlListView?: () => void;
   onThreatListView?: (filter?: ThreatStatementListFilter) => void;
   onThreatEditorView?: (threatId: string) => void;
 }

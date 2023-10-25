@@ -16,6 +16,7 @@
 
 export * from './assumptions';
 export * from './mitigations';
+export * from './controls';
 export * from './threats';
 export * from './threatFieldTypes';
 export * from './workspaces';

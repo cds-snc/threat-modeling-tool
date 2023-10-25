@@ -31,8 +31,8 @@ export const generateLabelPosition = (
   let startNodeHeight = !!startPos.nodeHeight ? startPos.nodeHeight : 0;
 
   if (startPos.portType === 'top' && endPos.portType === 'top') {
-    centerX = (startPos.x + endPos.x) / 2 - 50;
-    centerY = startPos.y < endPos.y ? startPos.y - 55 : endPos.y - 55;
+    centerX = (startPos.x + endPos.x) / 2 - 48;
+    centerY = startPos.y < endPos.y ? startPos.y - 50 : endPos.y - 48;
 
     return { centerX, centerY };
   }
@@ -118,7 +118,7 @@ export const generateLabelPosition = (
             ((startPos.x - endPos.x + 150) * (endPos.y - startPos.y - 30)) /
               120;
     }
-
+    centerY = centerY + 10;
     return { centerX, centerY };
   }
 
@@ -140,7 +140,7 @@ export const generateLabelPosition = (
           ? startPos.y - (startPos.x - endPos.x) - 30
           : (startPos.y + endPos.y) / 2;
     }
-
+    centerX = centerX - 10;
     return { centerX, centerY };
   }
 
@@ -216,20 +216,19 @@ export const generateLabelPosition = (
           ? endPos.x - 30
           : (startPos.x + endPos.x) / 2;
     }
-
+    centerY = centerY + 10;
     return { centerX, centerY };
   }
 
   if (startPos.portType === 'bottom' && endPos.portType === 'top') {
-    centerX = (startPos.x + endPos.x) / 2 - 50;
-    centerY = endPos.y - 55;
-
+    centerX = (startPos.x + endPos.x) / 2 - 10;
+    centerY = endPos.y - 45;
     return { centerX, centerY };
   }
 
   if (startPos.portType === 'bottom' && endPos.portType === 'right') {
     centerX = (startPos.x + endPos.x) / 2 - 50;
-    centerY = startPos.y + 5;
+    centerY = startPos.y + 15;
 
     return { centerX, centerY };
   }
@@ -243,7 +242,7 @@ export const generateLabelPosition = (
 
   if (startPos.portType === 'bottom' && endPos.portType === 'left') {
     centerX = (startPos.x + endPos.x) / 2 - 50;
-    centerY = startPos.y + 5;
+    centerY = startPos.y + 15;
 
     return { centerX, centerY };
   }
@@ -294,7 +293,7 @@ export const generateLabelPosition = (
     if (startPos.y >= endPos.y + 30 && startPos.x - 30 >= endPos.x) {
       centerY = startPos.y - 25;
     }
-
+    centerY = centerY + 10;
     return { centerX, centerY };
   }
 

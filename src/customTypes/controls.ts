@@ -13,14 +13,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export const ROUTE_WORKSPACE_HOME = '/workspaces/:workspaceId/dashboard';
-export const ROUTE_THREAT_LIST = '/workspaces/:workspaceId/threats';
-export const ROUTE_THREAT_EDITOR = '/workspaces/:workspaceId/threats/:threatId';
-export const ROUTE_MITIGATION_LIST = '/workspaces/:workspaceId/mitigations';
-export const ROUTE_ASSUMPTION_LIST = '/workspaces/:workspaceId/assumptions';
-export const ROUTE_CONTROL_LIST = '/workspaces/:workspaceId/controls';
-export const ROUTE_APPLICATION_INFO = '/workspaces/:workspaceId/application';
-export const ROUTE_ARCHITECTURE_INFO = '/workspaces/:workspaceId/architecture';
-//export const ROUTE_DATAFLOW_INFO = '/workspaces/:workspaceId/dataflow';
-export const ROUTE_DIAGRAM_INFO = '/workspaces/:workspaceId/diagram';
-export const ROUTE_VIEW_THREAT_MODEL = '/workspaces/:workspaceId/threatModel';
+
+import { z } from 'zod';
+import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
+
+export const ControlSchema = ContentEntityBaseSchema.extend({}).strict();;
+
+export type Control = z.infer<typeof ControlSchema>;
+
+export const ControlLinkSchema = EntityLinkBaseSchema.extend({
+  /**
+   * The control being linked.
+   */
+  controlId: z.string().length(36),
+  /**
+   * The linked entity Id.
+   */
+  linkedId: z.string().length(36),
+}).strict();
+
+export type ControlLink = z.infer<typeof ControlLinkSchema>;
