@@ -17,9 +17,7 @@
 import { z } from 'zod';
 import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
 
-export const ControlSchema = ContentEntityBaseSchema.extend({
-  code: z.string().length(36).min(2).max(36).optional(),
-}).strict();
+export const ControlSchema = ContentEntityBaseSchema.extend({}).strict();
 
 export type Control = z.infer<typeof ControlSchema>;
 
