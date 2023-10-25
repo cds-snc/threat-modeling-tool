@@ -27,6 +27,7 @@ import GenericCard from '../../generic/GenericCard';
 import Textarea from '../../generic/Textarea';
 import AssumptionMitigationLink from '../AssumptionMitigationLink';
 import AssumptionThreatLink from '../AssumptionThreatLink';
+import AssumptionControlLink from '../AssumptionControlLink';
 
 export interface AssumptionCardProps {
   assumption: Assumption;
@@ -97,8 +98,12 @@ const AssumptionCard: FC<AssumptionCardProps> = ({
           <AssumptionThreatLink
             assumptionId={assumption.id}
           />
+          <AssumptionControlLink
+            assumptionId={assumption.id}
+          />
           <AssumptionMitigationLink
-            assumptionId={assumption.id} />
+            assumptionId={assumption.id}
+          />
         </SpaceBetween>
       </ColumnLayout>
       <MetadataEditor
