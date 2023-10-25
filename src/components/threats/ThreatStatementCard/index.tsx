@@ -26,6 +26,7 @@ import AssumptionLink from '../../assumptions/AssumptionLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import GenericCard from '../../generic/GenericCard';
 import MitigationLink from '../../mitigations/MitigationLink';
+import ControlLink from '../../controls/ControlLink';
 import MetadataEditor from '../MetadataEditor';
 import PriorityBadge from '../PriorityBadge';
 
@@ -102,6 +103,9 @@ const ThreatStatementCard: FC<ThreatStatementCardProps> = ({
           </CopyToClipbord>
         </TextContent>
         {showLinkedEntities && <SpaceBetween direction='vertical' size='s'>
+          <ControlLink
+            linkedEntityId={statement.id}
+          />
           <MitigationLink
             linkedEntityId={statement.id}
           />

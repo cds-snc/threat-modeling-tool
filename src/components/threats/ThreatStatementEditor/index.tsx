@@ -29,6 +29,8 @@ import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/cont
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
+import { useControlLinksContext } from '../../../contexts/ControlLinksContext/context';
+import { useControlsContext } from '../../../contexts/ControlsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
 import { TemplateThreatStatement } from '../../../customTypes';
@@ -43,6 +45,7 @@ import scrollToTop from '../../../utils/scrollToTop';
 import AssumptionLinkComponent from '../../assumptions/AssumptionLinkView';
 import Tooltip from '../../generic/Tooltip';
 import MitigationLinkComponent from '../../mitigations/MitigationLinkView';
+import ControlLinkComponent from '../../controls/ControlLinkView';
 import CustomTemplate from '../CustomTemplate';
 import EditorImpactedAssets from '../EditorImpactedAssets';
 import EditorImpactedGoal from '../EditorImpactedGoal';
@@ -95,6 +98,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   const { addAssumptionLinks, getLinkedAssumptionLinks, removeAssumptionLinks } = useAssumptionLinksContext();
   const { addMitigationLinks, getLinkedMitigationLinks, removeMitigationLinks } = useMitigationLinksContext();
+  const { addControlLinks, getLinkedControlLinks, removeControlLinks } = useControlLinksContext();
 
   const prevLinkedAssumptionIds = useMemo(() => {
     return getLinkedAssumptionLinks(editingStatement.id).map(la => la.assumptionId);
@@ -104,15 +108,22 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     return getLinkedMitigationLinks(editingStatement.id).map(lm => lm.mitigationId);
   }, [getLinkedMitigationLinks, editingStatement]);
 
+  const prevLinkedControlIds = useMemo(() => {
+    return getLinkedControlLinks(editingStatement.id).map(lm => lm.controlId);
+  }, [getLinkedControlLinks, editingStatement]);
+
   const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>(editingStatement
     && editingStatement?.numericId === -1 ? [] : prevLinkedAssumptionIds);
   const [linkedMitigationIds, setLinkedMitigationIds] = useState<string[]>(editingStatement
     && editingStatement?.numericId === -1 ? [] : prevLinkedMitigationIds);
+  const [linkedControlIds, setLinkedControlIds] = useState<string[]>(editingStatement
+      && editingStatement?.numericId === -1 ? [] : prevLinkedControlIds);
 
   const { composerMode } = useGlobalSetupContext();
 
   const { assumptionList, saveAssumption } = useAssumptionsContext();
   const { mitigationList, saveMitigation } = useMitigationsContext();
+  const { controlList, saveControl } = useControlsContext();
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
@@ -172,6 +183,10 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
           mitigationId: lm,
           linkedId: id,
         })));
+        linkedControlIds && linkedControlIds.length > 0 && addControlLinks(linkedControlIds.map(lm => ({
+          controlId: lm,
+          linkedId: id,
+        })));
       } else {
         const toAddlinkedAssumptionIds = linkedAssumptionIds.filter(x =>
           !prevLinkedAssumptionIds.includes(x));
@@ -199,6 +214,18 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
           mitigationId: lm,
           linkedId: id,
         })));
+        const toAddlinkedControlIds = linkedControlIds.filter(x =>
+          !prevLinkedControlIds.includes(x));
+        const toRemovelinkedControlIds = prevLinkedControlIds.filter(x =>
+          !linkedControlIds.includes(x));
+        toAddlinkedControlIds && toAddlinkedControlIds.length > 0 && addControlLinks(toAddlinkedControlIds.map(lm => ({
+          controlId: lm,
+          linkedId: id,
+        })));
+        toRemovelinkedControlIds && toRemovelinkedControlIds.length > 0 && removeControlLinks(toRemovelinkedControlIds.map(lm => ({
+          controlId: lm,
+          linkedId: id,
+        })));
       }
     }
 
@@ -208,13 +235,17 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
     editingStatement,
     linkedAssumptionIds,
     linkedMitigationIds,
+    linkedControlIds,
     prevLinkedAssumptionIds,
     prevLinkedMitigationIds,
+    prevLinkedControlIds,
     onThreatListView,
     addAssumptionLinks,
     addMitigationLinks,
+    addControlLinks,
     removeAssumptionLinks,
     removeMitigationLinks,
+    removeControlLinks,
     setEditingStatement]);
 
   const handleExampleClicked = useCallback((statement: TemplateThreatStatement) => {
@@ -304,6 +335,20 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   }, [setLinkedMitigationIds, mitigationList, saveMitigation]);
 
+  const handleAddControlLink = useCallback((controlIdOrNewControl: string) => {
+    if (controlList.find(a => a.id === controlIdOrNewControl)) {
+      setLinkedControlIds(prev => [...prev, controlIdOrNewControl]);
+    } else {
+      const newControl = saveControl({
+        id: 'new',
+        numericId: -1,
+        content: controlIdOrNewControl,
+      });
+      setLinkedControlIds(prev => [...prev, newControl.id]);
+    }
+
+  }, [setLinkedControlIds, controlList, saveControl]);
+
   const handleEditMetadata = useEditMetadata(setEditingStatement);
 
   if (!editingStatement) {
@@ -345,6 +390,15 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
             </div>
             <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
           </Grid>
+          {composerMode === 'Full' && <div css={styles.metadataContainer}>
+            <ControlLinkComponent
+              variant='container'
+              linkedControlIds={linkedControlIds}
+              controlList={controlList}
+              onAddControlLink={handleAddControlLink}
+              onRemoveControlLink={(id) => setLinkedControlIds(prev => prev.filter(p => p !== id))}
+            />
+          </div>}
           {composerMode === 'Full' && <div css={styles.metadataContainer}>
             <MitigationLinkComponent
               variant='container'

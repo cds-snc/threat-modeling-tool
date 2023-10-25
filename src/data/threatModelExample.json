@@ -55,6 +55,20 @@
       "content": "TLS 1.2 is an adequate mitigation for threats related to tampering and information disclosure of data in transit over the network."
     }
   ],
+  "controls": [
+    {
+      "id": "baa86fce-6e2a-406b-a10e-ds30cf94589",
+      "numericId": 1,
+      "displayOrder": 1,
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "test 01"
+        }
+      ],
+      "content": "AC-1: Access Control Policy and Procedures"
+    }
+  ],
   "mitigations": [
     {
       "id": "baa86fce-6e2a-406b-a10e-79c30cf94589",

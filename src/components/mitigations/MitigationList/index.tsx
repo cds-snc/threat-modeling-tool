@@ -21,9 +21,9 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
+import { useAssumptionLinksContext, useControlLinksContext, useMitigationLinksContext } from '../../../contexts';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
-import { AssumptionLink, Mitigation, MitigationLink } from '../../../customTypes';
+import { AssumptionLink, ControlLink, Mitigation, MitigationLink } from '../../../customTypes';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import MitigationCard from '../MitigationCard';
@@ -48,6 +48,12 @@ const MitigationList: FC = () => {
     removeAssumptionLinksByLinkedEntityId,
   } = useAssumptionLinksContext();
 
+  const {
+    addControlLinks,
+    controlLinkList,
+    removeControlLinksByLinkedEntityId,
+  } = useControlLinksContext();
+
   const [filteringText, setFilteringText] = useState('');
 
   const [
@@ -65,23 +71,31 @@ const MitigationList: FC = () => {
     setSelectedLinkedAssumptionsFilter,
   ] = useState(ALL);
 
+  const [
+    selectedLinkedControlsFilter,
+    setSelectedLinkedControlsFilter,
+  ] = useState(ALL);
+
   const handleRemove = useCallback(async (mitigationId: string) => {
     removeMitigation(mitigationId);
+    await removeControlLinksByLinkedEntityId(mitigationId);
     await removeAssumptionLinksByLinkedEntityId(mitigationId);
     await removeMitigationLinksByMitigationId(mitigationId);
-  }, [removeAssumptionLinksByLinkedEntityId, removeMitigation, removeMitigationLinksByMitigationId]);
+  }, [removeAssumptionLinksByLinkedEntityId, removeMitigation, removeControlLinksByLinkedEntityId, removeMitigationLinksByMitigationId]);
 
   const hasNoFilter = useMemo(() => {
     return (filteringText === ''
       && selectedLinkedAssumptionsFilter === ALL
+      && selectedLinkedControlsFilter === ALL
       && selectedLinkedThreatsFilter === ALL
       && selectedTags.length === 0);
   }, [filteringText, selectedTags,
-    selectedLinkedThreatsFilter, selectedLinkedAssumptionsFilter]);
+    selectedLinkedThreatsFilter, selectedLinkedAssumptionsFilter, selectedLinkedControlsFilter]);
 
   const handleClearFilter = useCallback(() => {
     setFilteringText('');
     setSelectedTags([]);
+    setSelectedLinkedControlsFilter(ALL);
     setSelectedLinkedAssumptionsFilter(ALL);
     setSelectedLinkedThreatsFilter(ALL);
   }, []);
@@ -141,14 +155,23 @@ const MitigationList: FC = () => {
       });
     }
 
+    if (selectedLinkedControlsFilter !== ALL) {
+      output = output.filter(st => {
+        return controlLinkList.some(al => al.linkedId === st.id) ?
+          selectedLinkedControlsFilter === WITH_LINKED_ENTITY :
+          selectedLinkedControlsFilter === WITHOUT_NO_LINKED_ENTITY;
+      });
+    }
+
     output = output.sort((op1, op2) => (op2.displayOrder || Number.MAX_VALUE) - (op1.displayOrder || Number.MAX_VALUE));
 
     return output;
   }, [filteringText, mitigationList, selectedTags,
-    assumptionLinkList, mitigationLinkList,
-    selectedLinkedAssumptionsFilter, selectedLinkedThreatsFilter]);
+    assumptionLinkList, controlLinkList, mitigationLinkList,
+    selectedLinkedAssumptionsFilter, selectedLinkedControlsFilter, selectedLinkedThreatsFilter]);
 
   const handleSaveNew = useCallback((mitigation: Mitigation,
+    linkedControlIds: string[],
     linkedAssumptionIds: string[],
     linkedThreatIds: string[]) => {
     const updated = saveMitigation(mitigation);
@@ -174,7 +197,17 @@ const MitigationList: FC = () => {
 
     addAssumptionLinks(assumptionLinks);
 
-  }, [saveMitigation, addMitigationLinks, addAssumptionLinks]);
+    const controlLinks: ControlLink[] = [];
+    linkedControlIds.forEach(id => {
+      controlLinks.push({
+        linkedId: updated.id,
+        controlId: id,
+      });
+    });
+
+    addControlLinks(controlLinks);
+
+  }, [saveMitigation, addMitigationLinks, addAssumptionLinks, addControlLinks]);
 
   return (<div>
     <SpaceBetween direction='vertical' size='s'>
@@ -194,9 +227,9 @@ const MitigationList: FC = () => {
           />
           <Grid
             gridDefinition={[
+              { colspan: { default: 12, xs: 2 } },
               { colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 4 } },
-              { colspan: { default: 12, xs: 4 } },
+              { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 1 } },
             ]}
           >
@@ -210,6 +243,12 @@ const MitigationList: FC = () => {
               entityDisplayName='threats'
               selected={selectedLinkedThreatsFilter}
               setSelected={setSelectedLinkedThreatsFilter}
+            />
+            <LinkedEntityFilter
+              label='Linked controls'
+              entityDisplayName='controls'
+              selected={selectedLinkedControlsFilter}
+              setSelected={setSelectedLinkedControlsFilter}
             />
             <LinkedEntityFilter
               label='Linked assumptions'

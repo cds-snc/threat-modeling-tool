@@ -16,7 +16,7 @@
 
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST } from '../../../../configs/localStorageKeys';
+import { LOCAL_STORAGE_KEY_CONTROL_LINK_LIST } from '../../../../configs/localStorageKeys';
 import { ControlLink } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { ControlLinksContext } from '../../context';
@@ -25,10 +25,10 @@ import useControlLinks from '../../useControlLinks';
 
 const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
-    return `${LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST}_${workspaceId}`;
+    return `${LOCAL_STORAGE_KEY_CONTROL_LINK_LIST}_${workspaceId}`;
   }
 
-  return LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST;
+  return LOCAL_STORAGE_KEY_CONTROL_LINK_LIST;
 };
 
 

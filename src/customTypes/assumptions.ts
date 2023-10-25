@@ -40,3 +40,4 @@ export const AssumptionLinkSchema = EntityLinkBaseSchema.extend({
 
 export type AssumptionLink = z.infer<typeof AssumptionLinkSchema>;
 
+

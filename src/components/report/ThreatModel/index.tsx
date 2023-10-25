@@ -47,6 +47,7 @@ const ThreatModel: FC<ThreatModelProps> = ({
     onAssumptionListView,
     onThreatListView,
     onMitigationListView,
+    onControlListView,
   } = useWorkspacesContext();
   return <ThreatModelView
     {...props}
@@ -62,6 +63,7 @@ const ThreatModel: FC<ThreatModelProps> = ({
     onAssumptionListView={onAssumptionListView}
     onThreatListView={onThreatListView}
     onMitigationListView={onMitigationListView}
+    onControlListView={onControlListView}
   />;
 };
 

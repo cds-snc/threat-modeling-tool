@@ -22,6 +22,7 @@ import { FC, useState, useCallback } from 'react';
 import { Mitigation, MitigationSchema } from '../../../customTypes';
 import useEditMetadata from '../../../hooks/useEditMetadata';
 import AssumptionLink from '../../assumptions/AssumptionLink';
+import ControlLink from '../../controls/ControlLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import MetadataEditor from '../../generic/EntityMetadataEditor';
 import GenericCard from '../../generic/GenericCard';
@@ -96,10 +97,8 @@ const MitigationCard: FC<MitigationCardProps> = ({
         </TextContent>)}
         <SpaceBetween direction='vertical' size='s'>
           <MitigationThreatLink mitigationId={entity.id} />
-          <AssumptionLink
-            linkedEntityId={entity.id}
-            type='Mitigation'
-          />
+          <ControlLink linkedEntityId={entity.id} />
+          <AssumptionLink linkedEntityId={entity.id} type='Mitigation' />
         </SpaceBetween>
       </ColumnLayout>
       <MetadataEditor

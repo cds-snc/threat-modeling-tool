@@ -16,7 +16,7 @@
 
 import { FC, PropsWithChildren, useCallback } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import { LOCAL_STORAGE_KEY_MITIGATION_LIST } from '../../../../configs/localStorageKeys';
+import { LOCAL_STORAGE_KEY_CONTROL_LIST } from '../../../../configs/localStorageKeys';
 import { Control } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
 import { ControlsContext } from '../../context';
@@ -25,10 +25,10 @@ import useControls from '../../useControls';
 
 const getLocalStorageKey = (workspaceId: string | null) => {
   if (workspaceId) {
-    return `${LOCAL_STORAGE_KEY_MITIGATION_LIST}_${workspaceId}`;
+    return `${LOCAL_STORAGE_KEY_CONTROL_LIST}_${workspaceId}`;
   }
 
-  return LOCAL_STORAGE_KEY_MITIGATION_LIST;
+  return LOCAL_STORAGE_KEY_CONTROL_LIST;
 };
 
 const ControlsLocalStorageContextProvider: FC<PropsWithChildren<ControlsContextProviderProps>> = ({
