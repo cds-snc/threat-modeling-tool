@@ -24,6 +24,7 @@ import { useExampleContext } from '../ExampleContext';
 
 const ControlsContextProvider: FC<PropsWithChildren<ControlsContextProviderProps>> = (props) => {
   const { controls } = useExampleContext();
+  console.log('controls', controls);
 
   return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
     (<ControlsLocalStateContextProvider initialValue={controls} {...props} />) :

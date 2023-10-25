@@ -27,7 +27,7 @@ export const SINGLE_FIELD_INPUT_SMALL_MAX_LENGTH = 50;
 // Threat statement elements, Application name, custom template length
 export const SINGLE_FIELD_INPUT_MAX_LENGTH = 200;
 // Entity comments, Assumption/Mitigation content
-export const FREE_TEXT_INPUT_SMALL_MAX_LENGTH = 1000;
+export const FREE_TEXT_INPUT_SMALL_MAX_LENGTH = 10000;
 // Application info, Architecture description, Dataflow description
 export const FREE_TEXT_INPUT_MAX_LENGTH = 100000;
 // Architecture diagram, data flow diagram

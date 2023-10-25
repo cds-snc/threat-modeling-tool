@@ -25,6 +25,8 @@ import ExampleContextProvider from '../ExampleContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
 import MitigationsContextProvider from '../MitigationsContext';
+import ControlLinksContextProvider from '../ControlLinksContext';
+import ControlsContextProvider from '../ControlsContext';
 import ThreatsContextProvider from '../ThreatsContext';
 
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
@@ -51,17 +53,21 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
       >
         <MitigationsContextProvider workspaceId={workspaceId}>
           <AssumptionsContextProvider workspaceId={workspaceId}>
-            <MitigationLinksContextProvider workspaceId={workspaceId}>
-              <AssumptionLinksContextProvider workspaceId={workspaceId}>
-                <ApplicationInfoContextProvider workspaceId={workspaceId}>
-                  <ArchitectureInfoContextProvider workspaceId={workspaceId}>
-                    <DataflowInfoContextProvider workspaceId={workspaceId}>
-                      {children}
-                    </DataflowInfoContextProvider>
-                  </ArchitectureInfoContextProvider>
-                </ApplicationInfoContextProvider>
-              </AssumptionLinksContextProvider>
-            </MitigationLinksContextProvider>
+            <ControlsContextProvider workspaceId={workspaceId}>
+              <MitigationLinksContextProvider workspaceId={workspaceId}>
+                <AssumptionLinksContextProvider workspaceId={workspaceId}>
+                  <ControlLinksContextProvider workspaceId={workspaceId}>
+                    <ApplicationInfoContextProvider workspaceId={workspaceId}>
+                      <ArchitectureInfoContextProvider workspaceId={workspaceId}>
+                        <DataflowInfoContextProvider workspaceId={workspaceId}>
+                          {children}
+                        </DataflowInfoContextProvider>
+                      </ArchitectureInfoContextProvider>
+                    </ApplicationInfoContextProvider>
+                  </ControlLinksContextProvider>
+                </AssumptionLinksContextProvider>
+              </MitigationLinksContextProvider>
+            </ControlsContextProvider>
           </AssumptionsContextProvider >
         </MitigationsContextProvider>
       </ThreatsContextProvider>
