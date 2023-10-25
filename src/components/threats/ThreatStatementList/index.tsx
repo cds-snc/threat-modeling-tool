@@ -25,7 +25,7 @@ import TextFilter from '@cloudscape-design/components/text-filter';
 import { css } from '@emotion/react';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { LEVEL_SELECTOR_OPTIONS, DEFAULT_NEW_ENTITY_ID, LEVEL_NOT_SET } from '../../../configs';
-import { useAssumptionLinksContext, useMitigationLinksContext } from '../../../contexts';
+import { useAssumptionLinksContext, useMitigationLinksContext, useControlLinksContext } from '../../../contexts';
 import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { TemplateThreatStatement, ThreatStatementListFilter } from '../../../customTypes';
@@ -90,6 +90,11 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
   } = useMitigationLinksContext();
 
   const {
+    controlLinkList,
+    removeControlLinksByLinkedEntityId,
+  } = useControlLinksContext();
+
+  const {
     showInfoModal,
     composerMode,
   } = useGlobalSetupContext();
@@ -98,7 +103,8 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
     removeStatement(statementId);
     await removeAssumptionLinksByLinkedEntityId(statementId);
     await removeMitigationLinksByLinkedEntityId(statementId);
-  }, [removeStatement, removeAssumptionLinksByLinkedEntityId, removeMitigationLinksByLinkedEntityId]);
+    await removeControlLinksByLinkedEntityId(statementId);
+  }, [removeStatement, removeAssumptionLinksByLinkedEntityId, removeMitigationLinksByLinkedEntityId, removeControlLinksByLinkedEntityId]);
 
   const [filteringText, setFilteringText] = useState('');
   const [sortBy, setSortBy] = useState<SortByOption>(DEFAULT_SORT_BY);
@@ -141,6 +147,14 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
     setSelectedLinkedMitigationFilter,
   ] = useState(initialFilter && typeof initialFilter.linkedMitigations !== 'undefined' ? (
     initialFilter.linkedMitigations ? WITH_LINKED_ENTITY :
+      WITHOUT_NO_LINKED_ENTITY
+  ) : ALL);
+
+  const [
+    selectedLinkedControlFilter,
+    setSelectedLinkedControlFilter,
+  ] = useState(initialFilter && typeof initialFilter.linkedControls !== 'undefined' ? (
+    initialFilter.linkedControls ? WITH_LINKED_ENTITY :
       WITHOUT_NO_LINKED_ENTITY
   ) : ALL);
 
@@ -223,6 +237,14 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
       });
     }
 
+    if (selectedLinkedControlFilter !== ALL) {
+      output = output.filter(st => {
+        return controlLinkList.some(al => al.linkedId === st.id) ?
+          selectedLinkedControlFilter === WITH_LINKED_ENTITY :
+          selectedLinkedControlFilter === WITHOUT_NO_LINKED_ENTITY;
+      });
+    }
+
     if (sortBy.field === 'Priority') {
       output = output.sort((op1, op2) => {
         const priority1 = op1.metadata?.find(m => m.key === 'Priority')?.value as string;
@@ -241,10 +263,10 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
 
     return output;
   }, [filteringText, statementList,
-    assumptionLinkList, mitigationLinkList,
+    assumptionLinkList, mitigationLinkList, controlLinkList,
     selectedImpactedAssets, selectedImpactedGoal,
     selectedTags, selectedPriorities, selectedSTRIDEs,
-    selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter,
+    selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter, selectedLinkedControlFilter,
     sortBy]);
 
   const hasNoFilter = useMemo(() => {
@@ -255,10 +277,11 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
       && selectedPriorities.length === 0
       && selectedSTRIDEs.length === 0
       && selectedLinkedAssumptionFilter === ALL
+      && selectedLinkedControlFilter === ALL
       && selectedLinkedMitigationFilter === ALL);
   }, [filteringText, selectedImpactedAssets, selectedImpactedGoal,
     selectedTags, selectedPriorities, selectedSTRIDEs,
-    selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter]);
+    selectedLinkedAssumptionFilter, selectedLinkedMitigationFilter, selectedLinkedControlFilter]);
 
   const handleAddStatement = useCallback((idToCopy?: string) => {
     addStatement(idToCopy);
@@ -329,23 +352,30 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
     setSelectedPriorities([]);
     setSelectedSTRIDEs([]);
     setSelectedLinkedAssumptionFilter(ALL);
+    setSelectedLinkedControlFilter(ALL);
     setSelectedLinkedMitigationFilter(ALL);
   }, []);
 
   const gridDefinition = useMemo(() => {
-    return composerMode === 'Full' ? [{ colspan: { default: 12, xs: 6, s: 2 } },
+    return composerMode === 'Full' ? [
+      { colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 2 } },
+      { colspan: { default: 12, xs: 6, s: 2 } },
       { colspan: { default: 12, xs: 6, s: 2 } },
       { colspan: { default: 12, xs: 6, s: 3 } },
       { colspan: { default: 12, xs: 6, s: 3 } },
+      { colspan: { default: 12, xs: 6, s: 3 } },
       { colspan: { default: 12, xs: 6, s: 2 } },
-      { colspan: { default: 12, xs: 6, s: 5 } },
-      { colspan: { default: 12, xs: 6, s: 5 } },
-      { colspan: { default: 12, xs: 6, s: 2 } }] : [{ colspan: { default: 12, xs: 6, s: 2 } },
-      { colspan: { default: 12, xs: 6, s: 2 } },
-      { colspan: { default: 12, xs: 6, s: 2.5 } },
-      { colspan: { default: 12, xs: 6, s: 2.5 } },
-      { colspan: { default: 12, xs: 5, s: 2 } },
-      { colspan: { default: 1 } }];
+    ] :
+      [
+        { colspan: { default: 12, xs: 6, s: 2 } },
+        { colspan: { default: 12, xs: 6, s: 2 } },
+        { colspan: { default: 12, xs: 6, s: 2.5 } },
+        { colspan: { default: 12, xs: 6, s: 2.5 } },
+        { colspan: { default: 12, xs: 5, s: 2 } },
+        { colspan: { default: 1 } },
+      ];
   }, [composerMode]);
 
   return (<div>
@@ -422,6 +452,12 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
               selectedTags={selectedTags}
               setSelectedTags={setSelectedTags}
             />
+            {composerMode === 'Full' && <LinkedEntityFilter
+              label='Linked controls'
+              entityDisplayName='controls'
+              selected={selectedLinkedControlFilter}
+              setSelected={setSelectedLinkedControlFilter}
+            />}
             {composerMode === 'Full' && <LinkedEntityFilter
               label='Linked mitigations'
               entityDisplayName='mitigations'

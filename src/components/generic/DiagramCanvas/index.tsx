@@ -97,14 +97,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const Label = styled.div`
   position: absolute;
-  width: 120px;
+  width: fit-content;
   `;
 
   const LabelContent = styled.div`
-  padding: 5px 10px;
+  padding: 2px 3px;
   background: cornflowerblue;
   color: white;
-  border-radius: 5px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,12 +117,14 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   height: 15px;
   border-radius: 20px;
   background: #e1dfdf;
+  filter: opacity(0%);
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   &:hover {
     background: cornflowerblue;
+    filter: opacity(100%);
   }
   & svg {
     width: 15px;
@@ -275,7 +277,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   };
 
   const LinkCustom = (props) => {
-    // console.log("----props---- ", props)
+    //TODO: we should pass in the current label width for a better positioning system
     const { startPos, endPos, link, onLabelDoubleClick } = props;
     const { centerX, centerY } = generateLabelPosition(startPos, endPos);
     return (
@@ -434,7 +436,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
-    console.log('work-flow: ', JSON.stringify(workFlowValue));
+    //console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
   function filterStatementsCallback (

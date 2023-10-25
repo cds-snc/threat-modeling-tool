@@ -14,7 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { ApplicationInfo, ArchitectureInfo, Assumption, DiagramInfo, DataflowInfo, Mitigation, TemplateThreatStatement } from '../../customTypes';
+import { ApplicationInfo, ArchitectureInfo, Assumption, DiagramInfo, DataflowInfo, Mitigation, Control, TemplateThreatStatement } from '../../customTypes';
 
 export const hasApplicationName = (applicationInfo: ApplicationInfo) => {
   return !!(applicationInfo.name);
@@ -46,5 +46,9 @@ export const hasThreats = (threatStatementList: TemplateThreatStatement[]) => {
 
 export const hasMitigations = (mitigations: Mitigation[]) => {
   return mitigations.length > 0;
+};
+
+export const hasControls = (controls: Control[]) => {
+  return controls.length > 0;
 };
 

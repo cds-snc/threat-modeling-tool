@@ -22,6 +22,7 @@ import {
   //ROUTE_DATAFLOW_INFO,
   ROUTE_DIAGRAM_INFO,
   ROUTE_MITIGATION_LIST,
+  ROUTE_CONTROL_LIST,
   ROUTE_THREAT_EDITOR,
   ROUTE_THREAT_LIST,
   ROUTE_VIEW_THREAT_MODEL,
@@ -38,6 +39,7 @@ import UIArchitecture from '../containers/UIArchitecture';
 import UIAssumptionList from '../containers/UIAssumptionList';
 import UIDiagram from '../containers/UIDiagram';
 import UIMitigationList from '../containers/UIMitigationList';
+import UIControlList from '../containers/UIControlList';
 import UIWorkspaceHome from '../containers/UIWorkspaceHome';
 
 const ROUTE_BASE_PATH = process.env.REACT_APP_ROUTE_BASE_PATH || '';
@@ -75,6 +77,10 @@ const routes: RouteProps[] = [
   {
     path: getRouteWithBasePath(ROUTE_MITIGATION_LIST),
     element: <UIMitigationList />,
+  },
+  {
+    path: getRouteWithBasePath(ROUTE_CONTROL_LIST),
+    element: <UIControlList />,
   },
   {
     path: getRouteWithBasePath(ROUTE_VIEW_THREAT_MODEL),

@@ -17,7 +17,7 @@
 import { z } from 'zod';
 import { ContentEntityBaseSchema, EntityLinkBaseSchema } from './entities';
 
-export const MitigationSchema = ContentEntityBaseSchema.extend({}).strict();;
+export const MitigationSchema = ContentEntityBaseSchema.extend({}).strict();
 
 export type Mitigation = z.infer<typeof MitigationSchema>;
 
@@ -33,3 +33,4 @@ export const MitigationLinkSchema = EntityLinkBaseSchema.extend({
 }).strict();;
 
 export type MitigationLink = z.infer<typeof MitigationLinkSchema>;
+

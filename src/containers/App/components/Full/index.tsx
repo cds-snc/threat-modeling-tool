@@ -18,7 +18,7 @@ import React, { FC, useMemo, useCallback, useState, useEffect } from 'react';
 import { Routes, Route, RouteProps, useParams, useSearchParams, useNavigate, Navigate } from 'react-router-dom';
 
 import AppLayout from '../../../../components/FullAppLayout';
-import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, /*ROUTE_DATAFLOW_INFO*/ ROUTE_DIAGRAM_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL, ROUTE_WORKSPACE_HOME } from '../../../../configs/routes';
+import { ROUTE_APPLICATION_INFO, ROUTE_ARCHITECTURE_INFO, ROUTE_ASSUMPTION_LIST, ROUTE_DIAGRAM_INFO, ROUTE_MITIGATION_LIST, ROUTE_THREAT_EDITOR, ROUTE_THREAT_LIST, ROUTE_VIEW_THREAT_MODEL, ROUTE_WORKSPACE_HOME, ROUTE_CONTROL_LIST } from '../../../../configs/routes';
 
 import ContextAggregator from '../../../../contexts/ContextAggregator';
 import { useWorkspacesContext } from '../../../../contexts/WorkspacesContext';
@@ -125,6 +125,11 @@ const Full: FC = () => {
         type: 'link',
       },
       {
+        text: 'Security controls',
+        href: generateUrl(ROUTE_CONTROL_LIST, searchParms, workspaceId),
+        type: 'link',
+      },
+      {
         text: 'Mitigations',
         href: generateUrl(ROUTE_MITIGATION_LIST, searchParms, workspaceId),
         type: 'link',
@@ -166,6 +171,7 @@ const Full: FC = () => {
       onDiagramView={() => handleNavigationView(ROUTE_DIAGRAM_INFO)}
       onAssumptionListView={() => handleNavigationView(ROUTE_ASSUMPTION_LIST)}
       onMitigationListView={() => handleNavigationView(ROUTE_MITIGATION_LIST)}
+      onControlListView={() => handleNavigationView(ROUTE_CONTROL_LIST)}
       onThreatListView={handleThreatListView}
       onThreatEditorView={handleThreatEditorView}
       onPreview={handlePreview}

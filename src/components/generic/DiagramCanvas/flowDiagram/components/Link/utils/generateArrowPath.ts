@@ -23,16 +23,16 @@ const generateArrowPath = (startPos: IPosition, endPos: IPosition): string => {
     return '';
   }
   if (endPos.portType === 'top') {
-    return `M ${endPos.x} ${endPos.y} L ${endPos.x - 10} ${endPos.y - 20} L ${endPos.x + 10 } ${endPos.y - 20} Z`;
+    return `M ${endPos.x} ${endPos.y} L ${endPos.x - 5} ${endPos.y - 10} L ${endPos.x + 5 } ${endPos.y - 10} Z`;
   }
   if (endPos.portType === 'right') {
-    return `M ${endPos.x} ${endPos.y} L ${endPos.x + 20} ${endPos.y - 10} L ${endPos.x + 20 } ${endPos.y + 10} Z`;
+    return `M ${endPos.x} ${endPos.y} L ${endPos.x + 10} ${endPos.y - 5} L ${endPos.x + 10 } ${endPos.y + 5} Z`;
   }
   if (endPos.portType === 'bottom') {
-    return `M ${endPos.x} ${endPos.y} L ${endPos.x - 10} ${endPos.y + 20} L ${endPos.x + 10 } ${endPos.y + 20} Z`;
+    return `M ${endPos.x} ${endPos.y} L ${endPos.x - 5} ${endPos.y + 10} L ${endPos.x + 5 } ${endPos.y + 10} Z`;
   }
   if (endPos.portType === 'left') {
-    return `M ${endPos.x} ${endPos.y} L ${endPos.x - 20} ${endPos.y - 10} L ${endPos.x - 20 } ${endPos.y + 10} Z`;
+    return `M ${endPos.x} ${endPos.y} L ${endPos.x - 10} ${endPos.y - 5} L ${endPos.x - 10 } ${endPos.y + 5} Z`;
   }
 
   return '';

@@ -35,6 +35,7 @@ import { getApplicationName } from '../../utils/getApplicationName';
 import { getArchitectureContent } from '../../utils/getArchitecture';
 import { getAssetsContent } from '../../utils/getAssets';
 import { getAssumptionsContent } from '../../utils/getAssumptions';
+import { getControlsContent } from '../../utils/getControls';
 import { getDataflowContent } from '../../utils/getDataFlow';
 import { getMitigationsContent } from '../../utils/getMitigations';
 import { getThreatsContent } from '../../utils/getThreats';
@@ -87,6 +88,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
         (!hasContentDetails || hasContentDetails.dataflow) && await getDataflowContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.assumptions) && await getAssumptionsContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.threats) && await getThreatsContent(sanitizedData),
+        (!hasContentDetails || hasContentDetails.controls) && await getControlsContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.mitigations) && await getMitigationsContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.threats) && await getAssetsContent(sanitizedData),
       ] : [await getThreatsContent(sanitizedData, true)]).filter(x => !!x).join('\n');
@@ -114,9 +116,6 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     if (!hasContentDetails?.architecture) {
       buttons.push(<Button onClick={props.onArchitectureView}>Add Architecture</Button>);
     }
-    if (!hasContentDetails?.dataflow) {
-      buttons.push(<Button onClick={props.onDataflowView}>Add Dataflow</Button>);
-    }
     if (!hasContentDetails?.diagram) {
       buttons.push(<Button onClick={props.onDiagramView}>Add Diagram</Button>);
     }
@@ -125,6 +124,9 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     }
     if (!hasContentDetails?.threats) {
       buttons.push(<Button onClick={() => props.onThreatListView?.()}>Add Threats</Button>);
+    }
+    if (!hasContentDetails?.controls) {
+      buttons.push(<Button onClick={props.onControlListView}>Add Security Controls</Button>);
     }
     if (!hasContentDetails?.threats) {
       buttons.push(<Button onClick={props.onMitigationListView}>Add Mitigations</Button>);

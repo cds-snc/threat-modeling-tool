@@ -17,6 +17,8 @@
 import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import FormField from '@cloudscape-design/components/form-field';
+import SegmentedControl from '@cloudscape-design/components/segmented-control';
+import Checkbox from '@cloudscape-design/components/checkbox';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useMemo, useEffect } from 'react';
@@ -33,6 +35,15 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description );
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
+  const [securityCategory, setSecurityCategory] = useState('cccs-medium');
+  const [checkedIaaS, setCheckedIaaS] = useState(false);
+  const [checkedPaaS, setCheckedPaaS] = useState(false);
+  const [checkedSaaS, setCheckedSaaS] = useState(false);
+  const [checkedData, setCheckedData] = useState(true);
+  const [checkedStorage, setCheckedStorage] = useState(true);
+  const [checkedApplication, setCheckedApplication] = useState(false);
+  const [checkedCompute, setCheckedCompute] = useState(false);
+  const [checkedNetwork, setCheckedNetwork] = useState(true);
 
   useEffect(() => {
     onEditModeChange?.(editMode);
@@ -62,7 +73,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
 
   return (<Container
     header={<Header actions={actions}>{applicationInfo.name || 'Application Introduction'}</Header>}
-  >{editMode ? (<SpaceBetween direction='vertical' size='s'>
+  >{editMode ? (<SpaceBetween direction='vertical' size='l'>
       <FormField
         label="Application name"
       >
@@ -82,6 +93,93 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
         parentHeaderLevel='h2'
         validateData={ApplicationInfoSchema.shape.description.safeParse}
       />
+      <FormField
+        label="This application / feature requires the following GC Cloud Profile"
+        description="CCCS Low (formerly PALL) -> Targets: Protected A, Low Integrity, Low Availability | CCCS Medium (formerly PBMM) -> Targets: Protected B, Medium Integrity, Medium Availability"
+      >
+        <SegmentedControl
+          selectedId={securityCategory}
+          onChange={({ detail }) =>
+            setSecurityCategory(detail.selectedId)
+          }
+          label="This application / feature require the following GC Cloud Profile"
+          options={[
+            { text: 'CCCS Low', id: 'cccs-low' },
+            { text: 'CCCS Medium', id: 'cccs-medium' },
+            { text: 'CCCS High', id: 'cccs-high' },
+          ]}
+        />
+      </FormField>
+      <FormField
+        label="Cloud service model">
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedIaaS(detail.checked)
+          }
+          checked={checkedIaaS}
+        >
+        IaaS
+        </Checkbox>
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedPaaS(detail.checked)
+          }
+          checked={checkedPaaS}
+        >
+        PaaS
+        </Checkbox>
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedSaaS(detail.checked)
+          }
+          checked={checkedSaaS}
+        >
+        SaaS
+        </Checkbox>
+      </FormField>
+      <FormField
+        label="Cloud stack component">
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedData(detail.checked)
+          }
+          checked={checkedData}
+        >
+        Data
+        </Checkbox>
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedStorage(detail.checked)
+          }
+          checked={checkedStorage}
+        >
+        Storage
+        </Checkbox>
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedApplication(detail.checked)
+          }
+          checked={checkedApplication}
+        >
+        Application
+        </Checkbox>
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedCompute(detail.checked)
+          }
+          checked={checkedCompute}
+        >
+        Compute
+        </Checkbox>
+        <Checkbox
+          onChange={({ detail }) =>
+            setCheckedNetwork(detail.checked)
+          }
+          checked={checkedNetwork}
+        >
+        Network
+        </Checkbox>
+      </FormField>
     </SpaceBetween>) :
       (<MarkdownViewer>
         {applicationInfo.description || ''}

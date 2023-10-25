@@ -17,34 +17,40 @@
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback } from 'react';
 import { useAssumptionsContext } from '../../../contexts/AssumptionsContext/context';
+import { useControlsContext } from '../../../contexts/ControlsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { Mitigation } from '../../../customTypes';
 import AssumptionLinkView from '../../assumptions/AssumptionLinkView';
 import GenericEntityCreationCard, { DEFAULT_ENTITY } from '../../generic/GenericEntityCreationCard';
 import ThreatLinkView from '../../threats/ThreatLinkView';
+import ControlLinkView from '../../controls/ControlLinkView';
 
 export interface MitigationCreationCardProps {
-  onSave?: (entity: Mitigation, linkedAssumptionIds: string[], linkedThreatIds: string[]) => void;
+  onSave?: (entity: Mitigation, linkedControlIds: string[], linkedAssumptionIds: string[], linkedThreatIds: string[]) => void;
 }
 
 const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => {
   const [editingEntity, setEditingEntity] = useState<Mitigation>(DEFAULT_ENTITY);
   const [linkedAssumptionIds, setLinkedAssumptionIds] = useState<string[]>([]);
+  const [linkedControlIds, setLinkedControlIds] = useState<string[]>([]);
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
 
   const { assumptionList, saveAssumption } = useAssumptionsContext();
+  const { controlList, saveControl } = useControlsContext();
   const { statementList } = useThreatsContext();
 
   const handleSave = useCallback(() => {
-    onSave?.(editingEntity, linkedAssumptionIds, linkedThreatIds);
+    onSave?.(editingEntity, linkedControlIds, linkedAssumptionIds, linkedThreatIds);
     setEditingEntity(DEFAULT_ENTITY);
+    setLinkedControlIds([]);
     setLinkedAssumptionIds([]);
     setLinkedThreatIds([]);
-  }, [editingEntity, linkedAssumptionIds, linkedThreatIds, onSave]);
+  }, [editingEntity, linkedControlIds, linkedAssumptionIds, linkedThreatIds, onSave]);
 
   const handleReset = useCallback(() => {
     setEditingEntity(DEFAULT_ENTITY);
     setLinkedAssumptionIds([]);
+    setLinkedControlIds([]);
     setLinkedThreatIds([]);
   }, []);
 
@@ -61,6 +67,19 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
     }
   }, [assumptionList, saveAssumption, setLinkedAssumptionIds]);
 
+  const handleAddControlLink = useCallback((controlIdOrNewControl: string) => {
+    if (controlList.find(a => a.id === controlIdOrNewControl)) {
+      setLinkedControlIds(prev => [...prev, controlIdOrNewControl]);
+    } else {
+      const newControl = saveControl({
+        numericId: -1,
+        content: controlIdOrNewControl,
+        id: 'new',
+      });
+      setLinkedControlIds(prev => [...prev, newControl.id]);
+    }
+  }, [controlList, saveControl, setLinkedControlIds]);
+
   return (<GenericEntityCreationCard
     editingEntity={editingEntity}
     setEditingEntity={setEditingEntity}
@@ -73,6 +92,12 @@ const MitigationCreationCard: FC<MitigationCreationCardProps> = ({ onSave }) => 
         threatList={statementList}
         onAddThreatLink={(id) => setLinkedThreatIds(prev => [...prev, id])}
         onRemoveThreatLink={(id) => setLinkedThreatIds(prev => prev.filter(p => p !== id))}
+      />
+      <ControlLinkView
+        linkedControlIds={linkedControlIds}
+        controlList={controlList}
+        onAddControlLink={handleAddControlLink}
+        onRemoveControlLink={(id) => setLinkedControlIds(prev => prev.filter(p => p !== id))}
       />
       <AssumptionLinkView
         linkedAssumptionIds={linkedAssumptionIds}

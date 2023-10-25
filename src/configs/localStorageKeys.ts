@@ -24,9 +24,11 @@ export const LOCAL_STORAGE_KEY_STATEMENT_LIST = 'ThreatStatementGenerator.threat
 
 export const LOCAL_STORAGE_KEY_ASSUMPTION_LIST = 'ThreatStatementGenerator.AssumptionList';
 export const LOCAL_STORAGE_KEY_MITIGATION_LIST = 'ThreatStatementGenerator.MitigationList';
+export const LOCAL_STORAGE_KEY_CONTROL_LIST = 'ThreatStatementGenerator.ControlList';
 
 export const LOCAL_STORAGE_KEY_ASSUMPTION_LINK_LIST = 'ThreatStatementGenerator.AssumptionLinkList';
 export const LOCAL_STORAGE_KEY_MITIGATION_LINK_LIST = 'ThreatStatementGenerator.MitigationLinkList';
+export const LOCAL_STORAGE_KEY_CONTROL_LINK_LIST = 'ThreatStatementGenerator.ControlLinkList';
 
 export const LOCAL_STORAGE_KEY_APPLICATION_INFO = 'ThreatStatementGenerator.ApplicationInfo';
 export const LOCAL_STORAGE_KEY_ARCHIECTURE_INFO = 'ThreatStatementGenerator.ArchitectureInfo';

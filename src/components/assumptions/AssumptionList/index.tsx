@@ -56,6 +56,11 @@ const AssumptionList: FC = () => {
   ] = useState(ALL);
 
   const [
+    selectedLinkedControlFilter,
+    setSelectedLinkedControlFilter,
+  ] = useState(ALL);
+
+  const [
     selectedLinkedMitigationFilter,
     setSelectedLinkedMitigationFilter,
   ] = useState(ALL);
@@ -104,19 +109,28 @@ const AssumptionList: FC = () => {
       });
     }
 
+    if (selectedLinkedControlFilter !== ALL) {
+      output = output.filter(st => {
+        return assumptionLinkList.some(al => al.assumptionId === st.id && al.type === 'Control') ?
+          selectedLinkedControlFilter === WITH_LINKED_ENTITY :
+          selectedLinkedControlFilter === WITHOUT_NO_LINKED_ENTITY;
+      });
+    }
+
     output = output.sort((op1, op2) => (op2.displayOrder || Number.MAX_VALUE) - (op1.displayOrder || Number.MAX_VALUE));
 
     return output;
   }, [filteringText, assumptionList, selectedTags,
     assumptionLinkList,
-    selectedLinkedMitigationFilter, selectedLinkedThreatsFilter]);
+    selectedLinkedMitigationFilter, selectedLinkedControlFilter, selectedLinkedThreatsFilter]);
 
   const hasNoFilter = useMemo(() => {
     return (filteringText === ''
       && selectedLinkedMitigationFilter === ALL
+      && selectedLinkedControlFilter === ALL
       && selectedLinkedThreatsFilter === ALL
       && selectedTags.length === 0);
-  }, [filteringText, selectedTags, selectedLinkedThreatsFilter, selectedLinkedMitigationFilter]);
+  }, [filteringText, selectedTags, selectedLinkedThreatsFilter, selectedLinkedControlFilter, selectedLinkedMitigationFilter]);
 
   const allTags = useMemo(() => {
     return assumptionList
@@ -129,6 +143,7 @@ const AssumptionList: FC = () => {
     setFilteringText('');
     setSelectedTags([]);
     setSelectedLinkedMitigationFilter(ALL);
+    setSelectedLinkedControlFilter(ALL);
     setSelectedLinkedThreatsFilter(ALL);
   }, []);
 
@@ -175,9 +190,9 @@ const AssumptionList: FC = () => {
           />
           <Grid
             gridDefinition={[
+              { colspan: { default: 12, xs: 2 } },
               { colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 4 } },
-              { colspan: { default: 12, xs: 4 } },
+              { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 1 } },
             ]}
           >
@@ -191,6 +206,12 @@ const AssumptionList: FC = () => {
               entityDisplayName='threats'
               selected={selectedLinkedThreatsFilter}
               setSelected={setSelectedLinkedThreatsFilter}
+            />
+            <LinkedEntityFilter
+              label='Linked controls'
+              entityDisplayName='controls'
+              selected={selectedLinkedControlFilter}
+              setSelected={setSelectedLinkedControlFilter}
             />
             <LinkedEntityFilter
               label='Linked mitigations'

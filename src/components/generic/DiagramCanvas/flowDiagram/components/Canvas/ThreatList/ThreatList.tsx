@@ -26,6 +26,7 @@ import {
   PropertyFilter,
 } from '@cloudscape-design/components';
 import { columnDefinitions, getMatchesCountText, paginationLabels, collectionPreferencesProps, filteringConstants, filteringProperties } from './table-config';
+import { useThreatsContext } from '../../../../../../../contexts/ThreatsContext';
 
 function EmptyState({ title, subtitle, action }) {
   return (
@@ -45,6 +46,7 @@ export default function ThreatList( props ) {
   function handleThreatsSelectionChange(event) {
     props.onThreatsSelectionChange(event.detail.selectedItems.map( ({ id }) => ( { id: id } ) ));
   };
+  const { onThreatListView } = useThreatsContext();
   const [selectedDFDObjectId] = useState(props.clickedObjectId);
   selectedDFDObjectId;
   //console.log('selectedDFDObjectId', selectedDFDObjectId);
@@ -76,7 +78,7 @@ export default function ThreatList( props ) {
           <EmptyState
             title="No threats defined"
             subtitle=""
-            action={<Button>Add threat</Button>}
+            action={<Button onClick={() => onThreatListView?.()}>Add threats</Button>}
           />
         ),
         noMatch: (

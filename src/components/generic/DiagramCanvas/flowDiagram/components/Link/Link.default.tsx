@@ -21,14 +21,17 @@ import { generateLabelPosition } from '../../utils';
 
 const Label = styled.div`
   position: absolute;
-  width: 120px;
+  width: fit-content;
+  max-width: fit-content;
+  display: inline-block;
 `;
 
 const LabelContent = styled.div`
-  padding: 5px 10px;
+  padding: 1px 1px;
   background: cornflowerblue;
   color: white;
   border-radius: 5px;
+  width: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;

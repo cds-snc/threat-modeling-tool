@@ -21,9 +21,10 @@ import { useAssumptionsContext } from '../../contexts/AssumptionsContext';
 import { useDataflowInfoContext } from '../../contexts/DataflowContext';
 import { useDiagramInfoContext } from '../../contexts/DiagramContext';
 import { useMitigationsContext } from '../../contexts/MitigationsContext';
+import { useControlsContext } from '../../contexts/ControlsContext';
 import { useThreatsContext } from '../../contexts/ThreatsContext';
 import { HasContentDetails } from '../../customTypes';
-import { hasApplicationName, hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDiagramInfo, hasDataflowInfo, hasMitigations, hasThreats } from '../../utils/hasContent';
+import { hasApplicationName, hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDiagramInfo, hasDataflowInfo, hasMitigations, hasControls, hasThreats } from '../../utils/hasContent';
 
 const useHasContent = () => {
   const { applicationInfo } = useApplicationInfoContext();
@@ -31,6 +32,7 @@ const useHasContent = () => {
   const { diagramInfo } = useDiagramInfoContext();
   const { dataflowInfo } = useDataflowInfoContext();
   const { assumptionList } = useAssumptionsContext();
+  const { controlList } = useControlsContext();
   const { mitigationList } = useMitigationsContext();
   const { statementList } = useThreatsContext();
 
@@ -42,6 +44,7 @@ const useHasContent = () => {
       diagram: hasDiagramInfo(diagramInfo),
       dataflow: hasDataflowInfo(dataflowInfo),
       assumptions: hasAssumptions(assumptionList),
+      controls: hasControls(controlList),
       mitigations: hasMitigations(mitigationList),
       threats: hasThreats(statementList),
     };
@@ -49,7 +52,7 @@ const useHasContent = () => {
     const sum = Object.values(details).some(x => x);
 
     return [sum, details];
-  }, [applicationInfo, architectureInfo, dataflowInfo, assumptionList, mitigationList, statementList, diagramInfo]);
+  }, [applicationInfo, architectureInfo, dataflowInfo, assumptionList, mitigationList, controlList, statementList, diagramInfo]);
 
   return hasContent;
 };

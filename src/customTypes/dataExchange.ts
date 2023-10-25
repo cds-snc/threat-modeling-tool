@@ -20,6 +20,7 @@ import { ArchitectureInfoSchema } from './architecture';
 import { AssumptionSchema, AssumptionLinkSchema } from './assumptions';
 import { DataflowInfoSchema } from './dataflow';
 import { DiagramInfoSchema } from './diagram';
+import { ControlSchema, ControlLinkSchema } from './controls';
 import { MitigationSchema, MitigationLinkSchema } from './mitigations';
 import { TemplateThreatStatementSchema } from './threats';
 import { WorkspaceSchema } from './workspaces';
@@ -32,8 +33,10 @@ export const DataExchangeFormatSchema = z.object({
   diagram: DiagramInfoSchema.optional(),
   dataflow: DataflowInfoSchema.optional(),
   assumptions: AssumptionSchema.array().optional(),
+  controls: ControlSchema.array().optional(),
   mitigations: MitigationSchema.array().optional(),
   assumptionLinks: AssumptionLinkSchema.array().optional(),
+  controlLinks: ControlLinkSchema.array().optional(),
   mitigationLinks: MitigationLinkSchema.array().optional(),
   threats: TemplateThreatStatementSchema.array().optional(),
 }).strict();
@@ -47,6 +50,7 @@ export interface HasContentDetails {
   diagram: boolean;
   dataflow: boolean;
   assumptions: boolean;
+  controls: boolean;
   mitigations: boolean;
   threats: boolean;
 }
