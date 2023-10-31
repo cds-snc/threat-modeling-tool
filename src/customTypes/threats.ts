@@ -97,7 +97,7 @@ export interface ThreatStatementListFilter {
   linkedControls?: boolean;
   linkedAssumptions?: boolean;
   priority?: typeof LEVEL_HIGH | typeof LEVEL_MEDIUM | typeof LEVEL_LOW | typeof LEVEL_NOT_SET;
-  stride?: 'S' | 'T' | 'R' | 'I' | 'D' | 'E' | typeof LEVEL_NOT_SET;
+  stride?: 'S' | 'T' | 'R' | 'I' | 'D' | 'E' | 'LM' | typeof LEVEL_NOT_SET;
 }
 
 export interface ThreatStatementFormat {

@@ -13,40 +13,98 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
+/** @jsxImportSource @emotion/react */
 import Button from '@cloudscape-design/components/button';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import TextContent from '@cloudscape-design/components/text-content';
-import { FC, useState, useCallback } from 'react';
-import { Control, ControlSchema } from '../../../customTypes';
-import useEditMetadata from '../../../hooks/useEditMetadata';
-import AssumptionLink from '../../assumptions/AssumptionLink';
+//import TextContent from '@cloudscape-design/components/text-content';
+import { FC, useState, useCallback, useRef, useMemo, ReactNode } from 'react';
+import { Control, ControlProfile } from '../../../customTypes';
+import MitigationLink from '../../mitigations/MitigationLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
-import MetadataEditor from '../../generic/EntityMetadataEditor';
-import GenericCard from '../../generic/GenericCard';
-import Textarea from '../../generic/Textarea';
+import { DeleteConfirmationDialog } from '@aws-northstar/ui';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import * as awsui from '@cloudscape-design/design-tokens';
+import { css } from '@emotion/react';
 import ControlThreatLink from '../ControlThreatLink';
+import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
+import Tooltip from '../../generic/Tooltip';
+import Tags from './components/Tags';
+import controlProfiles from '../../../data/controlProfiles.json';
+import { Select, TextContent } from '@cloudscape-design/components';
+import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 
 export interface ControlCardProps {
   entity: Control;
-  onCopy?: (id: string) => void;
+  info?: ReactNode;
   onRemove?: (id: string) => void;
   onEdit?: (entity: Control) => void;
   onAddTagToEntity?: (entity: Control, tag: string) => void;
   onRemoveTagFromEntity?: (entity: Control, tag: string) => void;
 }
 
+const styles = {
+  header: css({
+    display: 'inline-flex',
+    alignItems: 'center',
+    [getMobileMediaQuery()]: {
+      display: 'block',
+      marginTop: awsui.spaceScaledS,
+    },
+  }),
+  tags: css({
+    marginRight: awsui.spaceScaledS,
+    marginLeft: awsui.spaceScaledS,
+    [getMobileMediaQuery()]: {
+      marginLeft: '0px',
+    },
+  }),
+  info: css({
+    marginLeft: awsui.spaceScaledS,
+    [getMobileMediaQuery()]: {
+      marginLeft: '0px',
+    },
+  }),
+  finalStatementSection: css({
+    '&:hover': {
+      backgroundColor: awsui.colorBackgroundDropdownItemHover,
+    },
+  }),
+  metadataContainer: css({
+    'h3>span>span': {
+      fontSize: '20px',
+    },
+  }),
+};
+
 const ControlCard: FC<ControlCardProps> = ({
   entity,
-  onCopy,
+  info,
   onRemove,
   onEdit,
   onAddTagToEntity,
   onRemoveTagFromEntity,
 }) => {
+  const ref = useRef<any>(null);
   const [editingMode, setEditingMode] = useState(false);
   const [editingValue, setEditingValue] = useState(entity.content);
+  const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
+  const [controlId, setControlId] = useState(entity.id);
+  const [tags, setTags] = useState(entity.tags);
+  const [metadataComments, setMetadataComments] = useState(entity.metadata?.find(m => m.key === 'Comments')?.value);
+  //const [linkedControlIds, setLinkedControlIds] = useState<string[]>([]);
+  const controlList = useMemo(() => {
+    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
+    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
+    return cccs_medium_profile.controls as Control[];
+  }, []);
+  const [selectedControl, setSelectedControl] = useState<OptionDefinition>({
+    label: entity.content,
+    value: entity.id,
+    description: entity.metadata?.find(m => m.key === 'Comments')?.value as string,
+    tags: entity.tags,
+  });
 
   const handleSave = useCallback(() => {
     const updated = {
@@ -59,56 +117,107 @@ const ControlCard: FC<ControlCardProps> = ({
 
   const handleCancel = useCallback(() => {
     setEditingValue(entity.content);
+    setSelectedControl({
+      label: entity.content,
+      value: entity.id,
+      description: entity.metadata?.find(m => m.key === 'Comments')?.value as string,
+      tags: entity.tags,
+    });
+    setTags(entity.tags);
+    setMetadataComments(entity.metadata?.find(m => m.key === 'Comments')?.value as string);
     setEditingMode(false);
   }, [entity]);
 
-  const handleMetadataEdit = useEditMetadata(onEdit);
+  const handleControlChange = (selectedOption) => {
+    setSelectedControl(selectedOption);
+    setControlId(selectedOption.id);
+    setTags(selectedOption.tags);
+    setMetadataComments(selectedOption.description);
+  };
 
-  return (<GenericCard
-    header={`Control ${entity.numericId}`}
-    entityId={entity.id}
-    tags={entity.tags}
-    onCopy={() => onCopy?.(entity.id)}
-    onRemove={() => onRemove?.(entity.id)}
-    onEdit={() => setEditingMode(true)}
-    onAddTagToEntity={(_entityId, tag) => onAddTagToEntity?.(entity, tag)}
-    onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromEntity?.(entity, tag)}
-  >
-    <SpaceBetween direction='vertical' size='s'>
-      <ColumnLayout columns={2}>
-        {editingMode ? (
-          <SpaceBetween direction='vertical' size='s'>
-            <Textarea
-              value={editingValue}
-              onChange={({ detail }) => setEditingValue(detail.value)}
-              validateData={ControlSchema.shape.content.safeParse}
-              singleLine
-            />
-            <SpaceBetween direction='horizontal' size='s'>
-              <Button onClick={handleCancel}>Cancel</Button>
-              <Button variant='primary' onClick={handleSave}>Save</Button>
-            </SpaceBetween>
-          </SpaceBetween>
-        ) : (<TextContent>
-          <CopyToClipbord>
-            {entity.content || ''}
-          </CopyToClipbord>
-        </TextContent>)}
+  // const handleAddControlLink = useCallback((controlIdOrNewControl: string) => {
+  //   if (controlList.find(a => a.id === controlIdOrNewControl)) {
+  //     setLinkedControlIds(prev => [...prev, controlIdOrNewControl]);
+  //   }
+
+  // }, [setLinkedControlIds, controlList]);
+
+  const actions = useMemo(() => {
+    return (<SpaceBetween direction='horizontal' size='s'>
+      {onRemove && <Tooltip tooltip='Remove From Workspace'><Button onClick={() => setRemoveDialogVisible(true)} variant='icon' iconName='remove' /></Tooltip>}
+      {onEdit && <Tooltip tooltip='Edit'><Button onClick={() => setEditingMode(true)} variant='icon' iconName='edit' /></Tooltip>}
+    </SpaceBetween>);
+  }, [onRemove, onEdit]);
+
+  return (
+    <div ref={ref}>
+      <Container
+        header={
+          <Header actions={actions}>
+            <div css={styles.header}>
+              {`Control ${entity.numericId}`}
+              <div css={styles.info}>{info}</div>
+              <div css={styles.tags}><Tags
+                tags={tags}
+                entityId={controlId}
+                onAddTagToEntity={(_entityId, tag) => onAddTagToEntity?.(entity, tag)}
+                onRemoveTagFromEntity={(_entityId, tag) => onRemoveTagFromEntity?.(entity, tag)}
+              />
+              </div>
+            </div>
+          </Header>
+        }
+      >
         <SpaceBetween direction='vertical' size='s'>
-          <ControlThreatLink controlId={entity.id} />
-          <AssumptionLink
-            linkedEntityId={entity.id}
-            type='Control'
-          />
+          <ColumnLayout columns={2}>
+            {editingMode ? (
+              <SpaceBetween direction='vertical' size='s'>
+                <Select
+                  selectedOption={selectedControl}
+                  onChange={({ detail }) => handleControlChange(detail.selectedOption)}
+                  options={controlList.map(c => ({
+                    label: c.content,
+                    value: c.id,
+                    description: c.metadata?.find(m => m.key === 'Comments')?.value as string,
+                    tags: c.tags,
+                  }))}
+                  filteringType="auto"
+                />
+                <SpaceBetween direction='horizontal' size='s'>
+                  <Button onClick={handleCancel}>Cancel</Button>
+                  <Button variant='primary' onClick={handleSave}>Save</Button>
+                </SpaceBetween>
+              </SpaceBetween>
+            ) : (<div css={styles.metadataContainer}>
+              <TextContent>
+                <CopyToClipbord content={entity.content}>
+                  {entity.content}
+                </CopyToClipbord>
+              </TextContent>
+            </div>
+            )}
+            <SpaceBetween direction='vertical' size='s'>
+              <ControlThreatLink controlId={controlId} />
+              <MitigationLink linkedEntityId={controlId} />
+            </SpaceBetween>
+          </ColumnLayout>
+          <TextContent>
+            <CopyToClipbord content={entity.content || ''}>
+              {metadataComments || ''}
+            </CopyToClipbord>
+          </TextContent>
         </SpaceBetween>
-      </ColumnLayout>
-      <MetadataEditor
-        variant='default'
-        entity={entity}
-        onEditEntity={handleMetadataEdit}
-      />
-    </SpaceBetween>
-  </GenericCard>);
+      </Container>
+      {removeDialogVisible && <DeleteConfirmationDialog
+        variant='confirmation'
+        title={`Remove Control ${entity.numericId}?`}
+        visible={removeDialogVisible}
+        onCancelClicked={() => setRemoveDialogVisible(false)}
+        onDeleteClicked={() => onRemove?.(controlId)}
+        deleteButtonText='Remove'
+      ></DeleteConfirmationDialog>}
+    </div>
+  );
 };
 
 export default ControlCard;

@@ -23,17 +23,17 @@ export const getControlsContent = async (
   data: DataExchangeFormat,
 ) => {
   const rows: string[] = [];
-  rows.push('## Controls');
+  rows.push('## Security Controls');
 
   rows.push('\n');
 
-  rows.push('| Control Number | Control | Threats Mitigating | Assumptions | Comments |');
+  rows.push('| Control Number | Control | Threats Mitigating | Mitigations | Comments |');
   rows.push('| --- | --- | --- | --- | --- |');
 
   if (data.controls) {
     const promises = data.controls.map(async (x) => {
-      const threats = data.controlLinks?.filter(ml => ml.controlId === x.id) || [];
-      const assumpptionLinks = data.assumptionLinks?.filter(al => al.linkedId === x.id) || [];
+      const threats = data.controlLinks?.filter(cl => cl.controlId === x.id) || [];
+      const mitigationLinks = data.mitigationLinks?.filter(ml => ml.linkedId === x.id) || [];
 
       const threatsContent = threats.map(tl => {
         const threat = data.threats?.find(s => s.id === tl.linkedId);
@@ -44,19 +44,19 @@ export const getControlsContent = async (
         return null;
       }).filter(t => !!t).join('<br/>');
 
-      const assumptionsContent = assumpptionLinks.map(al => {
-        const assumption = data.assumptions?.find(a => a.id === al.assumptionId);
-        if (assumption) {
-          const assumptionId = `A-${standardizeNumericId(assumption.numericId)}`;
-          return `[**${assumptionId}**](#${assumptionId}): ${escapeMarkdown(assumption.content)}`;
+      const mitigationsContent = mitigationLinks.map(ml => {
+        const mitigation = data.mitigations?.find(m => m.id === ml.mitigationId);
+        if (mitigation) {
+          const mitigationId = `A-${standardizeNumericId(mitigation.numericId)}`;
+          return `[**${mitigationId}**](#${mitigationId}): ${escapeMarkdown(mitigation.content)}`;
         }
         return null;
-      }).filter(a => !!a).join('<br/>');
+      }).filter(m => !!m).join('<br/>');
 
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
 
-      const controlId = `M-${standardizeNumericId(x.numericId)}`;
-      return `| <a name="${controlId}"></a>${controlId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${comments} |`;
+      const controlId = `C-${standardizeNumericId(x.numericId)}`;
+      return `| ${controlId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${mitigationsContent} | ${escapeMarkdown(comments)} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

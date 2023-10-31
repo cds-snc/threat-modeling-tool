@@ -230,6 +230,7 @@ const MitigationList: FC = () => {
               { colspan: { default: 12, xs: 2 } },
               { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 1 } },
             ]}
           >
@@ -241,18 +242,21 @@ const MitigationList: FC = () => {
             <LinkedEntityFilter
               label='Linked threats'
               entityDisplayName='threats'
+              callerName='mitigations'
               selected={selectedLinkedThreatsFilter}
               setSelected={setSelectedLinkedThreatsFilter}
             />
             <LinkedEntityFilter
               label='Linked controls'
               entityDisplayName='controls'
+              callerName='mitigations'
               selected={selectedLinkedControlsFilter}
               setSelected={setSelectedLinkedControlsFilter}
             />
             <LinkedEntityFilter
               label='Linked assumptions'
               entityDisplayName='assumptions'
+              callerName='mitigations'
               selected={selectedLinkedAssumptionsFilter}
               setSelected={setSelectedLinkedAssumptionsFilter}
             />

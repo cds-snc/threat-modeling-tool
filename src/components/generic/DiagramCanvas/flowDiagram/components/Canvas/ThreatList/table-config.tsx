@@ -180,6 +180,7 @@ export const filteringProperties:PropertyFilterProperty<any>[] = [
             'I',
             'D',
             'E',
+            'LM',
           ].map(val => ({ val, label: val }));
           return (
             <FormField>

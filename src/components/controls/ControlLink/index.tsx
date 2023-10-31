@@ -14,11 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { FC, useCallback, useEffect, useState } from 'react';
-import { useControlsContext } from '../../../contexts/ControlsContext/context';
-import { ControlLink } from '../../../customTypes';
-import ControlLinkView from '../ControlLinkView';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { ControlLink, Control, ControlProfile } from '../../../customTypes';
 import { useControlLinksContext } from '../../../contexts/ControlLinksContext/context';
+import ControlLookupComponent from '../../controls/ControlLookup';
+import controlProfiles from '../../../data/controlProfiles.json';
 
 export interface ControlLinkProps {
   linkedEntityId: string;
@@ -27,7 +27,13 @@ export interface ControlLinkProps {
 const ControlLinkComponent: FC<ControlLinkProps> = ({
   linkedEntityId,
 }) => {
-  const { controlList, saveControl } = useControlsContext();
+
+  const controlList = useMemo(() => {
+    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
+    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
+    return cccs_medium_profile.controls as Control[];
+  }, []);
+
   const [controlLinks, setControlLinks] = useState<ControlLink[]>([]);
 
   const { getLinkedControlLinks } = useControlLinksContext();
@@ -48,20 +54,10 @@ const ControlLinkComponent: FC<ControlLinkProps> = ({
         linkedId: linkedEntityId,
         controlId: controlIdOrNewControl,
       });
-    } else {
-      const newControl = saveControl({
-        numericId: -1,
-        content: controlIdOrNewControl,
-        id: 'new',
-      });
-      addControlLink({
-        linkedId: linkedEntityId,
-        controlId: newControl.id,
-      });
     }
-  }, [linkedEntityId, controlList, addControlLink, saveControl]);
+  }, [linkedEntityId, controlList, addControlLink]);
 
-  return (<ControlLinkView
+  return (<ControlLookupComponent
     controlList={controlList}
     linkedControlIds={controlLinks.map(ml => ml.controlId)}
     onAddControlLink={handleAddControlLink}

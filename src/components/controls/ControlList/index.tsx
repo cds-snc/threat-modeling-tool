@@ -21,13 +21,16 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { useAssumptionLinksContext, useControlLinksContext } from '../../../contexts';
+import { useMitigationLinksContext, useControlLinksContext } from '../../../contexts';
 import { useControlsContext } from '../../../contexts/ControlsContext/context';
-import { AssumptionLink, Control, ControlLink } from '../../../customTypes';
+import { MitigationLink, Control, ControlLink } from '../../../customTypes';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
+import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
+import { LEVEL_NOT_SET } from '../../../configs';
 import ControlCard from '../ControlCard';
 import ControlCreationCard from '../ControlCreationCard';
+import { Multiselect } from '@cloudscape-design/components';
 
 const ControlList: FC = () => {
   const {
@@ -43,10 +46,10 @@ const ControlList: FC = () => {
   } = useControlLinksContext();
 
   const {
-    addAssumptionLinks,
-    assumptionLinkList,
-    removeAssumptionLinksByLinkedEntityId,
-  } = useAssumptionLinksContext();
+    addMitigationLinks,
+    mitigationLinkList,
+    removeMitigationLinksByLinkedEntityId,
+  } = useMitigationLinksContext();
 
   const [filteringText, setFilteringText] = useState('');
 
@@ -55,34 +58,45 @@ const ControlList: FC = () => {
     setSelectedTags,
   ] = useState<string[]>([]);
 
+  const STRIDE_OPTION_NO_VALUE = {
+    label: 'STRIDE Not Set', value: LEVEL_NOT_SET,
+  };
+
+  const STRIDEOptionsWithNoValue = [...STRIDEOptions, STRIDE_OPTION_NO_VALUE];
+
+  const [
+    selectedSTRIDEs,
+    setSelectedSTRIDEs,
+  ] = useState<string[]>([]);
+
   const [
     selectedLinkedThreatsFilter,
     setSelectedLinkedThreatsFilter,
   ] = useState(ALL);
 
   const [
-    selectedLinkedAssumptionsFilter,
-    setSelectedLinkedAssumptionsFilter,
+    selectedLinkedMitigationsFilter,
+    setSelectedLinkedMitigationsFilter,
   ] = useState(ALL);
 
   const handleRemove = useCallback(async (controlId: string) => {
     removeControl(controlId);
-    await removeAssumptionLinksByLinkedEntityId(controlId);
+    await removeMitigationLinksByLinkedEntityId(controlId);
     await removeControlLinksByControlId(controlId);
-  }, [removeAssumptionLinksByLinkedEntityId, removeControl, removeControlLinksByControlId]);
+  }, [removeMitigationLinksByLinkedEntityId, removeControl, removeControlLinksByControlId]);
 
   const hasNoFilter = useMemo(() => {
     return (filteringText === ''
-      && selectedLinkedAssumptionsFilter === ALL
+      && selectedLinkedMitigationsFilter === ALL
       && selectedLinkedThreatsFilter === ALL
       && selectedTags.length === 0);
   }, [filteringText, selectedTags,
-    selectedLinkedThreatsFilter, selectedLinkedAssumptionsFilter]);
+    selectedLinkedThreatsFilter, selectedLinkedMitigationsFilter]);
 
   const handleClearFilter = useCallback(() => {
     setFilteringText('');
     setSelectedTags([]);
-    setSelectedLinkedAssumptionsFilter(ALL);
+    setSelectedLinkedMitigationsFilter(ALL);
     setSelectedLinkedThreatsFilter(ALL);
   }, []);
 
@@ -93,21 +107,21 @@ const ControlList: FC = () => {
       }, []);
   }, [controlList]);
 
-  const handleAddTagToEntity = useCallback((assumption: Control, tag: string) => {
+  const handleAddTagToEntity = useCallback((control: Control, tag: string) => {
     const updated: Control = {
-      ...assumption,
-      tags: assumption.tags ?
-        (!assumption.tags.includes(tag) ?
-          [...assumption.tags, tag] : assumption.tags) :
+      ...control,
+      tags: control.tags ?
+        (!control.tags.includes(tag) ?
+          [...control.tags, tag] : control.tags) :
         [tag],
     };
     saveControl(updated);
   }, [saveControl]);
 
-  const handleRemoveTagFromEntity = useCallback((assumption: Control, tag: string) => {
+  const handleRemoveTagFromEntity = useCallback((control: Control, tag: string) => {
     const updated: Control = {
-      ...assumption,
-      tags: assumption.tags?.filter(t => t !== tag),
+      ...control,
+      tags: control.tags?.filter(t => t !== tag),
     };
     saveControl(updated);
   }, [saveControl]);
@@ -121,7 +135,20 @@ const ControlList: FC = () => {
 
     if (selectedTags && selectedTags.length > 0) {
       output = output.filter(st => {
+        console.log('tag', st.tags, st.tags?.some(t => selectedTags.includes(t)));
         return st.tags?.some(t => selectedTags.includes(t));
+      });
+    }
+
+    if (selectedSTRIDEs && selectedSTRIDEs.length > 0) {
+      output = output.filter(st => {
+        const stride = st.metadata?.find(m => m.key === 'STRIDE');
+        const includedNoValue = selectedSTRIDEs.includes(LEVEL_NOT_SET);
+        if (includedNoValue && (!stride || !stride.value || stride.value.length === 0 || (stride.value.length === 1 && stride.value[0]===''))) {
+          return true;
+        }
+
+        return stride?.value && (stride.value as string[]).some(t => selectedSTRIDEs.includes(t));
       });
     }
 
@@ -133,23 +160,22 @@ const ControlList: FC = () => {
       });
     }
 
-    if (selectedLinkedAssumptionsFilter !== ALL) {
+    if (selectedLinkedMitigationsFilter !== ALL) {
       output = output.filter(st => {
-        return assumptionLinkList.some(al => al.linkedId === st.id) ?
-          selectedLinkedAssumptionsFilter === WITH_LINKED_ENTITY :
-          selectedLinkedAssumptionsFilter === WITHOUT_NO_LINKED_ENTITY;
+        return mitigationLinkList.some(al => al.linkedId === st.id) ?
+          selectedLinkedMitigationsFilter === WITH_LINKED_ENTITY :
+          selectedLinkedMitigationsFilter === WITHOUT_NO_LINKED_ENTITY;
       });
     }
 
     output = output.sort((op1, op2) => (op2.displayOrder || Number.MAX_VALUE) - (op1.displayOrder || Number.MAX_VALUE));
-
     return output;
-  }, [filteringText, controlList, selectedTags,
-    assumptionLinkList, controlLinkList,
-    selectedLinkedAssumptionsFilter, selectedLinkedThreatsFilter]);
+  }, [filteringText, controlList, selectedTags, selectedSTRIDEs,
+    mitigationLinkList, controlLinkList,
+    selectedLinkedMitigationsFilter, selectedLinkedThreatsFilter]);
 
   const handleSaveNew = useCallback((control: Control,
-    linkedAssumptionIds: string[],
+    linkedMitigationIds: string[],
     linkedThreatIds: string[]) => {
     const updated = saveControl(control);
 
@@ -163,18 +189,17 @@ const ControlList: FC = () => {
 
     addControlLinks(controlLinks);
 
-    const assumptionLinks: AssumptionLink[] = [];
-    linkedAssumptionIds.forEach(id => {
-      assumptionLinks.push({
+    const mitigationLinks: MitigationLink[] = [];
+    linkedMitigationIds.forEach(id => {
+      mitigationLinks.push({
         linkedId: updated.id,
-        assumptionId: id,
-        type: 'Control',
+        mitigationId: id,
       });
     });
 
-    addAssumptionLinks(assumptionLinks);
+    addMitigationLinks(mitigationLinks);
 
-  }, [saveControl, addControlLinks, addAssumptionLinks]);
+  }, [saveControl, addControlLinks, addMitigationLinks]);
 
   return (<div>
     <SpaceBetween direction='vertical' size='s'>
@@ -194,9 +219,10 @@ const ControlList: FC = () => {
           />
           <Grid
             gridDefinition={[
+              { colspan: { default: 12, xs: 2 } },
               { colspan: { default: 12, xs: 3 } },
-              { colspan: { default: 12, xs: 4 } },
-              { colspan: { default: 12, xs: 4 } },
+              { colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 1 } },
             ]}
           >
@@ -205,17 +231,31 @@ const ControlList: FC = () => {
               selectedTags={selectedTags}
               setSelectedTags={setSelectedTags}
             />
+            <Multiselect
+              tokenLimit={3}
+              selectedOptions={[...STRIDEOptions.filter(x => selectedSTRIDEs.includes(x.value)),
+                ...selectedSTRIDEs.includes(LEVEL_NOT_SET) ? [STRIDE_OPTION_NO_VALUE] : []]}
+              onChange={({ detail }) =>
+                setSelectedSTRIDEs(detail.selectedOptions?.map(o => o.value || '') || [])
+              }
+              deselectAriaLabel={e => `Remove ${e.label}`}
+              options={STRIDEOptionsWithNoValue}
+              placeholder="Filtered by STRIDE"
+              selectedAriaLabel="Selected"
+            />
             <LinkedEntityFilter
               label='Linked threats'
               entityDisplayName='threats'
+              callerName='controls'
               selected={selectedLinkedThreatsFilter}
               setSelected={setSelectedLinkedThreatsFilter}
             />
             <LinkedEntityFilter
-              label='Linked assumptions'
-              entityDisplayName='assumptions'
-              selected={selectedLinkedAssumptionsFilter}
-              setSelected={setSelectedLinkedAssumptionsFilter}
+              label='Linked mitigations'
+              entityDisplayName='mitigations'
+              callerName='controls'
+              selected={selectedLinkedMitigationsFilter}
+              setSelected={setSelectedLinkedMitigationsFilter}
             />
             <Button onClick={handleClearFilter}
               variant='icon'

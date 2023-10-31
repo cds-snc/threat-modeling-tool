@@ -24,6 +24,8 @@ import { useDataflowInfoContext } from '../../contexts/DataflowContext/context';
 import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext/context';
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../contexts/MitigationsContext/context';
+import { useControlLinksContext } from '../../contexts/ControlLinksContext/context';
+import { useControlsContext } from '../../contexts/ControlsContext/context';
 import { useThreatsContext } from '../../contexts/ThreatsContext/context';
 import { DataExchangeFormat, TemplateThreatStatement } from '../../customTypes';
 import downloadObjectAsJson from '../../utils/downloadObjectAsJson';
@@ -41,9 +43,11 @@ const useImportExport = () => {
   const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
   const { assumptionList, setAssumptionList } = useAssumptionsContext();
   const { mitigationList, setMitigationList } = useMitigationsContext();
+  const { controlList, setControlList } = useControlsContext();
   const { statementList, setStatementList } = useThreatsContext();
   const { assumptionLinkList, setAssumptionLinkList } = useAssumptionLinksContext();
   const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
+  const { controlLinkList, setControlLinkList } = useControlLinksContext();
 
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
     if (composerMode === 'Full') {
@@ -54,8 +58,10 @@ const useImportExport = () => {
         dataflow: dataflowInfo,
         assumptions: assumptionList,
         mitigations: mitigationList,
+        controls: controlList,
         assumptionLinks: assumptionLinkList,
         mitigationLinks: mitigationLinkList,
+        controlLinks: controlLinkList,
         threats: statementList,
       };
     }
@@ -66,8 +72,8 @@ const useImportExport = () => {
     };
   }, [composerMode, applicationInfo,
     architectureInfo, dataflowInfo,
-    assumptionList, mitigationList,
-    assumptionLinkList, mitigationLinkList,
+    assumptionList, mitigationList, controlList,
+    assumptionLinkList, mitigationLinkList, controlLinkList,
     statementList]);
 
   const exportAll = useCallback(() => {
@@ -118,9 +124,11 @@ const useImportExport = () => {
       setDataflowInfo(data.dataflow || {});
       setAssumptionList(data.assumptions || []);
       setMitigationList(data.mitigations || []);
+      setControlList(data.controls || []);
       setStatementList(data.threats || []);
       setAssumptionLinkList(data.assumptionLinks || []);
       setMitigationLinkList(data.mitigationLinks || []);
+      setControlLinkList(data.controlLinks || []);
     } else {
       // Support ListOnly mode
       setStatementList(data.threats || []);
@@ -131,9 +139,11 @@ const useImportExport = () => {
     setDataflowInfo,
     setAssumptionList,
     setMitigationList,
+    setControlList,
     setStatementList,
     setAssumptionLinkList,
     setMitigationLinkList,
+    setControlLinkList,
   ]);
 
   return {

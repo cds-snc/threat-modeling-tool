@@ -30,10 +30,9 @@ import { useGlobalSetupContext } from '../../../contexts/GlobalSetupContext/cont
 import { useMitigationLinksContext } from '../../../contexts/MitigationLinksContext/context';
 import { useMitigationsContext } from '../../../contexts/MitigationsContext/context';
 import { useControlLinksContext } from '../../../contexts/ControlLinksContext/context';
-import { useControlsContext } from '../../../contexts/ControlsContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
-import { TemplateThreatStatement } from '../../../customTypes';
+import { TemplateThreatStatement, Control, ControlProfile } from '../../../customTypes';
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
@@ -45,7 +44,6 @@ import scrollToTop from '../../../utils/scrollToTop';
 import AssumptionLinkComponent from '../../assumptions/AssumptionLinkView';
 import Tooltip from '../../generic/Tooltip';
 import MitigationLinkComponent from '../../mitigations/MitigationLinkView';
-import ControlLinkComponent from '../../controls/ControlLinkView';
 import CustomTemplate from '../CustomTemplate';
 import EditorImpactedAssets from '../EditorImpactedAssets';
 import EditorImpactedGoal from '../EditorImpactedGoal';
@@ -59,6 +57,8 @@ import FullExamples from '../FullExamples';
 import Header from '../Header';
 import MetadataEditor from '../MetadataEditor';
 import Metrics from '../Metrics';
+import ControlLookupComponent from '../../controls/ControlLookup';
+import controlProfiles from '../../../data/controlProfiles.json';
 
 const styles = {
   finalStatementSection: css({
@@ -123,7 +123,11 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   const { assumptionList, saveAssumption } = useAssumptionsContext();
   const { mitigationList, saveMitigation } = useMitigationsContext();
-  const { controlList, saveControl } = useControlsContext();
+  const controlList = useMemo(() => {
+    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
+    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
+    return cccs_medium_profile.controls as Control[];
+  }, []);
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
@@ -338,16 +342,9 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
   const handleAddControlLink = useCallback((controlIdOrNewControl: string) => {
     if (controlList.find(a => a.id === controlIdOrNewControl)) {
       setLinkedControlIds(prev => [...prev, controlIdOrNewControl]);
-    } else {
-      const newControl = saveControl({
-        id: 'new',
-        numericId: -1,
-        content: controlIdOrNewControl,
-      });
-      setLinkedControlIds(prev => [...prev, newControl.id]);
     }
 
-  }, [setLinkedControlIds, controlList, saveControl]);
+  }, [setLinkedControlIds, controlList]);
 
   const handleEditMetadata = useEditMetadata(setEditingStatement);
 
@@ -391,7 +388,7 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
             <Metrics statement={editingStatement} onClick={(token) => setEditor(token as ThreatFieldTypes)} />
           </Grid>
           {composerMode === 'Full' && <div css={styles.metadataContainer}>
-            <ControlLinkComponent
+            <ControlLookupComponent
               variant='container'
               linkedControlIds={linkedControlIds}
               controlList={controlList}

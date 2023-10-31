@@ -25,6 +25,7 @@ export const OPTIONS = [
   { label: 'Information disclosure', value: 'I' },
   { label: 'Denial of service', value: 'D' },
   { label: 'Elevation of privilege', value: 'E' },
+  { label: 'Lateral movement', value: 'LM' },
 ];
 
 export interface STRIDESelectorProps {

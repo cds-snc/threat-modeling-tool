@@ -27,13 +27,14 @@ export const getAssumptionsContent = async (
 
   rows.push('\n');
 
-  rows.push('| Assumption Number | Assumption | Linked Threats | Linked Mitigations | Comments |');
-  rows.push('| --- | --- | --- | --- | --- |');
+  rows.push('| Assumption Number | Assumption | Linked Threats | Linked Controls | Linked Mitigations | Comments |');
+  rows.push('| --- | --- | --- | --- | --- | --- |');
 
   if (data.assumptions) {
     const promises = data.assumptions?.map(async (x) => {
       const threatLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Threat') || [];
       const mitigationLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Mitigation') || [];
+      const controlLinks = data.assumptionLinks?.filter(al => al.assumptionId === x.id && al.type === 'Control') || [];
 
       const threatsContent = threatLinks.map(tl => {
         const threat = data.threats?.find(s => s.id === tl.linkedId);
@@ -53,9 +54,18 @@ export const getAssumptionsContent = async (
         return null;
       }).filter(t => !!t).join('<br/>');
 
+      const controlsContent = controlLinks.map(cl => {
+        const control = data.controls?.find(c => c.id === cl.linkedId);
+        if (control) {
+          const controlId = `C-${standardizeNumericId(control.numericId)}`;
+          return `[**${controlId}**](#${controlId}): ${escapeMarkdown(control.content)}`;
+        }
+        return null;
+      }).filter(c => !!c).join('<br/>');
+
       const assumptionId = `A-${standardizeNumericId(x.numericId)}`;
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-      return `| <a name="${assumptionId}"></a>${assumptionId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${mitigationsContent} | ${comments} |`;
+      return `| ${assumptionId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${controlsContent} | ${mitigationsContent} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

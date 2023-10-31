@@ -26,6 +26,7 @@ import { useMemo, FC, ReactNode } from 'react';
 import { LEVEL_HIGH, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_NOT_SET } from '../../../../../configs';
 import { useAssumptionLinksContext } from '../../../../../contexts';
 import { useMitigationLinksContext } from '../../../../../contexts/MitigationLinksContext';
+import { useControlLinksContext } from '../../../../../contexts/ControlLinksContext';
 import { useThreatsContext } from '../../../../../contexts/ThreatsContext';
 import filterThreatsByMetadata from '../../../../../utils/filterThreatsByMetadata';
 import useLinkClicked from '../../hooks/useLinkClicked';
@@ -87,6 +88,7 @@ const Overview: FC = () => {
   const { statementList } = useThreatsContext();
   const { mitigationLinkList } = useMitigationLinksContext();
   const { assumptionLinkList } = useAssumptionLinksContext();
+  const { controlLinkList } = useControlLinksContext();
 
   const missingMitigationOrAssumption = useMemo(() => {
     return statementList.filter(
@@ -103,6 +105,12 @@ const Overview: FC = () => {
       (s) => !mitigationLinkList.find((ml) => ml.linkedId === s.id),
     ).length;
   }, [statementList, mitigationLinkList]);
+
+  const missingControl = useMemo(() => {
+    return statementList.filter(
+      (s) => !controlLinkList.find((ml) => ml.linkedId === s.id),
+    ).length;
+  }, [statementList, controlLinkList]);
 
   const missingPriority = useMemo(() => {
     return filterThreatsByMetadata(statementList, 'Priority').length;
@@ -122,7 +130,7 @@ const Overview: FC = () => {
   }, [statementList]);
 
   return (
-    <ColumnLayout columns={7} variant="text-grid" minColumnWidth={100}>
+    <ColumnLayout columns={8} variant="text-grid" minColumnWidth={100}>
       <LabelValuePair label='Total' value={statementList.length} onLinkFollow={handleLinkClicked()} />
       <LabelValuePair label='No mitigation and assumption'
         showWarning
@@ -130,6 +138,12 @@ const Overview: FC = () => {
         onLinkFollow={handleLinkClicked({
           linkedMitigations: false,
           linkedAssumptions: false,
+        })} />
+      <LabelValuePair label='No security controls'
+        showWarning
+        value={missingControl}
+        onLinkFollow={handleLinkClicked({
+          linkedControls: false,
         })} />
       <LabelValuePair label='No mitigation'
         showWarning

@@ -28,13 +28,14 @@ export const getThreatsContent = async (
 
   rows.push('\n');
 
-  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Mitigations | Assumptions |'} Priority | STRIDE | Comments |`);
-  rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- |'} --- | --- | --- |`);
+  rows.push(`| Threat Number | Threat | ${threatsOnly ? '' : 'Security Controls | Mitigations | Assumptions |'} Priority | STRIDE | Comments |`);
+  rows.push(`| --- | --- | ${threatsOnly ? '' : '--- | --- | --- |'} --- | --- | --- |`);
 
   if (data.threats) {
     const promises = data.threats.map(async (x) => {
       const mitigationLinks = data.mitigationLinks?.filter(ml => ml.linkedId === x.id) || [];
       const assumpptionLinks = data.assumptionLinks?.filter(al => al.linkedId === x.id) || [];
+      const controlLinks = data.controlLinks?.filter(cl => cl.linkedId === x.id) || [];
       const threatId = `T-${standardizeNumericId(x.numericId)}`;
       const assumptionsContent = assumpptionLinks.map(al => {
         const assumption = data.assumptions?.find(a => a.id === al.assumptionId);
@@ -44,6 +45,7 @@ export const getThreatsContent = async (
         }
         return null;
       }).filter(al => !!al).join('<br/>');
+
       const mitigationsContent = mitigationLinks.map(ml => {
         const mitigation = data.mitigations?.find(m => m.id === ml.mitigationId);
         if (mitigation) {
@@ -52,10 +54,20 @@ export const getThreatsContent = async (
         }
         return null;
       }).filter(ml => !!ml).join('<br/>');
+
+      const controlsContent = controlLinks.map(ml => {
+        const control = data.controls?.find(m => m.id === ml.controlId);
+        if (control) {
+          const controlId = `C-${standardizeNumericId(control.numericId)}`;
+          return `[**${controlId}**](#${controlId}): ${escapeMarkdown(control.content)}`;
+        }
+        return null;
+      }).filter(cl => !!cl).join('<br/>');
+
       const priority = x.metadata?.find(m => m.key === 'Priority')?.value || '';
       const STRIDE = ((x.metadata?.find(m => m.key === 'STRIDE')?.value || []) as string[]).join(', ');
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
-      return `| <a name="${threatId}"></a>${threatId} | ${escapeMarkdown(x.statement || '')} | ${threatsOnly ? '' : `${mitigationsContent} | ${assumptionsContent} | `} ${priority} | ${STRIDE} | ${comments} |`;
+      return `| ${threatId} | ${escapeMarkdown(x.statement || '')} | ${threatsOnly ? '' : `${controlsContent} | ${mitigationsContent} | ${assumptionsContent} | `} ${priority} | ${STRIDE} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

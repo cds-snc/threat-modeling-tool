@@ -26,6 +26,7 @@ const replacements = [
   [/>/g, '&gt;', 'angle brackets'],
   [/_/g, '\\_', 'underscores'],
   [/`/g, '\\`', 'codeblocks'],
+  [/\|/g, '\\|', 'pipes'],
 ];
 
 const escapeMarkdown = (input: string, skips: string[] = []) => {

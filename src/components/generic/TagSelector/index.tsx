@@ -35,7 +35,6 @@ const TagSelector: FC<TagSelectorProps> = ({
   }, [allTags]);
 
   return (<Multiselect
-    tokenLimit={0}
     selectedOptions={selectedTags.map(ia => ({
       label: ia,
       value: ia,
@@ -51,6 +50,7 @@ const TagSelector: FC<TagSelectorProps> = ({
     filteringType="auto"
     placeholder="Filtered by tags"
     selectedAriaLabel="Selected"
+    tokenLimit={3}
   />);
 };
 
