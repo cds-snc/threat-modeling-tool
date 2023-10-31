@@ -22,9 +22,11 @@ import { useDataflowInfoContext } from '../../contexts/DataflowContext';
 import { useDiagramInfoContext } from '../../contexts/DiagramContext';
 import { useMitigationsContext } from '../../contexts/MitigationsContext';
 import { useControlsContext } from '../../contexts/ControlsContext';
+import { useControlProfilesContext } from '../../contexts/ControlProfilesContext';
 import { useThreatsContext } from '../../contexts/ThreatsContext';
 import { HasContentDetails } from '../../customTypes';
-import { hasApplicationName, hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDiagramInfo, hasDataflowInfo, hasMitigations, hasControls, hasThreats } from '../../utils/hasContent';
+import { hasApplicationName, hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDiagramInfo, hasDataflowInfo, hasMitigations, hasControls, hasControlProfiles, hasThreats } from '../../utils/hasContent';
+
 
 const useHasContent = () => {
   const { applicationInfo } = useApplicationInfoContext();
@@ -33,6 +35,7 @@ const useHasContent = () => {
   const { dataflowInfo } = useDataflowInfoContext();
   const { assumptionList } = useAssumptionsContext();
   const { controlList } = useControlsContext();
+  const { controlProfileList } = useControlProfilesContext();
   const { mitigationList } = useMitigationsContext();
   const { statementList } = useThreatsContext();
 
@@ -45,6 +48,7 @@ const useHasContent = () => {
       dataflow: hasDataflowInfo(dataflowInfo),
       assumptions: hasAssumptions(assumptionList),
       controls: hasControls(controlList),
+      controlProfiles: hasControlProfiles(controlProfileList),
       mitigations: hasMitigations(mitigationList),
       threats: hasThreats(statementList),
     };
@@ -52,7 +56,7 @@ const useHasContent = () => {
     const sum = Object.values(details).some(x => x);
 
     return [sum, details];
-  }, [applicationInfo, architectureInfo, dataflowInfo, assumptionList, mitigationList, controlList, statementList, diagramInfo]);
+  }, [applicationInfo, architectureInfo, dataflowInfo, assumptionList, mitigationList, controlList, controlProfileList, statementList, diagramInfo]);
 
   return hasContent;
 };

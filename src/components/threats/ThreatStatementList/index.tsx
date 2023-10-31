@@ -400,7 +400,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
             gridDefinition={gridDefinition}
           >
             <Multiselect
-              tokenLimit={0}
+              tokenLimit={2}
               selectedOptions={selectedPriorities.map(ia => ({
                 label: ia,
                 value: ia,
@@ -431,7 +431,7 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
               setSelectedAssets={setSelectedImpactedAssets}
             />
             <Multiselect
-              tokenLimit={0}
+              tokenLimit={2}
               selectedOptions={selectedImpactedGoal.map(ig => ({
                 label: ig,
                 value: ig,
@@ -455,18 +455,21 @@ const ThreatStatementList: FC<ThreatStatementListProps> = ({
             {composerMode === 'Full' && <LinkedEntityFilter
               label='Linked controls'
               entityDisplayName='controls'
+              callerName='threats'
               selected={selectedLinkedControlFilter}
               setSelected={setSelectedLinkedControlFilter}
             />}
             {composerMode === 'Full' && <LinkedEntityFilter
               label='Linked mitigations'
               entityDisplayName='mitigations'
+              callerName='threats'
               selected={selectedLinkedMitigationFilter}
               setSelected={setSelectedLinkedMitigationFilter}
             />}
             {composerMode === 'Full' && <LinkedEntityFilter
               label='Linked assumptions'
               entityDisplayName='assumptions'
+              callerName='threats'
               selected={selectedLinkedAssumptionFilter}
               setSelected={setSelectedLinkedAssumptionFilter}
             />}

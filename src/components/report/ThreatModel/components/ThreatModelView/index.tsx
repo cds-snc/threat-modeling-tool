@@ -111,25 +111,25 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
   const getNextStepButtons = useCallback(() => {
     const buttons: ReactNode[] = [];
     if (!hasContentDetails?.applicationInfo) {
-      buttons.push(<Button onClick={props.onApplicationInfoView}>Add Application Info</Button>);
+      buttons.push(<Button key='appInfoBtn' onClick={props.onApplicationInfoView}>Add Application Info</Button>);
     }
     if (!hasContentDetails?.architecture) {
-      buttons.push(<Button onClick={props.onArchitectureView}>Add Architecture</Button>);
+      buttons.push(<Button key='architectureViewBtn' onClick={props.onArchitectureView}>Add Architecture</Button>);
     }
     if (!hasContentDetails?.diagram) {
-      buttons.push(<Button onClick={props.onDiagramView}>Add Diagram</Button>);
+      buttons.push(<Button key='diagramViewBtn' onClick={props.onDiagramView}>Add Diagram</Button>);
     }
     if (!hasContentDetails?.assumptions) {
-      buttons.push(<Button onClick={props.onAssumptionListView}>Add Assumptions</Button>);
+      buttons.push(<Button key='assumptionsViewBtn' onClick={props.onAssumptionListView}>Add Assumptions</Button>);
     }
     if (!hasContentDetails?.threats) {
-      buttons.push(<Button onClick={() => props.onThreatListView?.()}>Add Threats</Button>);
+      buttons.push(<Button key='threatListViewBtn' onClick={() => props.onThreatListView?.()}>Add Threats</Button>);
     }
     if (!hasContentDetails?.controls) {
-      buttons.push(<Button onClick={props.onControlListView}>Add Security Controls</Button>);
+      buttons.push(<Button key='controlsViewBtn' onClick={props.onControlListView}>Add Security Controls</Button>);
     }
     if (!hasContentDetails?.threats) {
-      buttons.push(<Button onClick={props.onMitigationListView}>Add Mitigations</Button>);
+      buttons.push(<Button key='mitigationsViewBtn' onClick={props.onMitigationListView}>Add Mitigations</Button>);
     }
     const len = buttons.length;
     return buttons.flatMap((b, index) => index === len - 1 ? <Box>{b}</Box> : [b, <Box fontWeight="bold" css={styles.text}>or</Box>]);
@@ -152,27 +152,29 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
               }
             >
               <Button
+                key='handleCopyMarkdownBtn'
                 onClick={handleCopyMarkdown}>
                 Copy as Markdown
               </Button>
             </Popover>
             {downloadFileName && <Button
+              key='handleDownloadMarkdownBtn'
               onClick={handleDownloadMarkdown}>
               Download as Markdown File
             </Button>}
-            <Button variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>
+            <Button key='onPrintButtonClickBtn' variant="primary" onClick={onPrintButtonClick || (() => window.print())}>Print</Button>
           </SpaceBetween>
         }
       >
       </Header></div>
       {content ?
         (<MarkdownViewer allowHtml>{content}</MarkdownViewer>) :
-        (<Box fontSize='body-m' margin='xxl' fontWeight="bold" css={styles.noData}>{loading ? <Spinner /> : 'No data available'}</Box>)
+        (<Box key='boxNoDataAvailable' fontSize='body-m' margin='xxl' fontWeight="bold" css={styles.noData}>{loading ? <Spinner /> : 'No data available'}</Box>)
       }
       {!isPreview && composerMode === 'Full' && hasContentDetails && Object.values(hasContentDetails).some(x => !x) && <div css={printStyles.hiddenPrint}>
         <Box css={styles.nextStepsContainer}>
           <SpaceBetween direction="horizontal" size="xs">
-            <Box fontWeight="bold" css={styles.text}>Suggested next steps: </Box>
+            <Box key='boxSuggestedSteps' fontWeight="bold" css={styles.text}>Suggested next steps: </Box>
             {getNextStepButtons()}
           </SpaceBetween>
         </Box>

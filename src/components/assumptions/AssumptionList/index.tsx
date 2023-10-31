@@ -193,6 +193,7 @@ const AssumptionList: FC = () => {
               { colspan: { default: 12, xs: 2 } },
               { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 12, xs: 3 } },
+              { colspan: { default: 12, xs: 3 } },
               { colspan: { default: 1 } },
             ]}
           >
@@ -204,18 +205,21 @@ const AssumptionList: FC = () => {
             <LinkedEntityFilter
               label='Linked threats'
               entityDisplayName='threats'
+              callerName='assumptions'
               selected={selectedLinkedThreatsFilter}
               setSelected={setSelectedLinkedThreatsFilter}
             />
             <LinkedEntityFilter
               label='Linked controls'
               entityDisplayName='controls'
+              callerName='assumptions'
               selected={selectedLinkedControlFilter}
               setSelected={setSelectedLinkedControlFilter}
             />
             <LinkedEntityFilter
               label='Linked mitigations'
               entityDisplayName='mitigations'
+              callerName='assumptions'
               selected={selectedLinkedMitigationFilter}
               setSelected={setSelectedLinkedMitigationFilter}
             />

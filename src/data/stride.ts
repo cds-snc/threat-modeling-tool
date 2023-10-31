@@ -49,6 +49,12 @@ const STRIDE = [{
   value: 'E',
   violates: 'Authorization',
   description: 'Performing actions on protected resources that you should not be allowed to perform',
+},
+{
+  label: 'Lateral Movement',
+  value: 'LM',
+  violates: '',
+  description: 'Expanding control over the target network beyond the initial point of compromise',
 }];
 
 export default STRIDE;

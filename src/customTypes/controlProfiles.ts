@@ -14,19 +14,12 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-export * from './assumptions';
-export * from './mitigations';
-export * from './controls';
-export * from './controlProfiles';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './diagram';
-export * from './dataExchange';
-export * from './events';
-export * from './components';
+import { z } from 'zod';
+import { ControlSchema } from './controls';
+
+export const ControlProfileSchema = z.object({
+  schema: z.string(),
+  controls: ControlSchema.array().optional(),
+}).strict();
+
+export type ControlProfile = z.infer<typeof ControlProfileSchema>;

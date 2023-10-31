@@ -27,6 +27,7 @@ import MitigationLinksContextProvider from '../MitigationLinksContext';
 import MitigationsContextProvider from '../MitigationsContext';
 import ControlLinksContextProvider from '../ControlLinksContext';
 import ControlsContextProvider from '../ControlsContext';
+import ControlProfilesContextProvider from '../ControlProfilesContext';
 import ThreatsContextProvider from '../ThreatsContext';
 
 export interface WorkspaceContextAggregatorProps extends ViewNavigationEvent {
@@ -46,24 +47,22 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
 }) => {
   return (
     <ExampleContextProvider>
-      <ThreatsContextProvider
-        workspaceId={workspaceId || null}
-        onThreatEditorView={onThreatEditorView}
-        onThreatListView={onThreatListView}
-      >
+      <ThreatsContextProvider workspaceId={workspaceId || null} onThreatEditorView={onThreatEditorView} onThreatListView={onThreatListView}>
         <MitigationsContextProvider workspaceId={workspaceId}>
           <AssumptionsContextProvider workspaceId={workspaceId}>
             <ControlsContextProvider workspaceId={workspaceId}>
               <MitigationLinksContextProvider workspaceId={workspaceId}>
                 <AssumptionLinksContextProvider workspaceId={workspaceId}>
                   <ControlLinksContextProvider workspaceId={workspaceId}>
-                    <ApplicationInfoContextProvider workspaceId={workspaceId}>
-                      <ArchitectureInfoContextProvider workspaceId={workspaceId}>
-                        <DataflowInfoContextProvider workspaceId={workspaceId}>
-                          {children}
-                        </DataflowInfoContextProvider>
-                      </ArchitectureInfoContextProvider>
-                    </ApplicationInfoContextProvider>
+                    <ControlProfilesContextProvider workspaceId={workspaceId}>
+                      <ApplicationInfoContextProvider workspaceId={workspaceId}>
+                        <ArchitectureInfoContextProvider workspaceId={workspaceId}>
+                          <DataflowInfoContextProvider workspaceId={workspaceId}>
+                            {children}
+                          </DataflowInfoContextProvider>
+                        </ArchitectureInfoContextProvider>
+                      </ApplicationInfoContextProvider>
+                    </ControlProfilesContextProvider>
                   </ControlLinksContextProvider>
                 </AssumptionLinksContextProvider>
               </MitigationLinksContextProvider>

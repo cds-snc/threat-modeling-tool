@@ -14,19 +14,7 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-export * from './assumptions';
-export * from './mitigations';
-export * from './controls';
-export * from './controlProfiles';
-export * from './threats';
-export * from './threatFieldTypes';
-export * from './workspaces';
-export * from './entities';
-export * from './composerMode';
-export * from './application';
-export * from './architecture';
-export * from './dataflow';
-export * from './diagram';
-export * from './dataExchange';
-export * from './events';
-export * from './components';
+import { ContextProviderBaseProps } from '../types';
+
+export interface ControlProfilesContextProviderProps extends ContextProviderBaseProps {
+}

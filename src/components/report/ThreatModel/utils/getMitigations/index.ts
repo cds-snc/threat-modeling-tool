@@ -56,7 +56,7 @@ export const getMitigationsContent = async (
       const comments = await parseTableCellContent((x.metadata?.find(m => m.key === 'Comments')?.value as string) || '');
 
       const mitigationId = `M-${standardizeNumericId(x.numericId)}`;
-      return `| <a name="${mitigationId}"></a>${mitigationId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${comments} |`;
+      return `| ${mitigationId} | ${escapeMarkdown(x.content)} | ${threatsContent} | ${assumptionsContent} | ${comments} |`;
     });
 
     rows.push(...(await Promise.all(promises)));

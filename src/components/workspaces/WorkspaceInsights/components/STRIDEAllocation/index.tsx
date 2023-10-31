@@ -74,6 +74,10 @@ const STRIDEAllocation = () => {
     () => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'E').length,
     [filteredStatementList],
   );
+  const countLateralMovement = useMemo(
+    () => filterThreatsByMetadata(filteredStatementList, 'STRIDE', 'LM').length,
+    [filteredStatementList],
+  );
 
   const handleLinkClicked = useLinkClicked();
 
@@ -107,6 +111,11 @@ const STRIDEAllocation = () => {
       title: 'Elevation of Privilege',
       type: 'bar',
       data: [{ x: 'Elevation of Privilege', y: countElevationOfPrivilege }],
+    },
+    {
+      title: 'Lateral Movement',
+      type: 'bar',
+      data: [{ x: 'Lateral Movement', y: countLateralMovement }],
     },
   ];
 

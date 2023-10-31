@@ -181,7 +181,7 @@ const Full: FC = () => {
       {isPreview ? (
         <ThreatModelReport />
       ) : (<AppLayout
-        title='threat-composer'
+        title='Threat Modeling'
         href={defaultHref}
         navigationItems={navigationItems}
         availableRoutes={routes.map(x => x.path || '')}
