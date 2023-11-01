@@ -23,7 +23,7 @@ import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useMitigationLinksContext, useControlLinksContext } from '../../../contexts';
 import { useControlsContext } from '../../../contexts/ControlsContext/context';
-import { MitigationLink, Control, ControlLink } from '../../../customTypes';
+import { MitigationLink, Control, ControlLink, ControlProfile } from '../../../customTypes';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
@@ -31,13 +31,20 @@ import { LEVEL_NOT_SET } from '../../../configs';
 import ControlCard from '../ControlCard';
 import ControlCreationCard from '../ControlCreationCard';
 import { Multiselect } from '@cloudscape-design/components';
+import controlProfiles from '../../../data/controlProfiles.json';
 
 const ControlList: FC = () => {
   const {
-    controlList,
+    //controlList,
     removeControl,
     saveControl,
   } = useControlsContext();
+
+  const controlList = useMemo(() => {
+    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
+    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
+    return cccs_medium_profile.controls as Control[];
+  }, []);
 
   const {
     addControlLinks,
@@ -127,16 +134,30 @@ const ControlList: FC = () => {
   }, [saveControl]);
 
   const filteredList = useMemo(() => {
-    let output = controlList;
+    // display only controls that have at least one linked threat
+    let output = controlList.filter(c => {
+      return controlLinkList.some(cl => cl.controlId === c.id);
+    });
 
     if (filteringText) {
-      output = output.filter(st => st.content && st.content.toLowerCase().indexOf(filteringText.toLowerCase()) >= 0);
+      output = output.filter(c => c.content && c.content.toLowerCase().indexOf(filteringText.toLowerCase()) >= 0);
     }
 
     if (selectedTags && selectedTags.length > 0) {
-      output = output.filter(st => {
-        console.log('tag', st.tags, st.tags?.some(t => selectedTags.includes(t)));
-        return st.tags?.some(t => selectedTags.includes(t));
+      output = output.filter(c => {
+        return c.tags?.some(t => selectedTags.includes(t));
+      });
+    }
+
+    if (selectedSTRIDEs && selectedSTRIDEs.length > 0) {
+      output = output.filter(c => {
+        const stride = c.metadata?.find(m => m.key === 'STRIDE');
+        const includedNoValue = selectedSTRIDEs.includes(LEVEL_NOT_SET);
+        if (includedNoValue && (!stride || !stride.value || stride.value.length === 0 || (stride.value.length === 1 && stride.value[0]===''))) {
+          return true;
+        }
+
+        return stride?.value && (stride.value as string[]).some(t => selectedSTRIDEs.includes(t));
       });
     }
 
@@ -153,16 +174,17 @@ const ControlList: FC = () => {
     }
 
     if (selectedLinkedThreatsFilter !== ALL) {
-      output = output.filter(st => {
-        return controlLinkList.some(ml => ml. controlId === st.id) ?
+      output = output.filter(c => {
+        return controlLinkList.some(cl => cl. controlId === c.id) ?
           selectedLinkedThreatsFilter === WITH_LINKED_ENTITY :
           selectedLinkedThreatsFilter === WITHOUT_NO_LINKED_ENTITY;
       });
     }
 
     if (selectedLinkedMitigationsFilter !== ALL) {
-      output = output.filter(st => {
-        return mitigationLinkList.some(al => al.linkedId === st.id) ?
+
+      output = output.filter(c => {
+        return mitigationLinkList.some(ml => ml.linkedId === c.id) ?
           selectedLinkedMitigationsFilter === WITH_LINKED_ENTITY :
           selectedLinkedMitigationsFilter === WITHOUT_NO_LINKED_ENTITY;
       });

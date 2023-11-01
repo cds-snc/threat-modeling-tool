@@ -567,6 +567,28 @@
       "linkedId": "a0f523b0-bbc0-4e6a-9064-500af1f3836e"
     }
   ],
+  "controlLinks": [
+    {
+      "controlId": "9958E054-E8F5-40A2-AB66-402092AEB9F4",
+      "linkedId": "16c0b3de-a08f-418b-9969-9eb905ddd4e8"
+    },
+    {
+      "controlId": "84c1299c-27ba-4829-a1a1-c5368a2486a6",
+      "linkedId": "16c0b3de-a08f-418b-9969-9eb905ddd4e8"
+    },
+    {
+      "controlId": "FD165C85-5888-4BD0-A970-E8A3BBA09BD7",
+      "linkedId": "99648023-86fe-4b7d-829a-7011be545fa4"
+    },
+    {
+      "controlId": "1E82BD5D-7458-4D5F-B5EA-C68C7B6FDAD8",
+      "linkedId": "cbba3276-5ce2-47e0-bc77-aebc162c519f"
+    },
+    {
+      "controlId": "24C9A2F5-2436-4E96-8FD8-C9CE09E59F1D",
+      "linkedId": "a394f5d6-9479-40cc-ae88-b1911a269f0a"
+    }
+  ],
   "threats": [
     {
       "id": "7b49bdbd-25e9-446f-b44a-46fa2807e182",
