@@ -161,6 +161,18 @@ const ControlList: FC = () => {
       });
     }
 
+    if (selectedSTRIDEs && selectedSTRIDEs.length > 0) {
+      output = output.filter(st => {
+        const stride = st.metadata?.find(m => m.key === 'STRIDE');
+        const includedNoValue = selectedSTRIDEs.includes(LEVEL_NOT_SET);
+        if (includedNoValue && (!stride || !stride.value || stride.value.length === 0 || (stride.value.length === 1 && stride.value[0]===''))) {
+          return true;
+        }
+
+        return stride?.value && (stride.value as string[]).some(t => selectedSTRIDEs.includes(t));
+      });
+    }
+
     if (selectedLinkedThreatsFilter !== ALL) {
       output = output.filter(c => {
         return controlLinkList.some(cl => cl. controlId === c.id) ?
@@ -170,6 +182,7 @@ const ControlList: FC = () => {
     }
 
     if (selectedLinkedMitigationsFilter !== ALL) {
+
       output = output.filter(c => {
         return mitigationLinkList.some(ml => ml.linkedId === c.id) ?
           selectedLinkedMitigationsFilter === WITH_LINKED_ENTITY :
