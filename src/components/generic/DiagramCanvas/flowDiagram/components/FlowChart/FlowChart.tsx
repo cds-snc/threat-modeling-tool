@@ -21,8 +21,10 @@ import {
   IOnDragNode, IOnLinkCancel, IOnLinkClick, IOnLinkComplete, IOnLinkMouseEnter,
   IOnLinkMouseLeave, IOnLinkMove, IOnLinkStart, IOnNodeClick, IOnNodeDoubleClick, IOnNodeSizeChange, IOnLabelDoubleClick,
   IOnPortPositionChange, IPortDefaultProps,
-  IPortsDefaultProps, ISelectedOrHovered, LinkDefault, LinkWrapper, NodeDefault, NodeInnerDefault, NodeWrapper, PortDefault, PortsDefault,
+  IPortsDefaultProps, ISelectedOrHovered, LinkDefault, LinkWrapper,
+  NodeDefault, NodeInnerDefault, NodeWrapper, PortDefault, PortsDefault, IOnTrustBoundaryClick, IOnDragTrustBoundary,
 } from '../../';
+import { ITrustBoundaryDefaultProps, TrustBoundaryDefault, TrustBoundaryWrapper } from '../TrustBoundary';
 
 export interface IFlowChartCallbacks {
   onDragNode: IOnDragNode;
@@ -42,6 +44,8 @@ export interface IFlowChartCallbacks {
   onNodeDoubleClick: IOnNodeDoubleClick;
   onNodeSizeChange: IOnNodeSizeChange;
   onLabelDoubleClick: IOnLabelDoubleClick;
+  onTrustBoundaryClick: IOnTrustBoundaryClick;
+  onDragTrustBoundary: IOnDragTrustBoundary;
 };
 
 export interface IFlowChartComponents {
@@ -52,6 +56,7 @@ export interface IFlowChartComponents {
   Port?: React.FunctionComponent<IPortDefaultProps>;
   Node?: React.FunctionComponent<INodeDefaultProps>;
   Link?: React.FunctionComponent<ILinkDefaultProps>;
+  TrustBoundary?: React.FunctionComponent<ITrustBoundaryDefaultProps>;
 };
 
 export interface IFlowChartProps {
@@ -101,6 +106,8 @@ export const FlowChart = (props: IFlowChartProps) => {
       onNodeDoubleClick,
       onNodeSizeChange,
       onLabelDoubleClick,
+      onTrustBoundaryClick,
+      onDragTrustBoundary,
     },
     Components: {
       CanvasOuter = CanvasOuterDefault,
@@ -110,13 +117,15 @@ export const FlowChart = (props: IFlowChartProps) => {
       Port = PortDefault,
       Node = NodeDefault,
       Link = LinkDefault,
+      TrustBoundary = TrustBoundaryDefault,
     } = {},
     config = {},
   } = props;
-  const { links, nodes, selected, hovered, offset } = chart;
+  const { links, nodes, trustBoundaries, selected, hovered, offset } = chart;
   const canvasCallbacks = { onDragCanvas, onCanvasClick, onDeleteKey, onCanvasDrop };
   const linkCallbacks = { onLinkMouseEnter, onLinkMouseLeave, onLinkClick, onLabelDoubleClick };
   const nodeCallbacks = { onDragNode, onNodeClick, onNodeSizeChange, onNodeDoubleClick };
+  const trustBoundaryCallbacks = { onTrustBoundaryClick, onDragTrustBoundary };
   const portCallbacks = { onPortPositionChange, onLinkStart, onLinkMove, onLinkComplete, onLinkCancel };
 
   const nodesInView = Object.keys(nodes).filter((nodeId) => {
@@ -139,6 +148,15 @@ export const FlowChart = (props: IFlowChartProps) => {
       nodesInView.indexOf(from.nodeId) !== -1 ||
       nodesInView.indexOf(to.nodeId) !== -1
     );
+  });
+
+  const trustBoundariesInView = Object.keys(trustBoundaries).filter((trustBoundaryId) => {
+    const defaultTrustBoundarySize = { width: 100, height: 100 };
+    const { x, y } = trustBoundaries[trustBoundaryId].position;
+    const size = trustBoundaries[trustBoundaryId].size || defaultTrustBoundarySize;
+
+    return x + offset.x + size.width > 0 && x + offset.x < canvasSize.width &&
+      y + offset.y + size.height > 0 && y + offset.y < canvasSize.height;
   });
 
   return (
@@ -196,6 +214,21 @@ export const FlowChart = (props: IFlowChartProps) => {
             Port={Port}
             {...nodeCallbacks}
             {...portCallbacks}
+          />
+        );
+      })
+      }
+      { trustBoundariesInView.map((trustBoundaryId) => {
+        const isSelected = selected.type === 'trustBoundary' && selected.id === trustBoundaryId;
+        return (
+          <TrustBoundaryWrapper
+            config={config}
+            key={trustBoundaryId}
+            Component={TrustBoundary}
+            trustBoundary={trustBoundaries[trustBoundaryId]}
+            offset={chart.offset}
+            isSelected={isSelected}
+            {...trustBoundaryCallbacks}
           />
         );
       })

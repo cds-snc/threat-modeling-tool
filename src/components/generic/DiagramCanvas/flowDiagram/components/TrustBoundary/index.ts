@@ -13,17 +13,5 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-import { INode, IPosition } from '../../../';
-
-export const getLinkPosition = (node: INode, portId: string): IPosition => {
-  const port = node.ports[portId];
-  let nodeWidth = (!!node && !!node.size) ? node.size.width : 0;
-  let nodeHeight = (!!node && !!node.size) ? node.size.height : 0;
-  return {
-    x: node.position.x + (port.position ? port.position.x : 50),
-    y: node.position.y + (port.position ? port.position.y : 50),
-    portType: port.type,
-    nodeWidth,
-    nodeHeight,
-  };
-};
+export * from './TrustBoundary.default';
+export * from './TrustBoundary.wrapper';

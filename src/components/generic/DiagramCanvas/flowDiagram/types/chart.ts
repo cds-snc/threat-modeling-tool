@@ -24,6 +24,9 @@ export interface IChart {
   links: {
     [id: string]: ILink;
   };
+  trustBoundaries: {
+    [id: string]: ITrustBoundary;
+  };
   properties?: any;
 
   /** System Temp */
@@ -32,11 +35,19 @@ export interface IChart {
 
   isModelShow: boolean;
   showModelName: string;
+
   nodeName: string;
   nodeId: string;
   nodeDescription: string;
   nodeOutOfScope: boolean;
   nodeOutOfScopeReason: string;
+
+  trustBoundaryName: string;
+  trustBoundaryId: string;
+  trustBoundaryDescription: string;
+  trustBoundaryOutOfScope: boolean;
+  trustBoundaryOutOfScopeReason: string;
+
   tags: string[];
   dataFeatures: ReadonlyArray<OptionDefinition>;
   techFeatures: ReadonlyArray<OptionDefinition>;
@@ -44,19 +55,26 @@ export interface IChart {
   threats: {id: string}[];
   nodeRoleOption: string;
   linkLabel: string;
+
   newNodeId: string;
   newLinkId: string;
+  newTrustBoundaryId: string;
+
   clickNodeId: string;
+  clickLinkId: string;
+  clickTrustBoundaryId: string;
+
   modelOption: string;
   alertMessageInfo: string;
   alertMessageStatus: string;
-  clickLinkId: string;
+
   preNodes: any;
   preLinks: any;
+  preTrustBoundaries: any;
 }
 
 export interface ISelectedOrHovered {
-  type?: 'link' | 'node' | 'port';
+  type?: 'link' | 'node' | 'port' | 'trustBoundary';
   id?: string;
 }
 
@@ -70,6 +88,14 @@ export interface INode {
   };
   properties?: any;
   /** System Temp */
+  size?: ISize;
+}
+
+export interface ITrustBoundary {
+  id: string;
+  position: IPosition;
+  orientation?: number;
+  properties?: any;
   size?: ISize;
 }
 
