@@ -70,3 +70,7 @@ export type IOnLabelDoubleClick = (input: { config?: IConfig; linkId: string }) 
 export type IOnNodeSizeChange = (input: { config?: IConfig; nodeId: string; size: ISize }) => void;
 
 export type IOnCanvasDrop = (input: { config?: IConfig; data: any; position: IPosition }) => void;
+
+export type IOnTrustBoundaryClick = (input: { config?: IConfig; trustBoundaryId: string }) => void;
+
+export type IOnDragTrustBoundary = (input: { config?: IConfig; event: MouseEvent; data: DraggableData; id: string }) => void;

@@ -20,4 +20,5 @@ export * from './Port';
 export * from './Ports';
 export * from './PortsGroup';
 export * from './Link';
+export * from './TrustBoundary';
 export * from './FlowChart';

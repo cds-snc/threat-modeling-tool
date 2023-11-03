@@ -16,7 +16,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import mapValues from '../../container/utils/mapValues';
-import { FlowChart, IChart, IConfig, IFlowChartComponents, IOnNodeClick, IOnNodeDoubleClick, IOnLabelDoubleClick, IOnLinkClick } from '../..';
+import { FlowChart, IChart, IConfig, IFlowChartComponents, IOnNodeClick, IOnNodeDoubleClick, IOnLabelDoubleClick, IOnLinkClick, IOnTrustBoundaryClick, IOnDragTrustBoundary } from '../..';
 import {
   onDragNode, onDragCanvas, onLinkStart, onLinkMove, onLinkComplete,
   onLinkCancel, onLinkMouseEnter, onLinkMouseLeave,
@@ -133,6 +133,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       ...props.initialValue,
       preNodes: Object.keys(props.initialValue.nodes),
       preLinks: Object.keys(props.initialValue.links),
+      preTrustBoundaries: Object.keys(props.initialValue.trustBoundaries),
       isModelShow: false,
       showModelName: '',
       nodeName: '',
@@ -146,10 +147,17 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       securityFeatures: [],
       threats: [],
       nodeRoleOption: '',
+      trustBoundaryName: '',
+      trustBoundaryId: '',
+      trustBoundaryDescription: '',
+      trustBoundaryOutOfScope: false,
+      trustBoundaryOutOfScopeReason: '',
       linkLabel: '',
       newNodeId: '',
-      clickNodeId: '',
       newLinkId: '',
+      newTrustBoundaryId: '',
+      clickNodeId: '',
+      clickTrustBoundaryId: '',
       clickLinkId: '',
       modelOption: 'addNode',
       alertMessageInfo: '',
@@ -247,6 +255,47 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     }
   };
 
+  onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId }) => {
+    console.log('trustBoundaryId', trustBoundaryId);
+    let selectedTB = this.state.trustBoundaries[trustBoundaryId];
+    let tbProperties = !!selectedTB.properties ? selectedTB.properties : this.emptyProperties;
+    if (!selectedTB.properties) {
+      this.state.trustBoundaries[trustBoundaryId].properties = this.emptyProperties;
+      tbProperties = this.emptyProperties;
+    }
+    this.setState({
+      selected: {
+        type: 'trustBoundary',
+        id: trustBoundaryId,
+      },
+      linkLabel: '',
+      nodeName: '',
+      nodeId: '',
+      nodeDescription: '',
+      nodeOutOfScope: false,
+      nodeOutOfScopeReason: '',
+      clickTrustBoundaryId: trustBoundaryId,
+      clickNodeId: '',
+      clickLinkId: '',
+    });
+    if (this.filterStatementsCallbaack) {
+      this.filterStatementsCallbaack(
+        '', //filterSTRIDE
+        trustBoundaryId,
+        'trustBoundary', //selectedNode.type
+        tbProperties.name,
+        tbProperties.description,
+        tbProperties.outOfScope,
+        tbProperties.outOfScopeReason,
+        tbProperties.tags,
+        [], //tbProperties.dataFeatures
+        [], //tbProperties.techFeatures
+        [], //tbProperties.securityFeatures
+        [], //tbProperties.threats
+      );
+    };
+  };
+
   onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => {
     let clickNodeProperties = this.state.nodes[nodeId].properties;
     clickNodeProperties = !!clickNodeProperties ? clickNodeProperties : {};
@@ -332,6 +381,10 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     });
   };
 
+  onDragTrustBoundary: IOnDragTrustBoundary = ({ config }) => {
+    console.log('onDragTrustBoundary', config);
+  };
+
   private stateActions = mapValues({
     onDragNode,
     onDragCanvas,
@@ -350,6 +403,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     onCanvasDrop,
     onNodeDoubleClick: this.onNodeDoubleClick,
     onLabelDoubleClick: this.onLabelDoubleClick,
+    onTrustBoundaryClick: this.onTrustBoundaryClick,
+    onDragTrustBoundary: this.onDragTrustBoundary,
   }, (func: any) => (...args: any) => this.setState(func(...args)));
 
   hideModel = () => {
@@ -411,6 +466,12 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     });
   };
 
+  handleTrustBoundaryNameInput = (e: any) => {
+    this.setState({
+      trustBoundaryName: e.currentTarget.value,
+    });
+  };
+
   setNodeInfo = (): boolean => {
     let nodeKey = '';
     for (var key of Object.keys(this.state.nodes)) {
@@ -456,6 +517,33 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       isModelShow: false,
       linkLabel: '',
     });
+  };
+
+  setTrustBoundaryInfo = (): boolean => {
+    let trustBoundaryKey = '';
+    for (var key of Object.keys(this.state.trustBoundaries)) {
+      if (trustBoundaryKey !== '' && this.state.trustBoundaries[key].position === this.state.trustBoundaries[trustBoundaryKey].position) {
+        delete this.state.trustBoundaries[key];
+      }
+      trustBoundaryKey = key;
+    }
+
+    if (this.state.trustBoundaryName.trim() === '') {
+      this.warningMessage('Please input the trust boundary name!');
+      return false;
+    }
+    let _trustBoundaries = this.state.trustBoundaries;
+    let _trustBoundaryId = this.state.modelOption === 'addTrustBoundary' ? this.state.newTrustBoundaryId : this.state.clickTrustBoundaryId;
+    _trustBoundaries[_trustBoundaryId].properties = {
+      name: !!this.state.trustBoundaryName ? this.state.trustBoundaryName : '',
+      Id: this.state.trustBoundaryId,
+      description: this.state.trustBoundaryDescription,
+    };
+    this.setState({
+      trustBoundaries: _trustBoundaries,
+      isModelShow: false,
+    });
+    return true;
   };
 
   handleNodeRoleChange = (value: string): void => {
@@ -519,6 +607,25 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     );
   };
 
+  renderAddNewTrustBoundaryModel = () => {
+    return (
+      <ModelBox className={this.state.isModelShow ? '' : 'hide'}>
+        <ModelContent>
+          <div className="InputBox">
+            <InputBox>
+              <label>Name:</label>
+              <Input onChange={this.handleTrustBoundaryNameInput} value={this.state.trustBoundaryName} type="text" />
+            </InputBox>
+          </div>
+          <ButtonBox>
+            <Button onClick={this.setTrustBoundaryInfo} type="primary">Confirm</Button>
+            <Button onClick={this.hideModel} type="cancel">Cancel</Button>
+          </ButtonBox>
+        </ModelContent>
+      </ModelBox>
+    );
+  };
+
   warningMessage = (content: string): void => {
     this.setState(() => ({
       alertMessageInfo: content,
@@ -546,6 +653,12 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       let node = flowData.nodes[key];
       if (node.position && node.position.node) {
         delete node.position.node;
+      }
+    }
+    for (var key of Object.keys(flowData.trustBoundaries)) {
+      let trustBoundary = flowData.trustBoundaries[key];
+      if (trustBoundary.position && trustBoundary.position.node) {
+        delete trustBoundary.position.node;
       }
     }
     if (!!this.props.getWorkFlowChartValue) {
@@ -598,6 +711,26 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         preNodes: Object.keys(preState.nodes),
       }));
     }
+
+    if (Object.keys(this.state.trustBoundaries).length > this.state.preTrustBoundaries.length) {
+      let preTrustBoundaries = this.state.preTrustBoundaries;
+      let currentTrustBoundaries = Object.keys(this.state.trustBoundaries);
+      let newTrustBoundary = currentTrustBoundaries.filter(trustBoundary => !preTrustBoundaries.includes(trustBoundary));
+
+      this.setState({
+        isModelShow: true,
+        showModelName: 'newTrustBoundaryModel',
+        modelOption: 'addTrustBoundary',
+        newTrustBoundaryId: newTrustBoundary[0],
+        trustBoundaryName: '',
+        trustBoundaryId: '',
+      });
+    }
+    if (Object.keys(this.state.trustBoundaries).length != this.state.preTrustBoundaries.length) {
+      this.setState((preState) => ({
+        preTrustBoundaries: Object.keys(preState.trustBoundaries),
+      }));
+    }
   }
 
   public render () {
@@ -607,6 +740,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       <React.Fragment>
         { this.state.showModelName === 'newNodeModel' ? this.renderAddNewNodeModel() : ''}
         { this.state.showModelName === 'newLinkModel' ? this.renderAddNewLinkModel() : ''}
+        { this.state.showModelName === 'newTrustBoundaryModel' ? this.renderAddNewTrustBoundaryModel() : ''}
         { this.renderAlertMessage() }
         <FlowChart
           chart={this.state}

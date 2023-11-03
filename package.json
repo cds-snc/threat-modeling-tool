@@ -71,6 +71,7 @@
     "react-draggable": "^4.4.6",
     "react-markdown": "*",
     "react-resize-observer": "^1.1.1",
+    "react-rnd": "^10.4.1",
     "react-router-dom": "*",
     "react-scripts": "5.0.1",
     "react-simply-carousel": "*",

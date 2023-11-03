@@ -26,7 +26,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useCallback, useState, useMemo, useEffect, forwardRef } from 'react';
 import { DiagramInfo, EditableComponentBaseProps } from '../../../customTypes';
 import FlowChartWithState from './flowDiagram/components/FlowChart/FlowChartWithState';
-import { IPortDefaultProps, INodeDefaultProps, LinkDefault, IChart } from './flowDiagram';
+import { IPortDefaultProps, INodeDefaultProps, LinkDefault, IChart, ITrustBoundaryDefaultProps } from './flowDiagram';
 import { Sidebar, SidebarItem } from './flowDiagram/layout';
 import { chartSimple } from './flowDiagram/exampleChartState';
 import { generateLabelPosition } from './flowDiagram/utils';
@@ -236,6 +236,19 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }
   `;
 
+  const TrustBoundaryDefault = styled.div`
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  padding: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(148, 80, 81);
+  color: white;
+  border-radius: 50%;
+  ${(props: any) => props.isSelected && css`box-shadow: 0 10px 20px rgba(0,0,0,.1); margin-top: -2px`}
+`;
 
   const NodeCustom = forwardRef(({ node, isSelected, children, ...otherProps }: INodeDefaultProps, ref: React.Ref<HTMLDivElement>) => {
     switch (node.type) {
@@ -268,6 +281,15 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       <StartPoint outOfScope={node.properties?.outOfScope === true ? 'yes': 'no'} ref={ref} {...otherProps}>
         {children}
       </StartPoint>
+    );
+  });
+
+  // eslint-disable-next-line max-len
+  const TrustBoundaryCustom = forwardRef(({ trustBoundary, isSelected, children, ...otherProps }: ITrustBoundaryDefaultProps, ref: React.Ref<HTMLDivElement>) => {
+    return (
+      <TrustBoundaryDefault outOfScope={trustBoundary.properties?.outOfScope === true ? 'yes': 'no'} ref={ref} {...otherProps}>
+        {children}
+      </TrustBoundaryDefault>
     );
   });
 
@@ -313,24 +335,24 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
     },
   };
 
-  const processQueuePoint = {
-    port1: {
-      id: 'port1',
-      type: 'top',
-    },
-    port2: {
-      id: 'port2',
-      type: 'right',
-    },
-    port3: {
-      id: 'port3',
-      type: 'bottom',
-    },
-    port4: {
-      id: 'port4',
-      type: 'left',
-    },
-  };
+  // const processQueuePoint = {
+  //   port1: {
+  //     id: 'port1',
+  //     type: 'top',
+  //   },
+  //   port2: {
+  //     id: 'port2',
+  //     type: 'right',
+  //   },
+  //   port3: {
+  //     id: 'port3',
+  //     type: 'bottom',
+  //   },
+  //   port4: {
+  //     id: 'port4',
+  //     type: 'left',
+  //   },
+  // };
 
   const processPoint = {
     port1: {
@@ -483,6 +505,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
 
   useEffect( () => { // update properties panel
+    console.log('workFlowValue.trustBoundaries[clickedObjectId]', clickedObjectId);
     if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
       workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
@@ -503,6 +526,16 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       workFlowValue.links[clickedObjectId].properties.techFeatures = clickedObjectTechFeatures;
       workFlowValue.links[clickedObjectId].properties.securityFeatures = clickedObjectSecurityFeatures;
       workFlowValue.links[clickedObjectId].properties.threats = selectedThreatList;
+    } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.trustBoundaries[clickedObjectId]) {
+      workFlowValue.trustBoundaries[clickedObjectId].properties.name = clickedObjectName;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.description = clickedObjectDescription;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.tags = clickedObjectTags;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.dataFeatures = clickedObjectDataFeatures;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.techFeatures = clickedObjectTechFeatures;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.securityFeatures = clickedObjectSecurityFeatures;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.threats = selectedThreatList;
     }
   }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription,
     clickedObjectOutOfScope, clickedObjectOutOfScopeReason, clickedObjectTags, selectedThreatList,
@@ -529,7 +562,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
                 <SidebarItem type="start" ports={startPoint} />
                 <SidebarItem type="process-point" ports={processPoint} />
                 <SidebarItem type="end" ports={ endPoint } />
-                <SidebarItem type="process-queue" ports={processQueuePoint} />
+                <SidebarItem type="process-queue" />
               </Sidebar>
               <div css={diagramWrapper}>
                 <FlowChartWithState
@@ -541,6 +574,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
                     Port: PortCustom,
                     Node: NodeCustom,
                     Link: LinkCustom,
+                    TrustBoundary: TrustBoundaryCustom,
                   }}
                   config={{ readonly: !editMode }}
                   filterStatementsCallbaack = {filterStatementsCallback}
@@ -588,6 +622,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
                 Port: PortCustom,
                 Node: NodeCustom,
                 Link: LinkCustom,
+                TrustBoundary: TrustBoundaryCustom,
               }}
               config={{ readonly: true }}
             />

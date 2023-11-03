@@ -17,7 +17,7 @@ import { v4 } from 'uuid';
 import {
   IChart, IOnCanvasClick, IOnCanvasDrop, IOnDeleteKey, IOnDragCanvas, IOnDragNode, IOnLinkCancel,
   IOnLinkComplete, IOnLinkMouseEnter, IOnLinkMouseLeave, IOnLinkMove, IOnLinkStart, IOnLinkClick, IOnNodeClick,
-  IOnNodeDoubleClick, IOnNodeSizeChange, IOnPortPositionChange,
+  IOnNodeDoubleClick, IOnNodeSizeChange, IOnPortPositionChange, IOnDragTrustBoundary, IOnTrustBoundaryClick,
 } from '../';
 import { rotate } from './utils/rotate';
 
@@ -32,6 +32,20 @@ export const onDragNode: IOnDragNode = ({ config, event, data, id }) => (chart: 
   if (nodechart) {
     chart.nodes[id] = {
       ...nodechart,
+      position: config && config.snapToGrid ? { x: Math.round(data.x / 20) * 20, y: Math.round(data.y / 20) * 20 } : data,
+    };
+  };
+
+  return chart;
+};
+
+export const onDragTrustBoundary: IOnDragTrustBoundary = ({ config, event, data, id }) => (chart: IChart) => {
+  const trustBoundaryChart = chart.trustBoundaries[id];
+  //console.log('onDragNode event: ', event);
+  event;
+  if (trustBoundaryChart) {
+    chart.trustBoundaries[id] = {
+      ...trustBoundaryChart,
       position: config && config.snapToGrid ? { x: Math.round(data.x / 20) * 20, y: Math.round(data.y / 20) * 20 } : data,
     };
   };
@@ -143,6 +157,8 @@ export const onDeleteKey: IOnDeleteKey = () => (chart: IChart) => {
     delete chart.nodes[chart.selected.id];
   } else if (chart.selected.type === 'link' && chart.selected.id) {
     delete chart.links[chart.selected.id];
+  } else if (chart.selected.type === 'trustBoundary' && chart.selected.id) {
+    delete chart.trustBoundaries[chart.selected.id];
   }
   if (chart.selected) {
     chart.selected = {};
@@ -162,6 +178,15 @@ export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
   //    id: nodeId,
   //  };
   // }
+  return chart;
+};
+
+export const onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId }) => (chart: IChart) => {
+  //console.log('----actions.ts on node click----', nodeId);
+  chart.selected = {
+    type: 'trustBoundary',
+    id: trustBoundaryId,
+  };
   return chart;
 };
 
@@ -210,14 +235,25 @@ export const onPortPositionChange: IOnPortPositionChange = ({ node: nodeToUpdate
   };
 
 export const onCanvasDrop: IOnCanvasDrop = ({ config, data, position }) => (chart: IChart): IChart => {
+  console.log('dropped data: ', data, config, position);
+
   const id = v4();
-  chart.nodes[id] = {
-    id,
-    position: config && config.snapToGrid ? { x: Math.round(position.x / 20) * 20, y: Math.round(position.y / 20) * 20 } : position,
-    orientation: data.orientation || 0,
-    type: data.type,
-    ports: data.ports,
-    properties: data.properties,
-  };
+  if (data.type === 'process-queue') { // this is a trust boundary
+    chart.trustBoundaries[id] = {
+      id,
+      position: config && config.snapToGrid ? { x: Math.round(position.x / 20) * 20, y: Math.round(position.y / 20) * 20 } : position,
+      orientation: data.orientation || 0,
+      properties: data.properties,
+    };
+  } else {
+    chart.nodes[id] = {
+      id,
+      position: config && config.snapToGrid ? { x: Math.round(position.x / 20) * 20, y: Math.round(position.y / 20) * 20 } : position,
+      orientation: data.orientation || 0,
+      type: data.type,
+      ports: data.ports,
+      properties: data.properties,
+    };
+  }
   return chart;
 };
