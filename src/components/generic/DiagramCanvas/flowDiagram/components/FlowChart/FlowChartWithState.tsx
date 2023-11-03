@@ -255,6 +255,47 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
     }
   };
 
+  onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId }) => {
+    console.log('trustBoundaryId', trustBoundaryId);
+    let selectedTB = this.state.trustBoundaries[trustBoundaryId];
+    let tbProperties = !!selectedTB.properties ? selectedTB.properties : this.emptyProperties;
+    if (!selectedTB.properties) {
+      this.state.trustBoundaries[trustBoundaryId].properties = this.emptyProperties;
+      tbProperties = this.emptyProperties;
+    }
+    this.setState({
+      selected: {
+        type: 'trustBoundary',
+        id: trustBoundaryId,
+      },
+      linkLabel: '',
+      nodeName: '',
+      nodeId: '',
+      nodeDescription: '',
+      nodeOutOfScope: false,
+      nodeOutOfScopeReason: '',
+      clickTrustBoundaryId: trustBoundaryId,
+      clickNodeId: '',
+      clickLinkId: '',
+    });
+    if (this.filterStatementsCallbaack) {
+      this.filterStatementsCallbaack(
+        '', //filterSTRIDE
+        trustBoundaryId,
+        'trustBoundary', //selectedNode.type
+        tbProperties.name,
+        tbProperties.description,
+        tbProperties.outOfScope,
+        tbProperties.outOfScopeReason,
+        tbProperties.tags,
+        [], //tbProperties.dataFeatures
+        [], //tbProperties.techFeatures
+        [], //tbProperties.securityFeatures
+        [], //tbProperties.threats
+      );
+    };
+  };
+
   onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => {
     let clickNodeProperties = this.state.nodes[nodeId].properties;
     clickNodeProperties = !!clickNodeProperties ? clickNodeProperties : {};
@@ -338,10 +379,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         clickNodeId: '',
       };
     });
-  };
-
-  onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId }) => {
-    console.log('trustBoundaryId', trustBoundaryId);
   };
 
   onDragTrustBoundary: IOnDragTrustBoundary = ({ config }) => {

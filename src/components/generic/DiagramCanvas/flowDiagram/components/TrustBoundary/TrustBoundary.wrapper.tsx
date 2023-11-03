@@ -28,7 +28,7 @@ export interface ITrustBoundaryWrapperProps {
   Component: React.FunctionComponent<ITrustBoundaryDefaultProps>;
   offset: IPosition;
   isSelected: boolean;
-  onTrustBoundaryClick?: IOnTrustBoundaryClick;
+  onTrustBoundaryClick: IOnTrustBoundaryClick;
   onDragTrustBoundary: IOnDragTrustBoundary;
 }
 
@@ -39,6 +39,7 @@ export const TrustBoundaryWrapper = ({
   offset,
   Component = TrustBoundaryDefault,
   onDragTrustBoundary,
+  onTrustBoundaryClick,
 }: ITrustBoundaryWrapperProps) => {
   const [size, setSize] = React.useState<ISize>({ width: 0, height: 0 });
   isSelected;
@@ -49,31 +50,43 @@ export const TrustBoundaryWrapper = ({
   size;
   const aref = React.useRef(null);
 
-  const style = {
+  const trustBoundaryStyle = {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'first baseline',
+    justifyContent: 'start',
     border: 'dashed 2px red',
     background: 'transparent',
+  };
+
+  const trustBoundaryLabelStyle = {
+    border: 'dashed 2px red',
+    background: 'red',
+    filter: 'opacity(60%)',
+    color: 'white',
   };
 
   function handleDrag(event, data: DraggableData) {
     onDragTrustBoundary({ config, event, data, id: trustBoundary.id });
   };
 
+  function handleClick(e, _data: DraggableData) {
+    onTrustBoundaryClick({ config, trustBoundaryId: trustBoundary.id });
+    e.stopPropagation();
+  };
+
   return (
     <Rnd
       ref={aref}
-      style={style}
+      style={trustBoundaryStyle}
       default={{
         x: trustBoundary.position.x, //offset.x,
         y: trustBoundary.position.y, //offset.y,
         width: 100, //size.width || 100,
         height: 100, //size.width || 100,
       }}
+      onClick={handleClick}
       onDrag={handleDrag}
       onDragStart={(e) => {
-        console.log('onDragStart', e);
         e.stopPropagation();
       }}
       //onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
@@ -83,6 +96,7 @@ export const TrustBoundaryWrapper = ({
           height: ref.style.height as unknown as number,
         });
       }} >
+      <div style={trustBoundaryLabelStyle}>{trustBoundary.properties?.name}</div>
     </Rnd>
   );
 };

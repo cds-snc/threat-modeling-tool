@@ -505,6 +505,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
 
   useEffect( () => { // update properties panel
+    console.log('workFlowValue.trustBoundaries[clickedObjectId]', clickedObjectId);
     if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
       workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;
@@ -525,6 +526,16 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
       workFlowValue.links[clickedObjectId].properties.techFeatures = clickedObjectTechFeatures;
       workFlowValue.links[clickedObjectId].properties.securityFeatures = clickedObjectSecurityFeatures;
       workFlowValue.links[clickedObjectId].properties.threats = selectedThreatList;
+    } else if (clickedObjectId && clickedObjectId!== '' && workFlowValue.trustBoundaries[clickedObjectId]) {
+      workFlowValue.trustBoundaries[clickedObjectId].properties.name = clickedObjectName;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.description = clickedObjectDescription;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.outOfScope = clickedObjectOutOfScope;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.outOfScopeReason = clickedObjectOutOfScopeReason;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.tags = clickedObjectTags;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.dataFeatures = clickedObjectDataFeatures;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.techFeatures = clickedObjectTechFeatures;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.securityFeatures = clickedObjectSecurityFeatures;
+      workFlowValue.trustBoundaries[clickedObjectId].properties.threats = selectedThreatList;
     }
   }, [workFlowValue, clickedObjectName, clickedObjectId, clickedObjectDescription,
     clickedObjectOutOfScope, clickedObjectOutOfScopeReason, clickedObjectTags, selectedThreatList,

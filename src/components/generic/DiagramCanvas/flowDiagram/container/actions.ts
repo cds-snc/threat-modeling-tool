@@ -17,7 +17,7 @@ import { v4 } from 'uuid';
 import {
   IChart, IOnCanvasClick, IOnCanvasDrop, IOnDeleteKey, IOnDragCanvas, IOnDragNode, IOnLinkCancel,
   IOnLinkComplete, IOnLinkMouseEnter, IOnLinkMouseLeave, IOnLinkMove, IOnLinkStart, IOnLinkClick, IOnNodeClick,
-  IOnNodeDoubleClick, IOnNodeSizeChange, IOnPortPositionChange, IOnDragTrustBoundary,
+  IOnNodeDoubleClick, IOnNodeSizeChange, IOnPortPositionChange, IOnDragTrustBoundary, IOnTrustBoundaryClick,
 } from '../';
 import { rotate } from './utils/rotate';
 
@@ -157,6 +157,8 @@ export const onDeleteKey: IOnDeleteKey = () => (chart: IChart) => {
     delete chart.nodes[chart.selected.id];
   } else if (chart.selected.type === 'link' && chart.selected.id) {
     delete chart.links[chart.selected.id];
+  } else if (chart.selected.type === 'trustBoundary' && chart.selected.id) {
+    delete chart.trustBoundaries[chart.selected.id];
   }
   if (chart.selected) {
     chart.selected = {};
@@ -176,6 +178,15 @@ export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
   //    id: nodeId,
   //  };
   // }
+  return chart;
+};
+
+export const onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId }) => (chart: IChart) => {
+  //console.log('----actions.ts on node click----', nodeId);
+  chart.selected = {
+    type: 'trustBoundary',
+    id: trustBoundaryId,
+  };
   return chart;
 };
 

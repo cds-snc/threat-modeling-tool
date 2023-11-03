@@ -78,8 +78,8 @@ export const NodeWrapper = ({
   const onClick = React.useCallback(
     (e: React.MouseEvent) => {
       if (!config.readonly || config.selectable) {
-        e.stopPropagation();
         onNodeClick({ config, nodeId: node.id });
+        e.stopPropagation();
       }
     },
     [config, node.id, onNodeClick],
