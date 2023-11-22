@@ -63,6 +63,13 @@ export const TrustBoundaryWrapper = ({
     background: 'red',
     filter: 'opacity(60%)',
     color: 'white',
+    fontSize: '9px',
+    paddingTop: '1px',
+    paddingBottom: '1px',
+    paddingLeft: '2px',
+    paddingRight: '2px',
+    width: 'fit-content',
+    height: 'fit-content',
   };
 
   function handleDrag(event, data: DraggableData) {
@@ -81,7 +88,7 @@ export const TrustBoundaryWrapper = ({
       default={{
         x: trustBoundary.position.x, //offset.x,
         y: trustBoundary.position.y, //offset.y,
-        width: 100, //size.width || 100,
+        width: 200, //size.width || 100,
         height: 100, //size.width || 100,
       }}
       onClick={handleClick}

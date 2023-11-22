@@ -38,16 +38,16 @@ const SCHEMA_VERSION = 1.0;
 const useImportExport = () => {
   const { composerMode } = useGlobalSetupContext();
   const { currentWorkspace } = useWorkspacesContext();
-  const { applicationInfo, setApplicationInfo } = useApplicationInfoContext();
-  const { architectureInfo, setArchitectureInfo } = useArchitectureInfoContext();
-  const { dataflowInfo, setDataflowInfo } = useDataflowInfoContext();
-  const { assumptionList, setAssumptionList } = useAssumptionsContext();
-  const { mitigationList, setMitigationList } = useMitigationsContext();
-  const { controlList, setControlList } = useControlsContext();
+  const { applicationInfo } = useApplicationInfoContext();
+  const { architectureInfo } = useArchitectureInfoContext();
+  const { dataflowInfo } = useDataflowInfoContext();
+  const { assumptionList } = useAssumptionsContext();
+  const { mitigationList } = useMitigationsContext();
+  const { controlList } = useControlsContext();
   const { statementList, setStatementList } = useThreatsContext();
-  const { assumptionLinkList, setAssumptionLinkList } = useAssumptionLinksContext();
-  const { mitigationLinkList, setMitigationLinkList } = useMitigationLinksContext();
-  const { controlLinkList, setControlLinkList } = useControlLinksContext();
+  const { assumptionLinkList } = useAssumptionLinksContext();
+  const { mitigationLinkList } = useMitigationLinksContext();
+  const { controlLinkList } = useControlLinksContext();
 
   const getWorkspaceData = useCallback((): DataExchangeFormat => {
     if (composerMode === 'Full') {
@@ -119,31 +119,31 @@ const useImportExport = () => {
 
   const importData = useCallback((data: DataExchangeFormat) => {
     if (data.schema > 0) {
-      setApplicationInfo(data.applicationInfo || {});
-      setArchitectureInfo(data.architecture || {});
-      setDataflowInfo(data.dataflow || {});
-      setAssumptionList(data.assumptions || []);
-      setMitigationList(data.mitigations || []);
-      setControlList(data.controls || []);
+      //setApplicationInfo(data.applicationInfo || {});
+      //setArchitectureInfo(data.architecture || {});
+      //setDataflowInfo(data.dataflow || {});
+      //setAssumptionList(data.assumptions || []);
+      //setMitigationList(data.mitigations || []);
+      //setControlList(data.controls || []);
       setStatementList(data.threats || []);
-      setAssumptionLinkList(data.assumptionLinks || []);
-      setMitigationLinkList(data.mitigationLinks || []);
-      setControlLinkList(data.controlLinks || []);
+      //setAssumptionLinkList(data.assumptionLinks || []);
+      //setMitigationLinkList(data.mitigationLinks || []);
+      //setControlLinkList(data.controlLinks || []);
     } else {
       // Support ListOnly mode
       setStatementList(data.threats || []);
     }
   }, [
-    setApplicationInfo,
-    setArchitectureInfo,
-    setDataflowInfo,
-    setAssumptionList,
-    setMitigationList,
-    setControlList,
+    //setApplicationInfo,
+    //setArchitectureInfo,
+    //setDataflowInfo,
+    //setAssumptionList,
+    //setMitigationList,
+    //setControlList,
     setStatementList,
-    setAssumptionLinkList,
-    setMitigationLinkList,
-    setControlLinkList,
+    //setAssumptionLinkList,
+    //setMitigationLinkList,
+    //setControlLinkList,
   ]);
 
   return {

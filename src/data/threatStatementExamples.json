@@ -28,10 +28,10 @@
     "threatImpact": "interception of valid API requests",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -51,10 +51,10 @@
     "threatImpact": "the actor being able to do anything the user can do",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -89,9 +89,9 @@
     "id": "EXAMPLE_000006",
     "numericId": -1,
     "threatSource": "threat actor",
-    "prerequisites": "who can register a vehicle",
+    "prerequisites": "who can register a file",
     "threatAction": "claim they did not do so",
-    "threatImpact": "the actor disputing financial charges related to the registration of a vehicle",
+    "threatImpact": "the actor disputing financial charges related to the upload of a file",
     "impactedGoal": [
       "integrity"
     ],
@@ -111,14 +111,14 @@
     "id": "EXAMPLE_000007",
     "numericId": -1,
     "threatSource": "threat actor",
-    "prerequisites": "who can register a vehicle",
+    "prerequisites": "who can register a file",
     "threatAction": "claim they did when they did not",
     "threatImpact": "",
     "impactedGoal": [
       "integrity"
     ],
     "impactedAssets": [
-      "registration status"
+      "upload status"
     ],
     "metadata": [
       {
@@ -138,10 +138,10 @@
     "threatImpact": "",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -161,10 +161,10 @@
     "threatImpact": "spoofing of our legitimate endpoint",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -225,10 +225,10 @@
       "availability"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -250,10 +250,10 @@
       "confidentiality"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents",
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files",
       "authentication tokens"
     ],
     "metadata": [
@@ -276,10 +276,10 @@
       "confidentiality"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -301,10 +301,10 @@
       "availability"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -326,10 +326,10 @@
       "availability"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -349,10 +349,10 @@
     "threatImpact": "the API Gateway performing actions on another user's resources",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -372,10 +372,10 @@
     "threatImpact": "them performing actions they should not be authorized to perform",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -395,7 +395,7 @@
     "threatImpact": "",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration documents"
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -415,10 +415,10 @@
     "threatImpact": "the application behaving in unintended ways",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -496,10 +496,10 @@
       "confidentiality"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -521,7 +521,7 @@
       "return of investment"
     ],
     "impactedAssets": [
-      "vehicle registration features"
+      "file upload features"
     ],
     "metadata": [
       {
@@ -561,9 +561,9 @@
     "threatImpact": "",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status"
+      "file upload",
+      "file listing",
+      "upload status"
     ],
     "metadata": [
       {
@@ -585,9 +585,9 @@
       "confidentiality"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status"
+      "file upload",
+      "file listing",
+      "upload status"
     ],
     "metadata": [
       {
@@ -609,9 +609,9 @@
       "availability"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status"
+      "file upload",
+      "file listing",
+      "upload status"
     ],
     "metadata": [
       {
@@ -653,7 +653,7 @@
       "availability"
     ],
     "impactedAssets": [
-      "vehicle registration documents"
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -673,10 +673,10 @@
     "threatImpact": "",
     "impactedGoal": [],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -693,12 +693,12 @@
     "threatSource": "threat actor",
     "prerequisites": "who knows the source IP of a legitimate user and can direct high volumes of Internet traffic (e.g. from a botnet)",
     "threatAction": "flood the legitimate user's internet link",
-    "threatImpact": "preventing a legitimate user from registering a vehicle",
+    "threatImpact": "preventing a legitimate user from registering a file",
     "impactedGoal": [
       "availability"
     ],
     "impactedAssets": [
-      "vehicle registration"
+      "file upload"
     ],
     "metadata": [
       {
@@ -720,10 +720,10 @@
       "integrity"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -745,10 +745,10 @@
       "confidentiality"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -770,10 +770,10 @@
       "availability"
     ],
     "impactedAssets": [
-      "vehicle registration",
-      "vehicle listing",
-      "registration status",
-      "vehicle registration documents"
+      "file upload",
+      "file listing",
+      "upload status",
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -795,7 +795,7 @@
       "integrity"
     ],
     "impactedAssets": [
-      "vehicle registration documents"
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -817,7 +817,7 @@
       "confidentiality"
     ],
     "impactedAssets": [
-      "vehicle registration documents"
+      "uploaded files"
     ],
     "metadata": [
       {
@@ -839,7 +839,7 @@
       "confidentiality"
     ],
     "impactedAssets": [
-      "vehicle registration documents"
+      "uploaded files"
     ],
     "metadata": [
       {

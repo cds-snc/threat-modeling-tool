@@ -98,7 +98,7 @@ export const generateLabelPosition = (
           ? (startPos.x + endPos.x) / 2 - 50
           : startPos.x - 60 - (centerX - endPos.x);
     }
-
+    centerY = centerY + 50;
     return { centerX, centerY };
   }
 
@@ -140,7 +140,8 @@ export const generateLabelPosition = (
           ? startPos.y - (startPos.x - endPos.x) - 30
           : (startPos.y + endPos.y) / 2;
     }
-    centerX = centerX - 10;
+    centerX = centerX - 60;
+    centerY = centerY - 40;
     return { centerX, centerY };
   }
 
@@ -159,6 +160,7 @@ export const generateLabelPosition = (
         5 +
         ((startPos.x - centerX) * (startPos.y - endPos.y - 30)) / 60;
     }
+    centerX = centerX + 85;
     return { centerX, centerY };
   }
 
@@ -216,6 +218,7 @@ export const generateLabelPosition = (
           ? endPos.x - 30
           : (startPos.x + endPos.x) / 2;
     }
+    centerX = centerX + 40;
     centerY = centerY + 10;
     return { centerX, centerY };
   }
@@ -228,7 +231,7 @@ export const generateLabelPosition = (
 
   if (startPos.portType === 'bottom' && endPos.portType === 'right') {
     centerX = (startPos.x + endPos.x) / 2 - 50;
-    centerY = startPos.y + 15;
+    centerY = startPos.y + 35;
 
     return { centerX, centerY };
   }
@@ -241,7 +244,7 @@ export const generateLabelPosition = (
   }
 
   if (startPos.portType === 'bottom' && endPos.portType === 'left') {
-    centerX = (startPos.x + endPos.x) / 2 - 50;
+    centerX = (startPos.x + endPos.x) / 2 - 90;
     centerY = startPos.y + 15;
 
     return { centerX, centerY };
@@ -257,7 +260,7 @@ export const generateLabelPosition = (
           ? startPos.y - 25
           : endPos.y - 55 - (startPos.x - endPos.x);
     }
-
+    centerY = centerY + 30;
     return { centerX, centerY };
   }
 
@@ -302,7 +305,7 @@ export const generateLabelPosition = (
     centerY = endPos.y - 25;
 
     if (centerX >= endPos.x - 35 - 120) {
-      centerX = endPos.x - 35 - 120;
+      centerX = endPos.x - 35;
     }
     if (centerX <= startPos.x - 30 && startPos.y <= endPos.y) {
       centerY =
@@ -318,6 +321,7 @@ export const generateLabelPosition = (
           ? endPos.y - 25 + (startPos.x - 30 - centerX)
           : (startPos.y + endPos.y) / 2;
     }
+    centerY = centerY - 50;
 
     return { centerX, centerY };
   }

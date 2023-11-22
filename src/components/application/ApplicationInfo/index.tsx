@@ -75,7 +75,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
     header={<Header actions={actions}>{applicationInfo.name || 'Application Introduction'}</Header>}
   >{editMode ? (<SpaceBetween direction='vertical' size='l'>
       <FormField
-        label="Application name"
+        label="Application or feature name"
       >
         <Input
           value={name}
@@ -83,7 +83,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
             setName(event.detail.value)
           }
           validateData={ApplicationInfoSchema.shape.name.safeParse}
-          placeholder='Enter application name'
+          placeholder='Enter application or feature name'
         />
       </FormField>
       <MarkdownEditor

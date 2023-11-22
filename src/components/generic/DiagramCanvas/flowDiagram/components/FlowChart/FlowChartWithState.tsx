@@ -567,7 +567,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
               <label>Description:</label>
               <Input onChange={this.handleDescriptionInput} value={this.state.nodeDescription} type="text" />
             </InputBox>
-            <InputBox>
+            <InputBox style={{ display: 'none' }}>
               <label>Role:</label>
               <Select
                 optionList={ nodeRoleOptions }
