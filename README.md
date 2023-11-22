@@ -11,3 +11,6 @@ It also adds a new dependency @projectstorm/react-diagrams, for further developm
 1. Clone the repo ``git clone https://github.com/cds-snc/threat-modeling-tool.git``
 2. Using [VS Code](https://code.visualstudio.com/) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), select ``Dev Containers: Open Folder in Container...`` and select the project folder.
 3. The devcontainer will install and build the initial app, so all you need to do get it running is run `npm start` in the terminal.
+
+## Our recorded demo of the MVP
+https://www.youtube.com/watch?v=YhZtjF4nlBA

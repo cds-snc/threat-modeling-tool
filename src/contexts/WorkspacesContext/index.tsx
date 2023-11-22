@@ -71,6 +71,7 @@ const WorkspacesContextProvider: FC<WorkspacesContextProviderProps> = ({
     setWorkspaceList(prev => prev.find(p => p.name === workspaceName) ? [...prev] : [...prev, newWorkspace]);
     setCurrentWorkspace(newWorkspace);
     onWorkspaceChanged?.(newWorkspace.id);
+    
   }, [onWorkspaceChanged, setCurrentWorkspace, setWorkspaceList]);
 
   const handleRemoveWorkspace = useCallback(async (id: string) => {
