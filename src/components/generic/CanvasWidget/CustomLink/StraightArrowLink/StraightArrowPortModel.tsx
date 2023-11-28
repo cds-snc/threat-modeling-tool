@@ -14,9 +14,11 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { z } from 'zod';
-import { BaseImageInfoSchema } from './entities';
+import { DefaultPortModel } from '@projectstorm/react-diagrams';
+import StraightArrowLinkModel from './StraightArrowLinkModel';
 
-export const DiagramInfoSchema = BaseImageInfoSchema.extend({}).strict();
-
-export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;
+export class StraightArrowPortModel extends DefaultPortModel {
+  createLinkModel(): StraightArrowLinkModel {
+    return new StraightArrowLinkModel();
+  }
+}

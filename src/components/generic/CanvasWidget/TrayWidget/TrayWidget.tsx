@@ -13,10 +13,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import * as React from 'react';
+import styled from '@emotion/styled';
 
-import { z } from 'zod';
-import { BaseImageInfoSchema } from './entities';
+namespace S {
+  export const Tray = styled.div`
+		min-width: 110px;
+		background: rgb(20, 20, 20);
+		flex-grow: 0;
+		flex-shrink: 0;
+	`;
+}
 
-export const DiagramInfoSchema = BaseImageInfoSchema.extend({}).strict();
-
-export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;
+export class TrayWidget extends React.Component<any> {
+  render() {
+    return <S.Tray>{this.props.children}</S.Tray>;
+  }
+}

@@ -14,9 +14,8 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { z } from 'zod';
-import { BaseImageInfoSchema } from './entities';
-
-export const DiagramInfoSchema = BaseImageInfoSchema.extend({}).strict();
-
-export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;
+export * from './ProcessNodeFactory';
+export * from './ProcessNodeModel';
+export * from './ProcessNodeWidget';
+export * from './ProcessPortModel';
+export * from '../SimplePortFactory';

@@ -25,29 +25,14 @@ DiagramContextProviderProps & LocalStateContextProviderBaseProps<DiagramInfo>>> 
   children,
   initialValue,
 }) => {
-  const [diagramInfo, setDiagramInfo] = useState<DiagramInfo>(initialValue || {
-    id: '',
-    name: '',
-    description: '',
-    clickedObjectName: '',
-  });
+  const [diagramInfo, setDiagramInfo] = useState<DiagramInfo>(initialValue || {});
 
   const handleRemoveDiagramInfo = useCallback(async () => {
-    setDiagramInfo({
-      id: '',
-      name: '',
-      description: '',
-      clickedObjectName: '',
-    });
+    setDiagramInfo({});
   }, []);
 
   const handleDeleteWorkspace = useCallback(async (_workspaceId: string) => {
-    setDiagramInfo({
-      id: '',
-      name: '',
-      description: '',
-      clickedObjectName: '',
-    });
+    setDiagramInfo({});
   }, []);
 
   return (<DiagramInfoContext.Provider value={{
