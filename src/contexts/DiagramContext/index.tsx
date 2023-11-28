@@ -22,8 +22,10 @@ import { DiagramContextProviderProps } from './types';
 import { EXAMPLE_WORKSPACE_ID } from '../../configs/constants';
 import { useExampleContext } from '../ExampleContext';
 
+var workspaceId: string = '1';
 const DiagramContextProvider: FC<PropsWithChildren<DiagramContextProviderProps>> = (props) => {
   const { diagram } = useExampleContext();
+  workspaceId = props.workspaceId || '';
 
   return props.workspaceId === EXAMPLE_WORKSPACE_ID ?
     (<DiagramLocalStateContextProvider initialValue={diagram} {...props} />) :
@@ -34,4 +36,5 @@ export default DiagramContextProvider;
 
 export {
   useDiagramInfoContext,
+  workspaceId,
 };

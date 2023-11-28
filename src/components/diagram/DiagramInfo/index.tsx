@@ -17,18 +17,31 @@
 import { FC } from 'react';
 import { useDiagramInfoContext } from '../../../contexts/DiagramContext/context';
 import { EditableComponentBaseProps } from '../../../customTypes';
-import DiagramCanvas from '../../generic/DiagramCanvas';
-
+//import DiagramCanvas from '../../generic/DiagramCanvas';
+import DFDCanvasWidget from '../../generic/CanvasWidget';
 
 const DiagramInfo: FC<EditableComponentBaseProps> = (props) => {
   //return <div><h2>DIAGRAMINFO</h2></div>;
   const { diagramInfo, setDiagramInfo } = useDiagramInfoContext();
+  /*
   return <DiagramCanvas
     {...props}
     headerTitle='Dataflow Diagram'
     diagramTitle='Dataflow Diagram'
     entity={diagramInfo}
     onConfirm={(diagram) => setDiagramInfo(diagram)}
+  />;
+  */
+  return <DFDCanvasWidget
+    {...props}
+    headerTitle={'Dataflow diagram'}
+    diagramTitle={'Dataflow diagram'}
+    entity={diagramInfo}
+    onConfirm={
+      (diagram) => {
+        setDiagramInfo(diagram);
+      }
+    }
   />;
 
 };

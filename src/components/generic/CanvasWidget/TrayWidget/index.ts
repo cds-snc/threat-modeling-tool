@@ -13,10 +13,5 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-
-import { z } from 'zod';
-import { BaseImageInfoSchema } from './entities';
-
-export const DiagramInfoSchema = BaseImageInfoSchema.extend({}).strict();
-
-export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;
+export * from './TrayItemWidget';
+export * from './TrayWidget';

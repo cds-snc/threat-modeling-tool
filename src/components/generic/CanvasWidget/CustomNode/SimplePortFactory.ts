@@ -14,9 +14,18 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
-import { z } from 'zod';
-import { BaseImageInfoSchema } from './entities';
+import { DiagramEngine, PortModel } from '@projectstorm/react-diagrams';
+import { AbstractModelFactory } from '@projectstorm/react-canvas-core';
 
-export const DiagramInfoSchema = BaseImageInfoSchema.extend({}).strict();
+export class SimplePortFactory extends AbstractModelFactory<PortModel, DiagramEngine> {
+  cb: (initialConfig?: any) => PortModel;
 
-export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;
+  constructor(type: string, cb: (initialConfig?: any) => PortModel) {
+    super(type);
+    this.cb = cb;
+  }
+
+  generateModel(event): PortModel {
+    return this.cb(event.initialConfig);
+  }
+}

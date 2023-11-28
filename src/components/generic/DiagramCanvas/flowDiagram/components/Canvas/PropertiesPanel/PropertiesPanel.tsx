@@ -44,6 +44,11 @@ export default function PropertiesPanel(props) {
   function handleSecurityFeaturesChange(event) {
     props.onChangeSecurityFeatures(event.detail.selectedOptions);
   };
+  function handleOnKeyDown(event) {
+    if (event.detail.keyCode === 8 || event.detail.keyCode === 46) {
+      event.stopPropagation();
+    }
+  };
 
   return (
     <form onSubmit={e => e.preventDefault()} >
@@ -60,6 +65,7 @@ export default function PropertiesPanel(props) {
               value={props.name}
               onChange={handleNameChange}
               placeholder="name"
+              onKeyDown={handleOnKeyDown}
               rows={3} />
           </FormField>
           <FormField

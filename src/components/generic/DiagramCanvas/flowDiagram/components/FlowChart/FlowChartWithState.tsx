@@ -89,7 +89,7 @@ export interface IFlowChartWithStateProps {
   getWorkFlowChartValue?: (workFlowValue: any) => void;
   isAllowAddLinkLabel?: boolean;
   nodeRoleOptions: any[];
-  filterStatementsCallbaack?: (
+  filterStatementsCallback?: (
     strideFilter: string,
     objectId: string,
     objectType: string,
@@ -111,7 +111,7 @@ let timer:any = null;
  */
 class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChart> {
   public state: IChart;
-  public filterStatementsCallbaack?: (
+  public filterStatementsCallback?: (
     strideFilter: string,
     objectId: string,
     objectType: string,
@@ -128,7 +128,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
   constructor (props: IFlowChartWithStateProps) {
     super(props);
-    this.filterStatementsCallbaack = props.filterStatementsCallbaack;
+    this.filterStatementsCallback = props.filterStatementsCallback;
     this.state = {
       ...props.initialValue,
       preNodes: Object.keys(props.initialValue.nodes),
@@ -196,8 +196,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       },
     });
 
-    if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack('', '', 'canvas', '', '', false, '', [], [], [], []);
+    if (this.filterStatementsCallback) {
+      this.filterStatementsCallback('', '', 'canvas', '', '', false, '', [], [], [], []);
     }
   };
 
@@ -236,8 +236,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         clickLinkId: '',
       });
 
-      if (this.filterStatementsCallbaack) {
-        this.filterStatementsCallbaack(
+      if (this.filterStatementsCallback) {
+        this.filterStatementsCallback(
           filterSTRIDE,
           nodeId,
           selectedNode.type,
@@ -278,8 +278,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
       clickNodeId: '',
       clickLinkId: '',
     });
-    if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack(
+    if (this.filterStatementsCallback) {
+      this.filterStatementsCallback(
         '', //filterSTRIDE
         trustBoundaryId,
         'trustBoundary', //selectedNode.type
@@ -341,8 +341,8 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
         id: linkId,
       },
     });
-    if (this.filterStatementsCallbaack) {
-      this.filterStatementsCallbaack(
+    if (this.filterStatementsCallback) {
+      this.filterStatementsCallback(
         'T,I,D',
         linkId,
         'link',

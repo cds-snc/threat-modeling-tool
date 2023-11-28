@@ -26,9 +26,13 @@ const ArchitectureInfo: FC<EditableComponentBaseProps> = (props) => {
     headerTitle='Architecture'
     diagramTitle='Architecture Diagram'
     entity={architectureInfo}
-    onConfirm={(diagram) => setArchitectureInfo(diagram)}
+    onConfirm={
+      (diagram) => {
+        console.log(diagram);
+        setArchitectureInfo(diagram);
+      }
+    }
     validateData={ArchitectureInfoSchema.shape.description.safeParse}
   />;
 };
-
 export default ArchitectureInfo;

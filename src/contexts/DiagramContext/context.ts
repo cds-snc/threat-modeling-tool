@@ -16,7 +16,6 @@
 
 import { useContext, createContext } from 'react';
 import { DiagramInfo } from '../../customTypes';
-import { v4 as uuidV4 } from 'uuid';
 
 export interface DiagramInfoContextApi {
   diagramInfo: DiagramInfo;
@@ -26,12 +25,7 @@ export interface DiagramInfoContextApi {
 }
 
 const initialState: DiagramInfoContextApi = {
-  diagramInfo: {
-    id: uuidV4(),
-    name: '',
-    description: '',
-    clickedObjectName: '',
-  },
+  diagramInfo: {},
   setDiagramInfo: () => { },
   removeDiagramInfo: () => Promise.resolve(),
   onDeleteWorkspace: () => Promise.resolve(),

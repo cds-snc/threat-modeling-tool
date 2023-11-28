@@ -13,10 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
+import { DefaultPortModel, PortModelAlignment } from '@projectstorm/react-diagrams';
+import StraightArrowLinkModel from '../../CustomLink/StraightArrowLink/StraightArrowLinkModel';
 
-import { z } from 'zod';
-import { BaseImageInfoSchema } from './entities';
+export class DatastorePortModel extends DefaultPortModel {
+  constructor(alignment: PortModelAlignment) {
+    super({
+      type: 'datastore',
+      name: alignment,
+      alignment: alignment,
+    });
+  }
 
-export const DiagramInfoSchema = BaseImageInfoSchema.extend({}).strict();
+  createLinkModel(): StraightArrowLinkModel {
+    return new StraightArrowLinkModel();
+  }
 
-export type DiagramInfo = z.infer<typeof DiagramInfoSchema>;
+  canLinkToPort(this) {
+    return true;
+  }
+}
+
+

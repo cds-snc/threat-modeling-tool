@@ -57,13 +57,9 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   headerTitle,
   diagramTitle,
   entity,
-  onConfirm,
   onEditModeChange,
 }) => {
-  const [editMode, setEditMode] = useState(!entity.description && !entity.name);
-  const [id, setId] = useState('');
-  const [name, setName] = useState('');
-  const [content, setContent] = useState('');
+  const [editMode, setEditMode] = useState(!entity.description);
   const [workFlowValue, setWorkFlowValue] = useState<IChart>(chartSimple);
 
   useEffect(() => {
@@ -71,21 +67,12 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
   }, [editMode, onEditModeChange]);
 
   const handleSaveDiagramCanvas = useCallback(() => {
-    onConfirm({
-      id,
-      name,
-      description: content,
-      diagramData: JSON.stringify(workFlowValue),
-    });
     setEditMode(false);
-  }, [id, name, content, workFlowValue, onConfirm]);
+  }, []);
 
   const handleEdit = useCallback(() => {
-    setId(entity.id || '');
-    setContent(entity.description || '');
-    setName(entity.name || '');
     setEditMode(true);
-  }, [entity, setContent, setEditMode, setName]);
+  }, [setEditMode]);
 
 
   const actions = useMemo(() => {
@@ -577,7 +564,7 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
                     TrustBoundary: TrustBoundaryCustom,
                   }}
                   config={{ readonly: !editMode }}
-                  filterStatementsCallbaack = {filterStatementsCallback}
+                  filterStatementsCallback = {filterStatementsCallback}
                 />
               </div>
             </Grid>

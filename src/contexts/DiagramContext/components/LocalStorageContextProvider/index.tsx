@@ -19,7 +19,6 @@ import useLocalStorageState from 'use-local-storage-state';
 import { LOCAL_STORAGE_KEY_DIAGRAM_INFO } from '../../../../configs/localStorageKeys';
 import { DiagramInfo } from '../../../../customTypes';
 import removeLocalStorageKey from '../../../../utils/removeLocalStorageKey';
-import { v4 as uuidV4 } from 'uuid';
 import { DiagramInfoContext, useDiagramInfoContext } from '../../context';
 import { DiagramContextProviderProps } from '../../types';
 
@@ -36,12 +35,7 @@ const DiagramLocalStorageContextProvider: FC<PropsWithChildren<DiagramContextPro
   workspaceId: currentWorkspaceId,
 }) => {
   const [diagramInfo, setDiagramInfo, { removeItem }] = useLocalStorageState<DiagramInfo>(getLocalStorageKey(currentWorkspaceId), {
-    defaultValue: {
-      id: uuidV4(),
-      name: '',
-      description: '',
-      clickedObjectName: '',
-    },
+    defaultValue: {},
   });
 
   const handleRemoveDiagramInfo = useCallback(async () => {
