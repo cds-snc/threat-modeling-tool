@@ -47,6 +47,42 @@ namespace S {
 }
 
 export class DatastoreNodeWidget extends React.Component<DatastoreNodeWidgetProps> {
+
+  state: {
+    mouseDownX: number;
+    mouseDownY: number;
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      mouseDownX: 0,
+      mouseDownY: 0,
+    };
+  };
+
+  handleOnPortMouseDown = (event) => {
+    console.log('ActorNodeWidget.onmousedown', event);
+    this.setState({
+      mouseDownX: event.clientX,
+      mouseDownY: event.clientY,
+    });
+  };
+
+  handleOnPortMouseUp = (event) => {
+    console.log('ActorNodeWidget.onmouseup', event);
+    if (event.clientX === this.state.mouseDownX && event.clientY === this.state.mouseDownY) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
+  handleOnPortClick= (event) => {
+    console.log('ActorNodeWidget.onclick', event);
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   render() {
     return (
       <div
@@ -85,7 +121,7 @@ export class DatastoreNodeWidget extends React.Component<DatastoreNodeWidgetProp
           port={this.props.node.getPort(PortModelAlignment.LEFT) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
         <PortWidget
           style={{
@@ -96,7 +132,7 @@ export class DatastoreNodeWidget extends React.Component<DatastoreNodeWidgetProp
           port={this.props.node.getPort(PortModelAlignment.TOP) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
         <PortWidget
           style={{
@@ -107,7 +143,7 @@ export class DatastoreNodeWidget extends React.Component<DatastoreNodeWidgetProp
           port={this.props.node.getPort(PortModelAlignment.RIGHT) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
         <PortWidget
           style={{
@@ -118,7 +154,7 @@ export class DatastoreNodeWidget extends React.Component<DatastoreNodeWidgetProp
           port={this.props.node.getPort(PortModelAlignment.BOTTOM) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
       </div>
     );
