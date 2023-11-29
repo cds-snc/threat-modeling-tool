@@ -100,7 +100,7 @@ export class ActorNodeWidget extends React.Component<ActorNodeWidgetProps> {
             __html:
               `
 						<g id="Layer_2">
-              <rect width="${this.props.size}" height="${this.props.size-(this.props.size/2)}" fill="white" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="3" stroke-miterlimit="10"/>
+              <rect width="${this.props.size}" height="${this.props.size-(this.props.size/2)}" fill="${this.props.node.outOfScope ? '#bbbec0' : 'white'}" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="3" stroke-miterlimit="10"/>
 							<text x="50%" y="50%" text-anchor="middle" stroke="black" stroke-width="0.5px" dy=".2em">${this.props.node.name}</text>
 						</g>
 					`,

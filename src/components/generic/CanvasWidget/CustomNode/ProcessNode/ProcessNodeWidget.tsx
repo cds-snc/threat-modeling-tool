@@ -100,7 +100,7 @@ export class ProcessNodeWidget extends React.Component<ProcessNodeWidgetProps> {
             __html:
               `
 						<g id="Layer_1">
-							<circle cx="${this.props.size-(this.props.size/2)}" cy="${this.props.size-(this.props.size/2)}" r="${this.props.size/2}" fill="white" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="2" stroke-miterlimit="10" />
+							<circle cx="${this.props.size-(this.props.size/2)}" cy="${this.props.size-(this.props.size/2)}" r="${this.props.size/2}" fill="${this.props.node.outOfScope ? '#bbbec0' : 'white'}" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="2" stroke-miterlimit="10" />
 							<text x="50%" y="50%" text-anchor="middle" stroke="black" stroke-width="0.5px" dy=".2em">${this.props.node.name}</text>
 						</g>
 					`,

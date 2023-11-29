@@ -100,7 +100,7 @@ export class DatastoreNodeWidget extends React.Component<DatastoreNodeWidgetProp
             __html:
               `
 						<g id="Layer_2">
-              <rect width="${this.props.size}" height="${this.props.size-(this.props.size/2)}" fill="white" stroke="${this.props.node.isSelected() ? '#56bdf9' : ''}" stroke-width="3" stroke-miterlimit="10"/>
+              <rect width="${this.props.size}" height="${this.props.size-(this.props.size/2)}" fill="${this.props.node.outOfScope ? '#bbbec0' : 'white'}" stroke="${this.props.node.isSelected() ? '#56bdf9' : ''}" stroke-width="3" stroke-miterlimit="10"/>
               
               <polyline points="${0},0 ${this.props.size},0" fill="none" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="3" />
               <polyline points="${0},${this.props.size/2} ${this.props.size},${this.props.size/2}" fill="none" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="3" />
