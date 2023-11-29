@@ -38,7 +38,8 @@ export class StraightArrowLinkFactory extends DefaultLinkFactory {
     this.filterStatementsCallback = props;
   }
 
-  generateModel(): StraightArrowLinkModel {
+  generateModel(_event): StraightArrowLinkModel {
+    //console.log('StraightArrowLinkFactory.generateModel.pointsPosition', event.initialConfig.name, event.initialConfig.points[1].x, event.initialConfig.points[1].y);
     return new StraightArrowLinkModel({ filterStatementsCallback: this.filterStatementsCallback });
   }
 

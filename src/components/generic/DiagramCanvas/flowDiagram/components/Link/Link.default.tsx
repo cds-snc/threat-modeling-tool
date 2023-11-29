@@ -70,8 +70,6 @@ export const LinkDefault = ({
   const arrow = generateArrowPath(startPos, endPos);
   const { centerX, centerY } = generateLabelPosition(startPos, endPos);
 
-  // console.log("arrow: ", arrow)
-
   if (isAllowAddLinkLabel) {
     return (
       <>

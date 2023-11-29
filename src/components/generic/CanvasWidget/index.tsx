@@ -126,7 +126,6 @@ export interface BaseDiagramInfoProps extends EditableComponentBaseProps {
   entity: BaseImageInfo;
   headerTitle: string;
   diagramTitle: string;
-  onConfirm: (info: BaseImageInfo) => void;
   validateData?: MarkdownEditorProps['validateData'];
 }
 
@@ -134,22 +133,21 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
   headerTitle,
   diagramTitle,
   entity,
-  onConfirm,
   onEditModeChange,
 }) => {
 
   function registerFactories(engine) {
     engine
       .getPortFactories()
-      .registerFactory(new SimplePortFactory('process', (_config) => new ProcessPortModel(PortModelAlignment.LEFT)));
+      .registerFactory(new SimplePortFactory('process', (_config) => new ProcessPortModel(PortModelAlignment.TOP)));
     engine.getNodeFactories().registerFactory(new ProcessNodeFactory(filterStatementsCallback));
     engine
       .getPortFactories()
-      .registerFactory(new SimplePortFactory('datastore', (_config) => new DatastorePortModel(PortModelAlignment.LEFT)));
+      .registerFactory(new SimplePortFactory('datastore', (_config) => new DatastorePortModel(PortModelAlignment.TOP)));
     engine.getNodeFactories().registerFactory(new DatastoreNodeFactory(filterStatementsCallback));
     engine
       .getPortFactories()
-      .registerFactory(new SimplePortFactory('actor', (_config) => new ActorPortModel(PortModelAlignment.LEFT)));
+      .registerFactory(new SimplePortFactory('actor', (_config) => new ActorPortModel(PortModelAlignment.TOP)));
     engine.getNodeFactories().registerFactory(new ActorNodeFactory(filterStatementsCallback));
     engine.getLinkFactories().registerFactory(new StraightArrowLinkFactory(filterStatementsCallback));
   };
@@ -157,9 +155,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
   headerTitle;
   diagramTitle;
   const [editMode, _setEditMode] = useState(!entity.description && !entity.image);
-  const [image, setImage] = useState<string>('');
   const { currentWorkspace } = useWorkspacesContext();
-  console.log('WORKSPACE ID', currentWorkspace);
   const [content, setContent] = useState(JSON.parse( localStorage.getItem(`json-diagram-${currentWorkspace?.id}`) || '""'));
   const { statementList } = useThreatsContext();
   const [threatList, setThreatList] = useState(statementList);
@@ -175,6 +171,13 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
   const [clickedObjectDataFeatures, setClickedObjectDataFeatures] = useState<ReadonlyArray<OptionDefinition>>();
   const [clickedObjectTechFeatures, setClickedObjectTechFeatures] = useState<ReadonlyArray<OptionDefinition>>();
   const [clickedObjectSecurityFeatures, setClickedObjectSecurityFeatures] = useState<ReadonlyArray<OptionDefinition>>();
+  const [selectedLink, setSelectedLink] = useState<{
+    positionX?: number;
+    positionY?: number;
+    link?: StraightArrowLinkModel;
+  }>({
+    positionX: 0, positionY: 0, link: undefined,
+  });
 
   useEffect(() => {
     onEditModeChange?.(editMode);
@@ -188,7 +191,10 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
     var jsonModel = JSON.parse(content);
     model.deserializeModel(jsonModel, initialEngine);
   }
-  model.registerListener({ eventDidFire: handleEventDidFire });
+  model.registerListener({
+    eventDidFire: handleEventDidFire,
+  });
+
   initialEngine.setModel(model);
   initialEngine.repaintCanvas();
 
@@ -196,20 +202,10 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
 
   const handleSerialize = useCallback( () => {
     // unselect first any entity in the diagram
-    engine.getModel().getNodes().forEach( (n) => {
-      n.getOptions().selected = false;
-    });
-    engine.getModel().getLinks().forEach( (l) => {
-      l.getOptions().selected = false;
-    });
-
+    engine.getModel().clearSelection();
     var diagramContent = JSON.stringify(engine.getModel().serialize());
-    onConfirm({
-      image,
-      description: diagramContent,
-    });
     localStorage.setItem(`json-diagram-${currentWorkspace?.id}`, JSON.stringify(diagramContent));
-  }, [currentWorkspace?.id, engine, image, onConfirm]);
+  }, [currentWorkspace?.id, engine]);
 
   const handleObjectNameChange = useCallback((newValue) => {
     setClickedObjectName(newValue);
@@ -328,7 +324,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
     });
     engine.getModel().getLinks().forEach( (link) => {
       if (link.isSelected()) {
-        ( link.getLabels()[0] as DefaultLabelModel ).setLabel(clickedObjectName);
+        (link.getLabels()[0] as DefaultLabelModel).setLabel(clickedObjectName);
         ( link as StraightArrowLinkModel ).name = clickedObjectName;
         ( link as StraightArrowLinkModel ).description = clickedObjectDescription;
         ( link as StraightArrowLinkModel ).outOfScope = clickedObjectOutOfScope;
@@ -341,8 +337,10 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
         ( link as StraightArrowLinkModel ).threats = selectedThreatList;
       }
     });
-  }, [clickedObjectDataFeatures, clickedObjectDescription, clickedObjectName, clickedObjectOutOfScope,
-    clickedObjectOutOfScopeReason, clickedObjectSecurityFeatures, clickedObjectTags, clickedObjectTechFeatures, engine, selectedThreatList]);
+    engine.repaintCanvas();
+  }, [engine, clickedObjectDataFeatures, clickedObjectDescription, clickedObjectName, clickedObjectOutOfScope,
+    clickedObjectOutOfScopeReason, clickedObjectSecurityFeatures, clickedObjectTags, clickedObjectTechFeatures,
+    selectedThreatList]);
 
   function handleZoomIn(_event) {
     let scale = engine?.getCanvas().style.transform;
@@ -420,25 +418,37 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
   };
 
   function handleEventDidFire(event) {
-    //console.log('handleEventDidFire', event);
     if (event.function === 'linksUpdated') {
+      setSelectedLink({
+        positionX: event.link.getPoints()[1].getPosition().x,
+        positionY: event.link.getPoints()[1].getPosition().y,
+        link: event.link,
+      });
       // unselect all previously selected entities
-      engine.getModel().getNodes().forEach( (n) => {
-        n.getOptions().selected = false;
-      });
-      engine.getModel().getLinks().forEach( (l) => {
-        l.getOptions().selected = false;
-      });
-      if (event.link.labels === 1) {
-        (event.link.labels[0] as DefaultLabelModel).setLabel('Label');
-      } else {
-        event.link.addLabel('Label');
-      }
-      event.link.getOptions().selected = true;
+      engine.getModel().clearSelection();
     }
     var diagramContent = JSON.stringify(engine.getModel().serialize());
-    setImage('');
     setContent(diagramContent);
+  };
+
+  onmouseup = (_event) => {
+    if ( selectedLink.link !== undefined ) {
+      if (selectedLink.link?.getPoints()[1].getPosition().x !== selectedLink.positionX &&
+      selectedLink.link?.getPoints()[1].getPosition().y !== selectedLink.positionY) {
+        setClickedObjectName('');
+        if (selectedLink.link?.getLabels().length === 1) {
+          (selectedLink.link.getLabels()[0] as DefaultLabelModel).setLabel(clickedObjectName);
+        } else {
+          selectedLink.link?.addLabel(clickedObjectName);
+        }
+        selectedLink.link?.setSelected(true);
+        engine.repaintCanvas();
+        setSelectedLink({
+          positionX: 0, positionY: 0, link: undefined,
+        });
+      }
+    }
+
   };
 
   return (
@@ -473,9 +483,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
             color={'rgba(47, 44, 44, 0.05)'}
             onDrop={(event) => {
               // unselect all previously selected entities
-              engine.getModel().getNodes().forEach( (n) => {
-                n.getOptions().selected = false;
-              });
+              engine.getModel().clearSelection();
               // get the actual tray widget position on the screen
               var elementType = JSON.parse(event.dataTransfer.getData('storm-diagram-node'));
               // create a new node at the same position

@@ -205,7 +205,10 @@ export const StraightArrowLinkWidget: React.FC<DefaultLinkProps> = (props) => {
       }
     }
   }
-
-  return <g data-default-link-test={props.link.getOptions().testName} >{paths}</g>;
+  if (points[1].getPosition().x !== 0 && points[1].getPosition().y !== 0) {
+    return <g data-default-link-test={props.link.getOptions().testName} >{paths}</g>;
+  } else {
+    return <g data-default-link-test={'ghost'} style={ { display: 'none' } }>{paths}</g>;
+  }
 
 };

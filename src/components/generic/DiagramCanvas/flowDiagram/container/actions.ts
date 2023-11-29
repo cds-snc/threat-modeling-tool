@@ -27,7 +27,6 @@ import { rotate } from './utils/rotate';
 
 export const onDragNode: IOnDragNode = ({ config, event, data, id }) => (chart: IChart) => {
   const nodechart = chart.nodes[id];
-  //console.log('onDragNode event: ', event);
   event;
   if (nodechart) {
     chart.nodes[id] = {
@@ -41,7 +40,6 @@ export const onDragNode: IOnDragNode = ({ config, event, data, id }) => (chart: 
 
 export const onDragTrustBoundary: IOnDragTrustBoundary = ({ config, event, data, id }) => (chart: IChart) => {
   const trustBoundaryChart = chart.trustBoundaries[id];
-  //console.log('onDragNode event: ', event);
   event;
   if (trustBoundaryChart) {
     chart.trustBoundaries[id] = {
@@ -54,7 +52,6 @@ export const onDragTrustBoundary: IOnDragTrustBoundary = ({ config, event, data,
 };
 
 export const onDragCanvas: IOnDragCanvas = ({ config, event, data }) => (chart: IChart): IChart => {
-  //console.log('onDragNode event: ', event);
   event;
   chart.offset = config && config.snapToGrid ? { x: Math.round(data.x / 20) * 20, y: Math.round(data.y / 20) * 20 } : data;
   return chart;
@@ -125,7 +122,6 @@ export const onLinkMouseLeave: IOnLinkMouseLeave = ({ linkId }) => (chart: IChar
 };
 
 export const onLinkClick: IOnLinkClick = ({ linkId }) => (chart: IChart) => {
-  //console.log('----actions.ts on link click----', linkId);
   if (chart.selected.id !== linkId || chart.selected.type !== 'link') {
     chart.selected = {
       type: 'link',
@@ -136,7 +132,6 @@ export const onLinkClick: IOnLinkClick = ({ linkId }) => (chart: IChart) => {
 };
 
 export const onCanvasClick: IOnCanvasClick = () => (chart: IChart) => {
-  //console.log('----actions.ts on canvas click----', chart);
   if (chart.selected.id) {
     chart.selected = {};
   }
@@ -167,7 +162,6 @@ export const onDeleteKey: IOnDeleteKey = () => (chart: IChart) => {
 };
 
 export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
-  //console.log('----actions.ts on node click----', nodeId);
   chart.selected = {
     type: 'node',
     id: nodeId,
@@ -182,7 +176,6 @@ export const onNodeClick: IOnNodeClick = ({ nodeId }) => (chart: IChart) => {
 };
 
 export const onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId }) => (chart: IChart) => {
-  //console.log('----actions.ts on node click----', nodeId);
   chart.selected = {
     type: 'trustBoundary',
     id: trustBoundaryId,
@@ -191,7 +184,6 @@ export const onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId })
 };
 
 export const onNodeDoubleClick: IOnNodeDoubleClick = ({ nodeId }) => (chart: IChart) => {
-  //console.log('----actions.ts on node double click----', nodeId);
   chart.selected = {
     type: 'node',
     id: nodeId,
@@ -235,7 +227,6 @@ export const onPortPositionChange: IOnPortPositionChange = ({ node: nodeToUpdate
   };
 
 export const onCanvasDrop: IOnCanvasDrop = ({ config, data, position }) => (chart: IChart): IChart => {
-  console.log('dropped data: ', data, config, position);
 
   const id = v4();
   if (data.type === 'process-queue') { // this is a trust boundary

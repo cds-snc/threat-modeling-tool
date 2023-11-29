@@ -211,7 +211,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
 
     let filterSTRIDE: string;
     if (selectedNode) {
-      //console.log('selectedNode ', selectedNode);
       switch (selectedNode.type) {
         case 'start': // process node
           filterSTRIDE = 'S,T,R,I,D,E';
@@ -256,7 +255,6 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   onTrustBoundaryClick: IOnTrustBoundaryClick = ({ trustBoundaryId }) => {
-    console.log('trustBoundaryId', trustBoundaryId);
     let selectedTB = this.state.trustBoundaries[trustBoundaryId];
     let tbProperties = !!selectedTB.properties ? selectedTB.properties : this.emptyProperties;
     if (!selectedTB.properties) {
@@ -382,7 +380,7 @@ class FlowChartWithState extends React.Component<IFlowChartWithStateProps, IChar
   };
 
   onDragTrustBoundary: IOnDragTrustBoundary = ({ config }) => {
-    console.log('onDragTrustBoundary', config);
+    config;
   };
 
   private stateActions = mapValues({
