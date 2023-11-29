@@ -16,8 +16,6 @@
 import { IPosition } from '../../../';
 
 export const generateLinkPath = (startPos: IPosition, endPos: IPosition): string => {
-  //console.log('start point: ', startPos);
-  //console.log('end point: ', endPos);
   if (!endPos.portType) {
     return curvePath(startPos, endPos);
   } else {

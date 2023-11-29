@@ -160,7 +160,6 @@ export const SidebarItem = ({ type, ports = defaultPorts, properties, itemStyle=
       draggable={true}
       itemStyle={itemStyle}
       onDragStart={ (event) => {
-        //console.log('dragged data: ', { type, ports, properties });
         event.dataTransfer.setData(REACT_FLOW_CHART, JSON.stringify({ type, ports, properties }));
       } }
     >

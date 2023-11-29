@@ -49,7 +49,6 @@ export default function ThreatList( props ) {
   const { onThreatListView } = useThreatsContext();
   const [selectedDFDObjectId] = useState(props.clickedObjectId);
   selectedDFDObjectId;
-  //console.log('selectedDFDObjectId', selectedDFDObjectId);
   const [preferences, setPreferences] = useState<CollectionPreferencesProps.Preferences>({
     pageSize: 10,
     visibleContent: ['statement', 'priority', 'stride'],

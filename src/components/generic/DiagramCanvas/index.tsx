@@ -445,7 +445,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
   const getWorkFlowChartValue = (newWorkFlowValue) => {
     setWorkFlowValue(newWorkFlowValue);
-    console.log('work-flow: ', JSON.stringify(workFlowValue));
   };
 
   function filterStatementsCallback (
@@ -492,7 +491,6 @@ const DiagramCanvas: FC<DiagramCanvasProps> = ({
 
 
   useEffect( () => { // update properties panel
-    console.log('workFlowValue.trustBoundaries[clickedObjectId]', clickedObjectId);
     if (clickedObjectId && clickedObjectId!== '' && workFlowValue.nodes[clickedObjectId]) {
       workFlowValue.nodes[clickedObjectId].properties.name = clickedObjectName;
       workFlowValue.nodes[clickedObjectId].properties.description = clickedObjectDescription;

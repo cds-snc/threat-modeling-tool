@@ -30,7 +30,6 @@ export class ActorPortModel extends DefaultPortModel {
   }
 
   canLinkToPort(this) {
-    console.log('ActorePortModel.createLinkModel', this);
     return true;
   }
 }
