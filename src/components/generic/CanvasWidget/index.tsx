@@ -323,7 +323,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
       }
     });
     engine.getModel().getLinks().forEach( (link) => {
-      if (link.isSelected()) {
+      if (link.isSelected() && link.getLabels()[0]) {
         (link.getLabels()[0] as DefaultLabelModel).setLabel(clickedObjectName);
         ( link as StraightArrowLinkModel ).name = clickedObjectName;
         ( link as StraightArrowLinkModel ).description = clickedObjectDescription;
@@ -431,7 +431,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
     setContent(diagramContent);
   };
 
-  onmouseup = (_event) => {
+  onmouseup = (event) => {
     if ( selectedLink.link !== undefined ) {
       if (selectedLink.link?.getPoints()[1].getPosition().x !== selectedLink.positionX &&
       selectedLink.link?.getPoints()[1].getPosition().y !== selectedLink.positionY) {
@@ -447,8 +447,8 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
           positionX: 0, positionY: 0, link: undefined,
         });
       }
+      event.stopPropagation();
     }
-
   };
 
   return (
