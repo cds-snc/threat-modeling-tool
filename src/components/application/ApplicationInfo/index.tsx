@@ -35,7 +35,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description );
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
-  const [securityCategory, setSecurityCategory] = useState('cccs-medium');
+  const [securityCategory, setSecurityCategory] = useState('CCS Medium');
   const [checkedIaaS, setCheckedIaaS] = useState(false);
   const [checkedPaaS, setCheckedPaaS] = useState(false);
   const [checkedSaaS, setCheckedSaaS] = useState(false);
@@ -54,13 +54,33 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
       ...prev,
       description: content,
       name,
+      securityCategory: securityCategory,
+      useIaaS: checkedIaaS,
+      usePaaS: checkedPaaS,
+      useSaaS: checkedSaaS,
+      useData: checkedData,
+      useStorage: checkedStorage,
+      useApplication: checkedApplication,
+      useCompute: checkedCompute,
+      useNetwork: checkedNetwork,
     }));
     setEditMode(false);
-  }, [content, name, setApplicationInfo, setEditMode]);
+  }, [checkedApplication, checkedCompute, checkedData,
+    checkedIaaS, checkedNetwork, checkedPaaS, checkedSaaS,
+    checkedStorage, content, name, securityCategory, setApplicationInfo]);
 
   const handleEdit = useCallback(() => {
     setContent(applicationInfo.description || '');
     setName(applicationInfo.name || '');
+    setSecurityCategory(applicationInfo.securityCategory || 'CCCS Medium');
+    setCheckedIaaS(applicationInfo.useIaaS || false);
+    setCheckedPaaS(applicationInfo.usePaaS || false);
+    setCheckedSaaS(applicationInfo.useSaaS || false);
+    setCheckedData(applicationInfo.useData || false);
+    setCheckedStorage(applicationInfo.useStorage || false);
+    setCheckedApplication(applicationInfo.useApplication || false);
+    setCheckedCompute(applicationInfo.useCompute || false);
+    setCheckedNetwork(applicationInfo.useNetwork || false);
     setEditMode(true);
   }, [applicationInfo]);
 
@@ -73,117 +93,133 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
 
   return (<Container
     header={<Header actions={actions}>{applicationInfo.name || 'Application Introduction'}</Header>}
-  >{editMode ? (<SpaceBetween direction='vertical' size='l'>
-      <FormField
-        label="Application or feature name"
-      >
-        <Input
-          value={name}
-          onChange={event =>
-            setName(event.detail.value)
-          }
-          validateData={ApplicationInfoSchema.shape.name.safeParse}
-          placeholder='Enter application or feature name'
+  >{editMode ? (
+      <SpaceBetween direction='vertical' size='l'>
+        <FormField
+          label="Application or feature name"
+        >
+          <Input
+            value={name}
+            onChange={event =>
+              setName(event.detail.value)
+            }
+            validateData={ApplicationInfoSchema.shape.name.safeParse}
+            placeholder='Enter application or feature name'
+          />
+        </FormField>
+        <MarkdownEditor
+          value={content}
+          onChange={setContent}
+          label='Description'
+          parentHeaderLevel='h2'
+          validateData={ApplicationInfoSchema.shape.description.safeParse}
         />
-      </FormField>
-      <MarkdownEditor
-        value={content}
-        onChange={setContent}
-        label='Description'
-        parentHeaderLevel='h2'
-        validateData={ApplicationInfoSchema.shape.description.safeParse}
-      />
-      <FormField
-        label="This application / feature requires the following GC Cloud Profile"
-        description="CCCS Low (formerly PALL) -> Targets: Protected A, Low Integrity, Low Availability | CCCS Medium (formerly PBMM) -> Targets: Protected B, Medium Integrity, Medium Availability"
-      >
-        <SegmentedControl
-          selectedId={securityCategory}
-          onChange={({ detail }) =>
-            setSecurityCategory(detail.selectedId)
-          }
-          label="This application / feature require the following GC Cloud Profile"
-          options={[
-            { text: 'CCCS Low', id: 'cccs-low' },
-            { text: 'CCCS Medium', id: 'cccs-medium' },
-            { text: 'CCCS High', id: 'cccs-high' },
-          ]}
-        />
-      </FormField>
-      <FormField
-        label="Cloud service model">
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedIaaS(detail.checked)
-          }
-          checked={checkedIaaS}
+        <FormField
+          label="This application / feature requires the following GC Cloud Profile"
+          description="CCCS Low (formerly PALL) -> Targets: Protected A, Low Integrity, Low Availability | CCCS Medium (formerly PBMM) -> Targets: Protected B, Medium Integrity, Medium Availability"
         >
-        IaaS
-        </Checkbox>
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedPaaS(detail.checked)
-          }
-          checked={checkedPaaS}
-        >
-        PaaS
-        </Checkbox>
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedSaaS(detail.checked)
-          }
-          checked={checkedSaaS}
-        >
-        SaaS
-        </Checkbox>
-      </FormField>
-      <FormField
-        label="Cloud stack component">
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedData(detail.checked)
-          }
-          checked={checkedData}
-        >
-        Data
-        </Checkbox>
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedStorage(detail.checked)
-          }
-          checked={checkedStorage}
-        >
-        Storage
-        </Checkbox>
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedApplication(detail.checked)
-          }
-          checked={checkedApplication}
-        >
-        Application
-        </Checkbox>
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedCompute(detail.checked)
-          }
-          checked={checkedCompute}
-        >
-        Compute
-        </Checkbox>
-        <Checkbox
-          onChange={({ detail }) =>
-            setCheckedNetwork(detail.checked)
-          }
-          checked={checkedNetwork}
-        >
-        Network
-        </Checkbox>
-      </FormField>
-    </SpaceBetween>) :
-      (<MarkdownViewer>
-        {applicationInfo.description || ''}
-      </MarkdownViewer>)}
+          <SegmentedControl
+            selectedId={securityCategory}
+            onChange={({ detail }) =>
+              setSecurityCategory(detail.selectedId)
+            }
+            label="This application / feature require the following GC Cloud Profile"
+            options={[
+              { text: 'CCCS Low', id: 'CCCS Low' },
+              { text: 'CCCS Medium', id: 'CCCS Medium' },
+              { text: 'CCCS High', id: 'CCCS High' },
+            ]}
+          />
+        </FormField>
+        <FormField
+          label="Cloud service model">
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedIaaS(detail.checked)
+            }
+            checked={checkedIaaS}
+          >
+          IaaS
+          </Checkbox>
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedPaaS(detail.checked)
+            }
+            checked={checkedPaaS}
+          >
+          PaaS
+          </Checkbox>
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedSaaS(detail.checked)
+            }
+            checked={checkedSaaS}
+          >
+          SaaS
+          </Checkbox>
+        </FormField>
+        <FormField
+          label="Cloud stack component">
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedData(detail.checked)
+            }
+            checked={checkedData}
+          >
+          Data
+          </Checkbox>
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedStorage(detail.checked)
+            }
+            checked={checkedStorage}
+          >
+          Storage
+          </Checkbox>
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedApplication(detail.checked)
+            }
+            checked={checkedApplication}
+          >
+          Application
+          </Checkbox>
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedCompute(detail.checked)
+            }
+            checked={checkedCompute}
+          >
+          Compute
+          </Checkbox>
+          <Checkbox
+            onChange={({ detail }) =>
+              setCheckedNetwork(detail.checked)
+            }
+            checked={checkedNetwork}
+          >
+          Network
+          </Checkbox>
+        </FormField>
+      </SpaceBetween>) :
+      (
+        <SpaceBetween direction='vertical' size='l'>
+          <MarkdownViewer>
+            {applicationInfo.description || ''}
+          </MarkdownViewer>
+          <Header>{'GC cloud profile'}</Header>
+          <MarkdownViewer>
+            {applicationInfo.securityCategory || ''}
+          </MarkdownViewer>
+          <Header>{'Cloud service models'}</Header>
+          <MarkdownViewer>
+            {[(applicationInfo.useIaaS ? 'IaaS' : ''), (applicationInfo.usePaaS ? 'PaaS' : ''), (applicationInfo.useSaaS ? 'SaaS' : '')].filter(Boolean).join(', ')}
+          </MarkdownViewer>
+          <Header>{'Cloud stack components'}</Header>
+          <MarkdownViewer>
+            {[(applicationInfo.useData ? 'Data' : ''), (applicationInfo.useStorage ? 'Storage' : ''), (applicationInfo.useApplication ? 'Application' : ''), (applicationInfo.useCompute ? 'Compute' : ''), (applicationInfo.useNetwork ? 'Network' : '')].filter(Boolean).join(', ')}
+          </MarkdownViewer>
+        </SpaceBetween>)}
   </Container>);
 };
 

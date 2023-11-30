@@ -27,6 +27,15 @@ export interface ApplicationInfoContextApi {
 const initialState: ApplicationInfoContextApi = {
   applicationInfo: {
     description: '',
+    securityCategory: 'CCCS Medium',
+    useIaaS: false,
+    usePaaS: false,
+    useSaaS: false,
+    useData: false,
+    useStorage: false,
+    useApplication: false,
+    useCompute: false,
+    useNetwork: false,
   },
   setApplicationInfo: () => { },
   removeApplicationInfo: () => Promise.resolve(),

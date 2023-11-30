@@ -26,7 +26,7 @@ import controlProfiles from '../../../data/controlProfiles.json';
 import Tags from '../ControlCard/components/Tags';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import ThreatLinkView from '../../threats/ThreatLinkView';
-import { useMitigationsContext, useThreatsContext } from '../../../contexts';
+import { useApplicationInfoContext, useMitigationsContext, useThreatsContext } from '../../../contexts';
 import MitigationLinkView from '../../mitigations/MitigationLinkView';
 
 export interface ControlCreationCardProps {
@@ -75,6 +75,7 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
   onRemoveTagFromEntity,
 }) => {
   const ref = useRef<any>(null);
+  const { applicationInfo } = useApplicationInfoContext();
   const DEFAULT_ENTITY = useMemo( () => {
     return {
       id: DEFAULT_NEW_ENTITY_ID,
@@ -97,9 +98,9 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
 
   const controlList = useMemo(() => {
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
+    let cccs_medium_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
     return cccs_medium_profile.controls as Control[];
-  }, []);
+  }, [applicationInfo.securityCategory]);
   const [selectedControl, setSelectedControl] = useState<OptionDefinition | null>(null);
   const [controlId, setControlId] = useState(editingEntity.id);
   const [tags, setTags] = useState(editingEntity.tags);

@@ -21,7 +21,7 @@ import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { useMitigationLinksContext, useControlLinksContext } from '../../../contexts';
+import { useMitigationLinksContext, useControlLinksContext, useApplicationInfoContext } from '../../../contexts';
 import { useControlsContext } from '../../../contexts/ControlsContext/context';
 import { MitigationLink, Control, ControlLink, ControlProfile } from '../../../customTypes';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
@@ -34,6 +34,7 @@ import { Multiselect } from '@cloudscape-design/components';
 import controlProfiles from '../../../data/controlProfiles.json';
 
 const ControlList: FC = () => {
+  const { applicationInfo } = useApplicationInfoContext();
   const {
     //controlList,
     removeControl,
@@ -42,9 +43,9 @@ const ControlList: FC = () => {
 
   const controlList = useMemo(() => {
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
+    let cccs_medium_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
     return cccs_medium_profile.controls as Control[];
-  }, []);
+  }, [applicationInfo.securityCategory]);
 
   const {
     addControlLinks,

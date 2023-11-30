@@ -1,4 +1,5 @@
 {
+
   "securityProfiles": [
     {
       "schema": "CCCS Medium",
@@ -8980,6 +8981,14 @@
           ]
         }
       ]
+    },
+    {
+      "schema": "CCCS Low",
+      "controls": []
+    },
+    {
+      "schema": "CCCS High",
+      "controls": []
     }
   ]
 }

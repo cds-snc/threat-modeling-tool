@@ -480,7 +480,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
             <Button iconName="zoom-in" variant="primary" ariaLabel="Zoom in" onClick={handleZoomIn} />
             <Button iconName="zoom-to-fit" variant="primary" ariaLabel="Zoom to fit" onClick={handleZoomToFit} />
             <Button iconName="expand" variant="primary" ariaLabel="Reset zoom" onClick={handleZoomReset} />
-            <Button iconName="check" variant="primary" ariaLabel="Confirm changes" onClick={handleSerialize} />
+            <Button variant="primary" ariaLabel="Confirm changes" onClick={handleSerialize}>Save</Button>
           </SpaceBetween>
         </S.Toolbar>
 
