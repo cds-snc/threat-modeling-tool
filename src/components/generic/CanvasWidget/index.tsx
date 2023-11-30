@@ -40,6 +40,8 @@ import ThreatList from '../DiagramCanvas/flowDiagram/components/Canvas/ThreatLis
 import { BaseImageInfo, EditableComponentBaseProps } from '../../../customTypes';
 import { MarkdownEditorProps } from '../MarkdownEditor';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
+import TrustBoundaryNodeModel from './CustomNode/TrustBoundaryNode/TrustBoundaryNodeModel';
+import { TrustBoundaryNodeFactory } from './CustomNode/TrustBoundaryNode';
 
 const diagramWrapper = css({
   display: 'grid',
@@ -149,6 +151,15 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
       .getPortFactories()
       .registerFactory(new SimplePortFactory('actor', (_config) => new ActorPortModel(PortModelAlignment.TOP)));
     engine.getNodeFactories().registerFactory(new ActorNodeFactory(filterStatementsCallback));
+
+    engine.getNodeFactories().registerFactory(new TrustBoundaryNodeFactory({
+      nodeWidth: 150,
+      nodeHeight: 100,
+      nodeX: 0,
+      nodeY: 0,
+      filterStatementsCallback: filterStatementsCallback,
+    }));
+
     engine.getLinkFactories().registerFactory(new StraightArrowLinkFactory(filterStatementsCallback));
   };
 
@@ -284,6 +295,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
 
   useEffect( () => { // edit selected entitity
     engine.getModel().getNodes().forEach( (node) => {
+      console.log('selecte node info', node);
       if (node.isSelected()) {
         switch (node.getOptions().type) {
           case 'actor':
@@ -318,6 +330,13 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
             ( node as DatastoreNodeModel ).techFeatures = clickedObjectTechFeatures;
             ( node as DatastoreNodeModel ).securityFeatures = clickedObjectSecurityFeatures;
             ( node as DatastoreNodeModel ).threats = selectedThreatList;
+            break;
+          case 'trust-boundary':
+            ( node as TrustBoundaryNodeModel ).name = clickedObjectName;
+            ( node as TrustBoundaryNodeModel ).description = clickedObjectDescription;
+            ( node as TrustBoundaryNodeModel ).outOfScope = clickedObjectOutOfScope;
+            ( node as TrustBoundaryNodeModel ).outOfScopeReason = clickedObjectOutOfScopeReason;
+            ( node as TrustBoundaryNodeModel ).tags = clickedObjectTags;
             break;
         }
       }
@@ -487,6 +506,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
               // get the actual tray widget position on the screen
               var elementType = JSON.parse(event.dataTransfer.getData('storm-diagram-node'));
               // create a new node at the same position
+              var point = engine.getRelativeMousePoint(event);
               var node: any = null;
               switch (elementType) {
                 case 'actor':
@@ -528,8 +548,20 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
                     filterStatementsCallback: filterStatementsCallback,
                   });
                   break;
+                case 'trust-boundary':
+                  node = new TrustBoundaryNodeModel({
+                    nodeWidth: 150,
+                    nodeHeight: 100,
+                    nodeX: point.x - 225,
+                    nodeY: point.y - 175,
+                    name: clickedObjectName,
+                    description: clickedObjectDescription,
+                    outOfScope: clickedObjectOutOfScope,
+                    outOfScopeReason: clickedObjectOutOfScopeReason,
+                    tags: clickedObjectTags,
+                  });
+                  break;
               };
-              var point = engine.getRelativeMousePoint(event);
               node.setPosition(point);
               engine.getModel().addNode(node);
               // repaint the canvas
