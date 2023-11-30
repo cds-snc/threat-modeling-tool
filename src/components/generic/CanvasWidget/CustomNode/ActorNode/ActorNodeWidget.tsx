@@ -47,14 +47,46 @@ namespace S {
 }
 
 export class ActorNodeWidget extends React.Component<ActorNodeWidgetProps> {
+
+  state: {
+    mouseDownX: number;
+    mouseDownY: number;
+  };
+
   constructor(props) {
     super(props);
+    this.state = {
+      mouseDownX: 0,
+      mouseDownY: 0,
+    };
+  };
+
+  handleOnPortMouseDown = (event) => {
+    console.log('ActorNodeWidget.onmousedown', event);
+    this.setState({
+      mouseDownX: event.clientX,
+      mouseDownY: event.clientY,
+    });
+  };
+
+  handleOnPortMouseUp = (event) => {
+    console.log('ActorNodeWidget.onmouseup', event);
+    if (event.clientX === this.state.mouseDownX && event.clientY === this.state.mouseDownY) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
+  handleOnPortClick= (event) => {
+    console.log('ActorNodeWidget.onclick', event);
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   render() {
     return (
       <div
-        className={'datastore-node'}
+        className={'actor-node'}
         style={{
           position: 'relative',
           width: this.props.size,
@@ -68,7 +100,7 @@ export class ActorNodeWidget extends React.Component<ActorNodeWidgetProps> {
             __html:
               `
 						<g id="Layer_2">
-              <rect width="${this.props.size}" height="${this.props.size-(this.props.size/2)}" fill="white" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="3" stroke-miterlimit="10"/>
+              <rect width="${this.props.size}" height="${this.props.size-(this.props.size/2)}" fill="${this.props.node.outOfScope ? '#bbbec0' : 'white'}" stroke="${this.props.node.isSelected() ? '#56bdf9' : 'black'}" stroke-width="3" stroke-miterlimit="10"/>
 							<text x="50%" y="50%" text-anchor="middle" stroke="black" stroke-width="0.5px" dy=".2em">${this.props.node.name}</text>
 						</g>
 					`,
@@ -83,7 +115,7 @@ export class ActorNodeWidget extends React.Component<ActorNodeWidgetProps> {
           port={this.props.node.getPort(PortModelAlignment.LEFT) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
         <PortWidget
           style={{
@@ -94,7 +126,7 @@ export class ActorNodeWidget extends React.Component<ActorNodeWidgetProps> {
           port={this.props.node.getPort(PortModelAlignment.TOP) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
         <PortWidget
           style={{
@@ -105,7 +137,7 @@ export class ActorNodeWidget extends React.Component<ActorNodeWidgetProps> {
           port={this.props.node.getPort(PortModelAlignment.RIGHT) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
         <PortWidget
           style={{
@@ -116,7 +148,7 @@ export class ActorNodeWidget extends React.Component<ActorNodeWidgetProps> {
           port={this.props.node.getPort(PortModelAlignment.BOTTOM) as PortModel<PortModelGenerics>}
           engine={this.props.engine}
         >
-          <S.Port />
+          <S.Port onMouseDown={this.handleOnPortMouseDown} onMouseUp={this.handleOnPortMouseUp} onClick={this.handleOnPortClick} />
         </PortWidget>
       </div>
     );

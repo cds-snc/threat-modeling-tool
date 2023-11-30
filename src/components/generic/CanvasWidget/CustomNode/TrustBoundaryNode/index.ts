@@ -13,5 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  ******************************************************************************************************************** */
-export * from './TrustBoundary.default';
-export * from './TrustBoundary.wrapper';
+
+export * from './TrustBoundaryNodeFactory';
+export * from './TrustBoundaryNodeModel';
+export * from './TrustBoundaryNodeWidget';
