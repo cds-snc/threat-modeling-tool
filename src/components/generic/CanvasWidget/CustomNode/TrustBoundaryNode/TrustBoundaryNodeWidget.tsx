@@ -17,9 +17,7 @@
 import * as React from 'react';
 import { DraggableData, Rnd } from 'react-rnd';
 import TrustBoundaryNodeModel from './TrustBoundaryNodeModel';
-import {
-  DiagramEngine,
-} from '@projectstorm/react-diagrams';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
 import { RefObject } from 'react';
 
 const trustBoundaryStyle = {
@@ -31,11 +29,46 @@ const trustBoundaryStyle = {
   zIndex: -100000,
 };
 
+const trustBoundarySelectedStyle = {
+  display: 'flex',
+  alignItems: 'first baseline',
+  justifyContent: 'start',
+  border: 'dashed 2px #56bdf9',
+  background: 'transparent',
+  zIndex: -100000,
+  boxShadow: '0 10px 20px rgba(0,0,0,.1)',
+  marginTop: '-2px',
+};
+
+const trustBoundaryOOBStyle = {
+  display: 'flex',
+  alignItems: 'first baseline',
+  justifyContent: 'start',
+  border: 'dashed 2px #bbbec0',
+  background: 'transparent',
+  zIndex: -100000,
+  marginTop: '-2px',
+};
+
 const trustBoundaryLabelStyle = {
   border: 'dashed 2px red',
   background: 'red',
   filter: 'opacity(60%)',
   color: 'white',
+  fontSize: '9px',
+  paddingTop: '1px',
+  paddingBottom: '1px',
+  paddingLeft: '2px',
+  paddingRight: '2px',
+  width: 'fit-content',
+  height: 'fit-content',
+};
+
+const trustBoundaryLabelOOBStyle = {
+  border: 'dashed 2px #bbbec0',
+  background: '#bbbec0',
+  filter: 'opacity(60%)',
+  color: 'black',
   fontSize: '9px',
   paddingTop: '1px',
   paddingBottom: '1px',
@@ -78,7 +111,7 @@ export class TrustBoundaryNodeWidget extends React.Component<TrustBoundaryNodeWi
     return (
       <Rnd
         ref={this.aref}
-        style={trustBoundaryStyle}
+        style={this.props.node.isSelected() ? trustBoundarySelectedStyle : (this.props.node.outOfScope ? trustBoundaryOOBStyle : trustBoundaryStyle)}
         key={this.props.node.getID()}
         position={{ x: this.state.x, y: this.state.y }}
         size={{ width: this.state.width, height: this.state.height }}
@@ -122,7 +155,7 @@ export class TrustBoundaryNodeWidget extends React.Component<TrustBoundaryNodeWi
           this.props.node.nodeHeight = ref.style.height as unknown as number;
           //this.props.node.updateDimensions({ width: ref.style.width as unknown as number, height: ref.style.height as unknown as number });
         }} >
-        <div style={trustBoundaryLabelStyle}>{this.props.node.name}</div>
+        <div style={this.props.node.outOfScope ? trustBoundaryLabelOOBStyle : trustBoundaryLabelStyle}>{this.props.node.name}</div>
       </Rnd>
     );
   }
