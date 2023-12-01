@@ -17,7 +17,7 @@
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useRef, useMemo } from 'react';
 import { Control, ControlProfile } from '../../../customTypes';
-import { Button, ColumnLayout, Container, Header, Select, TextContent } from '@cloudscape-design/components';
+import { Button, ColumnLayout, Container, Header, Select, TextContent, Alert } from '@cloudscape-design/components';
 import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import * as awsui from '@cloudscape-design/design-tokens';
@@ -95,11 +95,12 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
   }, []);
   const [editingEntity, setEditingEntity] = useState<Control>(DEFAULT_ENTITY);
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
+  const [showAlert, setShowAlert] = useState(false);
 
   const controlList = useMemo(() => {
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
-    return cccs_medium_profile.controls as Control[];
+    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
+    return cccs_profile.controls as Control[];
   }, [applicationInfo.securityCategory]);
   const [selectedControl, setSelectedControl] = useState<OptionDefinition | null>(null);
   const [controlId, setControlId] = useState(editingEntity.id);
@@ -110,6 +111,11 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
   const [linkedMitigationIds, setLinkedMitigationIds] = useState<string[]>([]);
 
   const handleSave = useCallback(() => {
+    if (linkedThreatIds.length === 0) {
+      setShowAlert(true);
+      return;
+    }
+
     editingEntity.id = controlId || 'new';
     editingEntity.content = selectedControl?.label as string || '';
     editingEntity.tags = tags || [];
@@ -142,7 +148,7 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
 
   const handleControlChange = (selectedOption) => {
     setSelectedControl(selectedOption);
-    setControlId(selectedOption.id);
+    setControlId(selectedOption.value);
     setTags(selectedOption.tags);
     setMetadataComments(selectedOption.description);
   };
@@ -159,6 +165,10 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
       setLinkedMitigationIds(prev => [...prev, newMitigation.id]);
     }
   }, [mitigationList, saveMitigation]);
+
+  const handleOnDismissAlert = (_event) => {
+    setShowAlert(false);
+  };
 
   return (
     <div ref={ref}>
@@ -182,11 +192,23 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
           <SpaceBetween direction='horizontal' size='s'>
             <Button onClick={handleReset}>Reset</Button>
             <Button variant='primary' disabled={selectedControl===null} onClick={handleSave}>Save</Button>
+            <Alert
+              dismissible
+              statusIconAriaLabel="Error"
+              type="error"
+              visible={showAlert}
+              onDismiss={handleOnDismissAlert}
+              header="Validation error" >
+              Select at least one threat from the list.
+            </Alert>
           </SpaceBetween>
           <ColumnLayout columns={2}>
             <Select
               selectedOption={selectedControl}
-              onChange={({ detail }) => handleControlChange(detail.selectedOption)}
+              onChange={({ detail }) => {
+                handleControlChange(detail.selectedOption);
+                setShowAlert(false);
+              }}
               options={controlList.map(c => ({
                 label: c.content,
                 labelTag: (c.metadata?.find(m => m.key === 'STRIDE')?.value as string[]).join(','),
@@ -216,7 +238,6 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
           <TextContent>
             {metadataComments || ''}
           </TextContent>
-
         </SpaceBetween>
       </Container>
     </div>

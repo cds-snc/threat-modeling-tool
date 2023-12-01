@@ -29,7 +29,7 @@ export const ControlLinkSchema = EntityLinkBaseSchema.extend({
   /**
    * The linked entity Id.
    */
-  linkedId: z.string().length(36),
+  linkedId: z.string().length(36).min(36).max(36),
 }).strict();
 
 export type ControlLink = z.infer<typeof ControlLinkSchema>;

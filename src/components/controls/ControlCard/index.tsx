@@ -98,8 +98,8 @@ const ControlCard: FC<ControlCardProps> = ({
   //const [linkedControlIds, setLinkedControlIds] = useState<string[]>([]);
   const controlList = useMemo(() => {
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
-    return cccs_medium_profile.controls as Control[];
+    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
+    return cccs_profile.controls as Control[];
   }, [applicationInfo.securityCategory]);
   const [selectedControl, setSelectedControl] = useState<OptionDefinition>({
     label: entity.content,

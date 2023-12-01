@@ -41,12 +41,6 @@ const ControlList: FC = () => {
     saveControl,
   } = useControlsContext();
 
-  const controlList = useMemo(() => {
-    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
-    return cccs_medium_profile.controls as Control[];
-  }, [applicationInfo.securityCategory]);
-
   const {
     addControlLinks,
     controlLinkList,
@@ -61,10 +55,36 @@ const ControlList: FC = () => {
 
   const [filteringText, setFilteringText] = useState('');
 
+  const controlList = useMemo(() => {
+    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
+    let cccs_profile = profiles?.filter( cp => {
+      return (cp.schema === applicationInfo.securityCategory);
+    })[0];
+    return cccs_profile.controls as Control[];
+  }, [applicationInfo.securityCategory]);
+
+  const allTags = useMemo(() => {
+    return controlList
+      .reduce((all: string[], cur) => {
+        return [...all, ...cur.tags?.filter(ia => !all.includes(ia)) || []];
+      }, []).filter(t=>t!==applicationInfo.securityCategory).concat(['Data', 'Storage', 'Application', 'Compute', 'Network']);
+  }, [applicationInfo.securityCategory, controlList]);
+
   const [
     selectedTags,
     setSelectedTags,
-  ] = useState<string[]>([]);
+  ] = useState<string[]>(allTags.filter(t => {
+    return (t.includes(applicationInfo.securityCategory||'') ||
+           (t === 'CSP Stacked IaaS' && applicationInfo.useIaaS) ||
+           (t === 'CSP Stacked PaaS' && applicationInfo.usePaaS) ||
+           (t === 'CSP Stacked SaaS' && applicationInfo.useSaaS) ||
+           (t.includes('Data') && applicationInfo.useData) ||
+           (t.includes('Storage') && applicationInfo.useStorage) ||
+           (t.includes('Application') && applicationInfo.useApplication) ||
+           (t.includes('Compute') && applicationInfo.useCompute) ||
+           (t.includes('Network') && applicationInfo.useNetwork)
+    );
+  }).concat(['Technical']));
 
   const STRIDE_OPTION_NO_VALUE = {
     label: 'STRIDE Not Set', value: LEVEL_NOT_SET,
@@ -108,13 +128,6 @@ const ControlList: FC = () => {
     setSelectedLinkedThreatsFilter(ALL);
   }, []);
 
-  const allTags = useMemo(() => {
-    return controlList
-      .reduce((all: string[], cur) => {
-        return [...all, ...cur.tags?.filter(ia => !all.includes(ia)) || []];
-      }, []);
-  }, [controlList]);
-
   const handleAddTagToEntity = useCallback((control: Control, tag: string) => {
     const updated: Control = {
       ...control,
@@ -134,37 +147,23 @@ const ControlList: FC = () => {
     saveControl(updated);
   }, [saveControl]);
 
+
   const filteredList = useMemo(() => {
     // display only controls that have at least one linked threat
-    let output = controlList.filter(c => {
-      return controlLinkList.some(cl => cl.controlId === c.id);
-    });
+    let output = controlList;//.filter(c => {return controlLinkList?.some(cl => cl.controlId.toLowerCase() === c.id.toLowerCase());});
 
     if (filteringText) {
       output = output.filter(c => c.content && c.content.toLowerCase().indexOf(filteringText.toLowerCase()) >= 0);
     }
-
     if (selectedTags && selectedTags.length > 0) {
+      console.log('selectedTags', selectedTags);
       output = output.filter(c => {
         return c.tags?.some(t => selectedTags.includes(t));
       });
     }
-
     if (selectedSTRIDEs && selectedSTRIDEs.length > 0) {
       output = output.filter(c => {
         const stride = c.metadata?.find(m => m.key === 'STRIDE');
-        const includedNoValue = selectedSTRIDEs.includes(LEVEL_NOT_SET);
-        if (includedNoValue && (!stride || !stride.value || stride.value.length === 0 || (stride.value.length === 1 && stride.value[0]===''))) {
-          return true;
-        }
-
-        return stride?.value && (stride.value as string[]).some(t => selectedSTRIDEs.includes(t));
-      });
-    }
-
-    if (selectedSTRIDEs && selectedSTRIDEs.length > 0) {
-      output = output.filter(st => {
-        const stride = st.metadata?.find(m => m.key === 'STRIDE');
         const includedNoValue = selectedSTRIDEs.includes(LEVEL_NOT_SET);
         if (includedNoValue && (!stride || !stride.value || stride.value.length === 0 || (stride.value.length === 1 && stride.value[0]===''))) {
           return true;
@@ -183,19 +182,18 @@ const ControlList: FC = () => {
     }
 
     if (selectedLinkedMitigationsFilter !== ALL) {
-
       output = output.filter(c => {
         return mitigationLinkList.some(ml => ml.linkedId === c.id) ?
           selectedLinkedMitigationsFilter === WITH_LINKED_ENTITY :
           selectedLinkedMitigationsFilter === WITHOUT_NO_LINKED_ENTITY;
       });
     }
-
     output = output.sort((op1, op2) => (op2.displayOrder || Number.MAX_VALUE) - (op1.displayOrder || Number.MAX_VALUE));
     return output;
   }, [filteringText, controlList, selectedTags, selectedSTRIDEs,
     mitigationLinkList, controlLinkList,
     selectedLinkedMitigationsFilter, selectedLinkedThreatsFilter]);
+
 
   const handleSaveNew = useCallback((control: Control,
     linkedMitigationIds: string[],
