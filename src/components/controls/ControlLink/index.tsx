@@ -19,6 +19,7 @@ import { ControlLink, Control, ControlProfile } from '../../../customTypes';
 import { useControlLinksContext } from '../../../contexts/ControlLinksContext/context';
 import ControlLookupComponent from '../../controls/ControlLookup';
 import controlProfiles from '../../../data/controlProfiles.json';
+import { useApplicationInfoContext } from '../../../contexts';
 
 export interface ControlLinkProps {
   linkedEntityId: string;
@@ -28,11 +29,13 @@ const ControlLinkComponent: FC<ControlLinkProps> = ({
   linkedEntityId,
 }) => {
 
+  const { applicationInfo } = useApplicationInfoContext();
+
   const controlList = useMemo(() => {
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
-    return cccs_medium_profile.controls as Control[];
-  }, []);
+    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
+    return cccs_profile.controls as Control[];
+  }, [applicationInfo.securityCategory]);
 
   const [controlLinks, setControlLinks] = useState<ControlLink[]>([]);
 

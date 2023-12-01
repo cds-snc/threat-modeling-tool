@@ -34,6 +34,7 @@ import Tags from './components/Tags';
 import controlProfiles from '../../../data/controlProfiles.json';
 import { Select, TextContent } from '@cloudscape-design/components';
 import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
+import { useApplicationInfoContext } from '../../../contexts';
 
 export interface ControlCardProps {
   entity: Control;
@@ -87,6 +88,7 @@ const ControlCard: FC<ControlCardProps> = ({
   onRemoveTagFromEntity,
 }) => {
   const ref = useRef<any>(null);
+  const { applicationInfo } = useApplicationInfoContext();
   const [editingMode, setEditingMode] = useState(false);
   const [editingValue, setEditingValue] = useState(entity.content);
   const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
@@ -96,9 +98,9 @@ const ControlCard: FC<ControlCardProps> = ({
   //const [linkedControlIds, setLinkedControlIds] = useState<string[]>([]);
   const controlList = useMemo(() => {
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
-    return cccs_medium_profile.controls as Control[];
-  }, []);
+    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
+    return cccs_profile.controls as Control[];
+  }, [applicationInfo.securityCategory]);
   const [selectedControl, setSelectedControl] = useState<OptionDefinition>({
     label: entity.content,
     value: entity.id,

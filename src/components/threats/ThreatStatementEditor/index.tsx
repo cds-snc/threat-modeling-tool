@@ -59,6 +59,7 @@ import MetadataEditor from '../MetadataEditor';
 import Metrics from '../Metrics';
 import ControlLookupComponent from '../../controls/ControlLookup';
 import controlProfiles from '../../../data/controlProfiles.json';
+import { useApplicationInfoContext } from '../../../contexts';
 
 const styles = {
   finalStatementSection: css({
@@ -87,6 +88,7 @@ const editorMapping: { [key in ThreatFieldTypes]: React.ComponentType<EditorProp
 const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement }> = ({
   editingStatement,
 }) => {
+  const { applicationInfo } = useApplicationInfoContext();
   const { setEditingStatement, saveStatement, addStatement, onThreatListView } = useThreatsContext();
   const inputRef = useRef<{ focus(): void }>();
   const fullExamplesRef = useRef<{ collapse(): void }>();
@@ -125,9 +127,9 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
   const { mitigationList, saveMitigation } = useMitigationsContext();
   const controlList = useMemo(() => {
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_medium_profile = profiles?.filter(cp => cp.schema === 'CCCS Medium')[0];
-    return cccs_medium_profile.controls as Control[];
-  }, []);
+    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
+    return cccs_profile.controls as Control[];
+  }, [applicationInfo.securityCategory]);
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];

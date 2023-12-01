@@ -22,10 +22,16 @@ export const ApplicationInfoSchema = z.object({
    * The name of the application.
   */
   name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
-  /**
-   * The description of the architecture diagram
-   */
   description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
+  securityCategory: z.string().optional(),
+  useIaaS: z.boolean().optional(),
+  usePaaS: z.boolean().optional(),
+  useSaaS: z.boolean().optional(),
+  useData: z.boolean().optional(),
+  useStorage: z.boolean().optional(),
+  useApplication: z.boolean().optional(),
+  useCompute: z.boolean().optional(),
+  useNetwork: z.boolean().optional(),
 }).strict();
 
 export type ApplicationInfo = z.infer<typeof ApplicationInfoSchema>;
