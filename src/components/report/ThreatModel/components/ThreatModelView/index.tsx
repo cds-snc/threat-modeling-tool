@@ -36,7 +36,7 @@ import { getArchitectureContent } from '../../utils/getArchitecture';
 import { getAssetsContent } from '../../utils/getAssets';
 import { getAssumptionsContent } from '../../utils/getAssumptions';
 import { getControlsContent } from '../../utils/getControls';
-import { getDataflowContent } from '../../utils/getDataFlow';
+//import { getDataflowContent } from '../../utils/getDataFlow';
 import { getMitigationsContent } from '../../utils/getMitigations';
 import { getThreatsContent } from '../../utils/getThreats';
 
@@ -85,7 +85,7 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
         (!hasContentDetails || hasContentDetails.applicationName) && await getApplicationName(sanitizedData),
         (!hasContentDetails || hasContentDetails.applicationInfo) && await getApplicationInfoContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.architecture) && await getArchitectureContent(sanitizedData),
-        (!hasContentDetails || hasContentDetails.dataflow) && await getDataflowContent(sanitizedData),
+        //(!hasContentDetails || hasContentDetails.dataflow) && await getDataflowContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.assumptions) && await getAssumptionsContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.threats) && await getThreatsContent(sanitizedData),
         (!hasContentDetails || hasContentDetails.controls) && await getControlsContent(sanitizedData),
@@ -116,9 +116,9 @@ const ThreatModelView: FC<ThreatModelViewProps> = ({
     if (!hasContentDetails?.architecture) {
       buttons.push(<Button key='architectureViewBtn' onClick={props.onArchitectureView}>Add Architecture</Button>);
     }
-    if (!hasContentDetails?.diagram) {
-      buttons.push(<Button key='diagramViewBtn' onClick={props.onDiagramView}>Add Diagram</Button>);
-    }
+    //if (!hasContentDetails?.diagram) {
+    //  buttons.push(<Button key='diagramViewBtn' onClick={props.onDiagramView}>Add Diagram</Button>);
+    //}
     if (!hasContentDetails?.assumptions) {
       buttons.push(<Button key='assumptionsViewBtn' onClick={props.onAssumptionListView}>Add Assumptions</Button>);
     }
