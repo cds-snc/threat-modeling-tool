@@ -103,7 +103,6 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
     let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
     return cccs_profile.controls as Control[];
   }, [applicationInfo.securityCategory]);
-
   const [selectedControl, setSelectedControl] = useState<OptionDefinition | null>(null);
   const [controlId, setControlId] = useState(editingEntity.id);
   const [tags, setTags] = useState(editingEntity.tags);
