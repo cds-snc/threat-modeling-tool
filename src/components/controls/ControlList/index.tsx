@@ -30,7 +30,7 @@ import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
 import { LEVEL_NOT_SET } from '../../../configs';
 import ControlCard from '../ControlCard';
 import ControlCreationCard from '../ControlCreationCard';
-import { Multiselect } from '@cloudscape-design/components';
+import { Link, Multiselect } from '@cloudscape-design/components';
 import controlProfiles from '../../../data/controlProfiles.json';
 
 const ControlList: FC = () => {
@@ -227,6 +227,7 @@ const ControlList: FC = () => {
       <Container header={
         <Header
           counter={`(${filteredList.length})`}
+          info={<Link variant="info">Info</Link>}
         >Control List</Header>
       }>
         <SpaceBetween direction='vertical' size='s'>
