@@ -98,6 +98,7 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
   const [showAlert, setShowAlert] = useState(false);
 
   const controlList = useMemo(() => {
+    // use the preselected security profile and show only the controls that were not selected yet
     let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
     let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
     return cccs_profile.controls as Control[];

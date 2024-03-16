@@ -18,5 +18,5 @@
 	"containerEnv": {
 		"SHELL": "/bin/zsh"
 	},
-	"postCreateCommand": "npm i && npm run build"
+	"postCreateCommand": "yarn install && yarn build"
 }
