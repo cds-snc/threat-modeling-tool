@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: threat-modeling-tool
+  description: CDS Threat Modeling Tool MVP
+  labels:
+    license: Apache-2.0
+spec:
+  type: website
+  lifecycle: experimental
+  owner: security
