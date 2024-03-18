@@ -19,7 +19,7 @@ import ColumnLayout from '@cloudscape-design/components/column-layout';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 //import TextContent from '@cloudscape-design/components/text-content';
 import { FC, useState, useCallback, useRef, useMemo, ReactNode } from 'react';
-import { Control, ControlProfile } from '../../../customTypes';
+import { Control } from '../../../customTypes';
 import MitigationLink from '../../mitigations/MitigationLink';
 import CopyToClipbord from '../../generic/CopyToClipboard';
 import { DeleteConfirmationDialog } from '@aws-northstar/ui';
@@ -31,10 +31,8 @@ import ControlThreatLink from '../ControlThreatLink';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import Tooltip from '../../generic/Tooltip';
 import Tags from './components/Tags';
-import controlProfiles from '../../../data/controlProfiles.json';
 import { Select, TextContent } from '@cloudscape-design/components';
 import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
-import { useApplicationInfoContext } from '../../../contexts';
 
 export interface ControlCardProps {
   entity: Control;
@@ -43,6 +41,7 @@ export interface ControlCardProps {
   onEdit?: (entity: Control) => void;
   onAddTagToEntity?: (entity: Control, tag: string) => void;
   onRemoveTagFromEntity?: (entity: Control, tag: string) => void;
+  controlList?: Control[];
 }
 
 const styles = {
@@ -86,9 +85,9 @@ const ControlCard: FC<ControlCardProps> = ({
   onEdit,
   onAddTagToEntity,
   onRemoveTagFromEntity,
+  controlList,
 }) => {
   const ref = useRef<any>(null);
-  const { applicationInfo } = useApplicationInfoContext();
   const [editingMode, setEditingMode] = useState(false);
   const [editingValue, setEditingValue] = useState(entity.content);
   const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
@@ -96,11 +95,6 @@ const ControlCard: FC<ControlCardProps> = ({
   const [tags, setTags] = useState(entity.tags);
   const [metadataComments, setMetadataComments] = useState(entity.metadata?.find(m => m.key === 'Comments')?.value);
   //const [linkedControlIds, setLinkedControlIds] = useState<string[]>([]);
-  const controlList = useMemo(() => {
-    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
-    return cccs_profile.controls as Control[];
-  }, [applicationInfo.securityCategory]);
   const [selectedControl, setSelectedControl] = useState<OptionDefinition>({
     label: entity.content,
     value: entity.id,
@@ -177,7 +171,7 @@ const ControlCard: FC<ControlCardProps> = ({
                 <Select
                   selectedOption={selectedControl}
                   onChange={({ detail }) => handleControlChange(detail.selectedOption)}
-                  options={controlList.map(c => ({
+                  options={controlList?.map(c => ({
                     label: c.content,
                     value: c.id,
                     description: c.metadata?.find(m => m.key === 'Comments')?.value as string,

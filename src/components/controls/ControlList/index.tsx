@@ -23,7 +23,7 @@ import TextFilter from '@cloudscape-design/components/text-filter';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useMitigationLinksContext, useControlLinksContext, useApplicationInfoContext } from '../../../contexts';
 import { useControlsContext } from '../../../contexts/ControlsContext/context';
-import { MitigationLink, Control, ControlLink, ControlProfile } from '../../../customTypes';
+import { MitigationLink, Control, ControlLink } from '../../../customTypes';
 import LinkedEntityFilter, { ALL, WITHOUT_NO_LINKED_ENTITY, WITH_LINKED_ENTITY } from '../../generic/LinkedEntityFilter';
 import TagSelector from '../../generic/TagSelector';
 import { OPTIONS as STRIDEOptions } from '../../generic/STRIDESelector';
@@ -31,7 +31,7 @@ import { LEVEL_NOT_SET } from '../../../configs';
 import ControlCard from '../ControlCard';
 import ControlCreationCard from '../ControlCreationCard';
 import { Link, Multiselect } from '@cloudscape-design/components';
-import controlProfiles from '../../../data/controlProfiles.json';
+import { getControlProfileByName } from '../../../data/controlProfileProvider';
 
 const ControlList: FC = () => {
   const { applicationInfo } = useApplicationInfoContext();
@@ -55,13 +55,10 @@ const ControlList: FC = () => {
 
   const [filteringText, setFilteringText] = useState('');
 
+  let selectedCategory = (applicationInfo.securityCategory == undefined ? 'CCCS Medium' : applicationInfo.securityCategory);
   const controlList = useMemo(() => {
-    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_profile = profiles?.filter( cp => {
-      return (cp.schema === applicationInfo.securityCategory);
-    })[0];
-    return cccs_profile.controls as Control[];
-  }, [applicationInfo.securityCategory]);
+    return getControlProfileByName(selectedCategory) as Control[];
+  }, [selectedCategory]);
 
   const allTags = useMemo(() => {
     return controlList
@@ -302,9 +299,11 @@ const ControlList: FC = () => {
         onEdit={saveControl}
         onAddTagToEntity={handleAddTagToEntity}
         onRemoveTagFromEntity={handleRemoveTagFromEntity}
+        controlList={controlList}
       />))}
       <ControlCreationCard
         onSave={handleSaveNew}
+        controlList={controlList}
       />
     </SpaceBetween>
   </div>);

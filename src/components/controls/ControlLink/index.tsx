@@ -15,10 +15,10 @@
  ******************************************************************************************************************** */
 
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { ControlLink, Control, ControlProfile } from '../../../customTypes';
+import { ControlLink, Control } from '../../../customTypes';
 import { useControlLinksContext } from '../../../contexts/ControlLinksContext/context';
 import ControlLookupComponent from '../../controls/ControlLookup';
-import controlProfiles from '../../../data/controlProfiles.json';
+import { getControlProfileByName } from '../../../data/controlProfileProvider';
 import { useApplicationInfoContext } from '../../../contexts';
 
 export interface ControlLinkProps {
@@ -31,11 +31,10 @@ const ControlLinkComponent: FC<ControlLinkProps> = ({
 
   const { applicationInfo } = useApplicationInfoContext();
 
+  let selectedCategory = (applicationInfo.securityCategory == undefined ? 'CCCS Medium' : applicationInfo.securityCategory);
   const controlList = useMemo(() => {
-    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
-    return cccs_profile.controls as Control[];
-  }, [applicationInfo.securityCategory]);
+    return getControlProfileByName(selectedCategory) as Control[];
+  }, [selectedCategory]);
 
   const [controlLinks, setControlLinks] = useState<ControlLink[]>([]);
 
