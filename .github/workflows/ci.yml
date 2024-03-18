@@ -10,5 +10,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
 
+      - name: Install
+        run: yarn install 
+
+      - name: Test
+        run: yarn test
+
       - name: Build
-        run: yarn install && yarn build
+        run: yarn build
