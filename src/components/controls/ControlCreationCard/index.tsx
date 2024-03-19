@@ -16,23 +16,23 @@
 /** @jsxImportSource @emotion/react */
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { FC, useState, useCallback, useRef, useMemo } from 'react';
-import { Control, ControlProfile } from '../../../customTypes';
+import { Control } from '../../../customTypes';
 import { Button, ColumnLayout, Container, Header, Select, TextContent, Alert } from '@cloudscape-design/components';
 import { OptionDefinition } from '@cloudscape-design/components/internal/components/option/interfaces';
 import getMobileMediaQuery from '../../../utils/getMobileMediaQuery';
 import * as awsui from '@cloudscape-design/design-tokens';
 import { css } from '@emotion/react';
-import controlProfiles from '../../../data/controlProfiles.json';
 import Tags from '../ControlCard/components/Tags';
 import { DEFAULT_NEW_ENTITY_ID } from '../../../configs';
 import ThreatLinkView from '../../threats/ThreatLinkView';
-import { useApplicationInfoContext, useMitigationsContext, useThreatsContext } from '../../../contexts';
+import { useMitigationsContext, useThreatsContext } from '../../../contexts';
 import MitigationLinkView from '../../mitigations/MitigationLinkView';
 
 export interface ControlCreationCardProps {
   onSave?: (entity: Control, linkedMitigationIds: string[], linkedThreatIds: string[]) => void;
   onAddTagToEntity?: (entity: Control, tag: string) => void;
   onRemoveTagFromEntity?: (entity: Control, tag: string) => void;
+  controlList?: Control[];
 }
 
 const styles = {
@@ -73,9 +73,9 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
   onSave,
   onAddTagToEntity,
   onRemoveTagFromEntity,
+  controlList,
 }) => {
   const ref = useRef<any>(null);
-  const { applicationInfo } = useApplicationInfoContext();
   const DEFAULT_ENTITY = useMemo( () => {
     return {
       id: DEFAULT_NEW_ENTITY_ID,
@@ -97,12 +97,6 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
   const [linkedThreatIds, setLinkedThreatIds] = useState<string[]>([]);
   const [showAlert, setShowAlert] = useState(false);
 
-  const controlList = useMemo(() => {
-    // use the preselected security profile and show only the controls that were not selected yet
-    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
-    return cccs_profile.controls as Control[];
-  }, [applicationInfo.securityCategory]);
   const [selectedControl, setSelectedControl] = useState<OptionDefinition | null>(null);
   const [controlId, setControlId] = useState(editingEntity.id);
   const [tags, setTags] = useState(editingEntity.tags);
@@ -210,7 +204,7 @@ const ControlCreationCard: FC<ControlCreationCardProps> = ({
                 handleControlChange(detail.selectedOption);
                 setShowAlert(false);
               }}
-              options={controlList.map(c => ({
+              options={controlList?.map(c => ({
                 label: c.content,
                 labelTag: (c.metadata?.find(m => m.key === 'STRIDE')?.value as string[]).join(','),
                 value: c.id,

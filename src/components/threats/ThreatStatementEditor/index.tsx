@@ -32,7 +32,7 @@ import { useMitigationsContext } from '../../../contexts/MitigationsContext/cont
 import { useControlLinksContext } from '../../../contexts/ControlLinksContext/context';
 import { useThreatsContext } from '../../../contexts/ThreatsContext/context';
 import { useWorkspacesContext } from '../../../contexts/WorkspacesContext/context';
-import { TemplateThreatStatement, Control, ControlProfile } from '../../../customTypes';
+import { TemplateThreatStatement, Control } from '../../../customTypes';
 import { ThreatFieldTypes } from '../../../customTypes/threatFieldTypes';
 import threatFieldData from '../../../data/threatFieldData';
 import threatStatementExamples from '../../../data/threatStatementExamples.json';
@@ -58,7 +58,7 @@ import Header from '../Header';
 import MetadataEditor from '../MetadataEditor';
 import Metrics from '../Metrics';
 import ControlLookupComponent from '../../controls/ControlLookup';
-import controlProfiles from '../../../data/controlProfiles.json';
+import { getControlProfileByName } from '../../../data/controlProfileProvider';
 import { useApplicationInfoContext } from '../../../contexts';
 
 const styles = {
@@ -125,11 +125,11 @@ const ThreatStatementEditorInner: FC<{ editingStatement: TemplateThreatStatement
 
   const { assumptionList, saveAssumption } = useAssumptionsContext();
   const { mitigationList, saveMitigation } = useMitigationsContext();
+
+  let selectedCategory = (applicationInfo.securityCategory == undefined ? 'CCCS Medium' : applicationInfo.securityCategory);
   const controlList = useMemo(() => {
-    let profiles = (controlProfiles.securityProfiles as unknown as ControlProfile[]);
-    let cccs_profile = profiles?.filter(cp => cp.schema === applicationInfo.securityCategory)[0];
-    return cccs_profile.controls as Control[];
-  }, [applicationInfo.securityCategory]);
+    return getControlProfileByName(selectedCategory) as Control[];
+  }, [selectedCategory]);
 
   const Component = useMemo(() => {
     return editor && editorMapping[editor];
