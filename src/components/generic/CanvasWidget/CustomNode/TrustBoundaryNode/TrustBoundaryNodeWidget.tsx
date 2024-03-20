@@ -116,23 +116,8 @@ export class TrustBoundaryNodeWidget extends React.Component<TrustBoundaryNodeWi
         position={{ x: this.state.x, y: this.state.y }}
         size={{ width: this.state.width, height: this.state.height }}
         onClick={(event) => {
-          if (this.props.node.filterStatementsCallback) {
-            this.props.engine.getModel().clearSelection();
-            this.props.node.setSelected(true);
-            this.props.node.filterStatementsCallback(
-              '',
-              this.props.node.getID(),
-              'trust-boundary',
-              this.props.node.name || '',
-              this.props.node.description || '',
-              this.props.node.outOfScope || false,
-              this.props.node.outOfScopeReason || '',
-              this.props.node.tags || [],
-              [],
-              [],
-              [],
-              []);
-          }
+          this.props.engine.getModel().clearSelection();
+          this.props.node.fireEvent({ isSelected: true }, 'selectionChanged');
           event.stopPropagation();
         }
         }

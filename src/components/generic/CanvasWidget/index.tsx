@@ -559,6 +559,7 @@ const DFDCanvasWidget: FC<BaseDiagramInfoProps> = ({
                     outOfScope: clickedObjectOutOfScope,
                     outOfScopeReason: clickedObjectOutOfScopeReason,
                     tags: clickedObjectTags,
+                    filterStatementsCallback: filterStatementsCallback,
                   });
                   break;
               };

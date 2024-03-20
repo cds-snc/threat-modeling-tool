@@ -77,6 +77,7 @@ export default class TrustBoundaryNodeModel extends NodeModel<NodeModelGenerics 
     this.nodeHeight = props.nodeHeight;
     this.nodeX = props.nodeX;
     this.nodeY = props.nodeY;
+    this.registerListener({ selectionChanged: this.handleSelectionChanged });
     this.filterStatementsCallback = props.filterStatementsCallback;
     this.name = props.name;
     this.description = props.description;
@@ -116,6 +117,7 @@ export default class TrustBoundaryNodeModel extends NodeModel<NodeModelGenerics 
 
   handleSelectionChanged = (event) => {
     if (this.filterStatementsCallback) {
+      this.setSelected(event.isSelected);
       if (event.isSelected) {
         this.filterStatementsCallback(
           '',
