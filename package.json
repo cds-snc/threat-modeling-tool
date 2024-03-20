@@ -75,6 +75,7 @@
     "react-scripts": "5.0.1",
     "react-simply-carousel": "*",
     "react-work-flow": "^1.1.1",
+    "reactflow": "^11.10.4",
     "rehype-raw": "*",
     "rehype-stringify": "*",
     "remark-frontmatter": "*",
