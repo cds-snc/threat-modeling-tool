@@ -16,6 +16,8 @@
 import { DiagramEngine, LinkWidget, PointModel, DefaultLinkModel, DefaultLinkPointWidget, DefaultLinkSegmentWidget } from '@projectstorm/react-diagrams';
 import * as React from 'react';
 import { MouseEvent, useEffect, useRef } from 'react';
+import { v4 as uuidV4 } from 'uuid';
+
 
 export interface DefaultLinkProps {
   link: DefaultLinkModel;
@@ -104,7 +106,7 @@ export const StraightArrowLinkWidget: React.FC<DefaultLinkProps> = (props) => {
   const generatePoint = (point: PointModel): JSX.Element => {
     return (
       <DefaultLinkPointWidget
-        key={point.getID()}
+        key={`${point.getID()}-${uuidV4()}`}
         point={point as any}
         colorSelected={props.link.getOptions().selectedColor ?? ''}
         color={props.link.getOptions().color}
