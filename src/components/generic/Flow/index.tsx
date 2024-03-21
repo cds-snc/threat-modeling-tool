@@ -14,7 +14,10 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import 'reactflow/dist/style.css';
 
 import ActorNode from './Nodes/ActorNode';
+import DatastoreNode from './Nodes/DatastoreNode';
+import ProcessNode from './Nodes/ProcessNode';
 import BiDirectionalEdge from './Edges/BiDirectionalEdge';
+import TrustBoundaryNode from './Nodes/TrustBoundaryNode';
 
 const edgeTypes = {
   biDirectional: BiDirectionalEdge,
@@ -22,11 +25,16 @@ const edgeTypes = {
 
 const nodeTypes = {
   actor: ActorNode,
+  datastore: DatastoreNode,
+  process: ProcessNode,
+  trustBoundary: TrustBoundaryNode,
 };
 
 const initialNodes: Node[] = [
-  { id: '1', data: { id: '1', label: 'Node 1' }, position: { x: 5, y: 5 }, type: 'actor' },
-  { id: '2', data: { id: '2', label: 'Node 2' }, position: { x: 5, y: 100 }, type: 'actor' },
+  { id: '1', data: { label: 'Actor' }, position: { x: 5, y: 5 }, type: 'actor' },
+  { id: '2', data: { label: 'Process' }, position: { x: 5, y: 100 }, type: 'process' },
+  { id: '3', data: { label: 'Datastore' }, position: { x: 5, y: 300 }, type: 'datastore' },
+  { id: '4', data: { label: 'TrustBoundary' }, position: { x: 5, y: 500 }, type: 'trustBoundary' },
 ];
 
 const initialEdges: Edge[] = [];
@@ -44,7 +52,7 @@ function Flow() {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   return (
     <SpaceBetween direction="vertical" size="s">
@@ -57,6 +65,8 @@ function Flow() {
           onConnect={onConnect}
           edgeTypes={edgeTypes}
           nodeTypes={nodeTypes}
+          minZoom={0.2}
+          maxZoom={4}
           fitView
           connectionMode={ConnectionMode.Loose}
         >

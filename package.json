@@ -62,6 +62,8 @@
     "@projectstorm/react-diagrams": "^7.0.4",
     "browser-image-compression": "*",
     "d3": "^7",
+    "d3-drag": "^3.0.0",
+    "d3-selection": "^3.0.0",
     "eslint-plugin-header": "^3.1.1",
     "indefinite": "*",
     "lodash": "^4.17.21",
