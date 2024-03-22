@@ -1,4 +1,4 @@
-import { getBezierPath, BaseEdge, useStore, EdgeProps, ReactFlowState } from 'reactflow';
+import { getBezierPath, BaseEdge, useStore, EdgeProps, ReactFlowState, EdgeLabelRenderer, MarkerType } from 'reactflow';
 
 export type GetSpecialPathParams = {
   sourceX: number;
@@ -10,14 +10,15 @@ export type GetSpecialPathParams = {
 export const getSpecialPath = (
   { sourceX, sourceY, targetX, targetY }: GetSpecialPathParams,
   offset: number,
-) => {
+): [path: string, labelX: number, labelY: number] => {
   const centerX = (sourceX + targetX) / 2;
   const centerY = (sourceY + targetY) / 2;
 
-  return `M ${sourceX} ${sourceY} Q ${centerX} ${centerY + offset} ${targetX} ${targetY}`;
+  return [`M ${sourceX} ${sourceY} Q ${centerX} ${centerY + offset} ${targetX} ${targetY}`, centerX, centerY + offset];
 };
 
 export default function CustomEdge({
+  id,
   source,
   target,
   sourceX,
@@ -26,7 +27,7 @@ export default function CustomEdge({
   targetY,
   sourcePosition,
   targetPosition,
-  markerEnd,
+  selected,
 }: EdgeProps) {
   const isBiDirectionEdge = useStore((s: ReactFlowState) => {
     const edgeExists = s.edges.some(
@@ -47,12 +48,39 @@ export default function CustomEdge({
   };
 
   let path = '';
+  let labelX: number = 0;
+  let labelY: number = 0;
+  let name = 'Edge';
 
   if (isBiDirectionEdge) {
-    path = getSpecialPath(edgePathParams, sourceX < targetX ? 25 : -25);
+    [path, labelX, labelY] = getSpecialPath(edgePathParams, sourceX < targetX ? 25 : -25);
   } else {
-    [path] = getBezierPath(edgePathParams);
+    [path, labelX, labelY] = getBezierPath(edgePathParams);
   }
 
-  return <BaseEdge path={path} markerEnd={markerEnd} />;
+  return (
+    <>
+      <BaseEdge id={id} path={path} markerEnd={MarkerType.Arrow} style={{
+        strokeWidth: 2,
+        zIndex: 1,
+        stroke: selected ? '#FF0072' : '#000',
+      }}/>
+      <EdgeLabelRenderer>
+        <div
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            background: '#ffcc00',
+            padding: 10,
+            borderRadius: 5,
+            fontSize: 12,
+            fontWeight: 700,
+            zIndex: 2,
+          }}
+          className="nodrag nopan"
+        >
+          {name}
+        </div>
+      </EdgeLabelRenderer>
+    </>);
 }

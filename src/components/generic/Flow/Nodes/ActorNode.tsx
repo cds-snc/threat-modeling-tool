@@ -3,12 +3,17 @@ import { Handle, Position } from 'reactflow';
 
 import styled from '@emotion/styled';
 
+type StyleProps = {
+  selected: boolean;
+};
+
 const ActorStyle = styled.div`
   padding: 10px 50px 10px 50px;
-  border: 1px solid #000;
+  border: 2px solid ${(props: StyleProps) => (props.selected ? '#56bdf9' : '#000')};
+  background-color: ${(props: StyleProps) => (props.selected ? '#dbf1fe' : '#fff')};
 `;
 
-export default memo(({ data }: { data: any }) => {
+export default memo(({ data, selected }: { data: any; selected: boolean }) => {
   return (
     <>
       <Handle
@@ -27,8 +32,8 @@ export default memo(({ data }: { data: any }) => {
         onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={true}
       />
-      <ActorStyle>
-        {data.label}
+      <ActorStyle selected={selected}>
+        {data.name}
       </ActorStyle>
       <Handle
         type="source"

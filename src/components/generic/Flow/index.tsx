@@ -1,23 +1,32 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
   Controls,
   Background,
-  Node,
-  Edge,
   addEdge,
   useEdgesState,
   useNodesState,
+  useOnSelectionChange,
   ConnectionMode,
+  Panel,
+  Node,
+  Edge,
 } from 'reactflow';
 import styled from '@emotion/styled';
 import SpaceBetween from '@cloudscape-design/components/space-between';
+import { v4 } from 'uuid';
 import 'reactflow/dist/style.css';
 
 import ActorNode from './Nodes/ActorNode';
 import DatastoreNode from './Nodes/DatastoreNode';
 import ProcessNode from './Nodes/ProcessNode';
-import BiDirectionalEdge from './Edges/BiDirectionalEdge';
 import TrustBoundaryNode from './Nodes/TrustBoundaryNode';
+
+import BiDirectionalEdge from './Edges/BiDirectionalEdge';
+
+import NodeSelector from './Nodes/NodeSelector';
+
+import PropertiesPanel from './Properties/PropertiesPanel';
+
 
 const edgeTypes = {
   biDirectional: BiDirectionalEdge,
@@ -30,29 +39,74 @@ const nodeTypes = {
   trustBoundary: TrustBoundaryNode,
 };
 
-const initialNodes: Node[] = [
-  { id: '1', data: { label: 'Actor' }, position: { x: 5, y: 5 }, type: 'actor' },
-  { id: '2', data: { label: 'Process' }, position: { x: 5, y: 100 }, type: 'process' },
-  { id: '3', data: { label: 'Datastore' }, position: { x: 5, y: 300 }, type: 'datastore' },
-  { id: '4', data: { label: 'TrustBoundary' }, position: { x: 5, y: 500 }, type: 'trustBoundary' },
-];
-
-const initialEdges: Edge[] = [];
-
 namespace s {
   export const OuterContainer = styled.div`
     height: 450px;
     display: flex;
     border: 1px solid #000;
+
+     svg.react-flow__edges {
+      z-index: 1 !important;
+     }
   `;
 }
 
 function Flow() {
 
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const [nodeDataValue, setNodeDataValue] = useState({});
+  const [selectedComponent, setSelectedComponent] = useState<Node | Edge | null>(null);
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === selectedComponent?.id) {
+          node.data = { ...node.data, ...nodeDataValue };
+        }
+        return node;
+      }));
+  }, [nodeDataValue, selectedComponent, setNodes, setEdges]);
+
+  useOnSelectionChange({
+    onChange: (selected) => {
+      console.log('selected', selected);
+      setSelectedComponent(selected.nodes[0] || selected.edges[0] || null);
+    },
+  });
+
+  const onConnect = useCallback(
+    (params) => {
+      const edge = { ...params, type: 'biDirectional' };
+      setEdges((eds) => addEdge(edge, eds));
+    }, [setEdges],
+  );
+
+  const onAdd = useCallback((type: string) => {
+    setNodes((nds) => {
+      // Randomize position for new nodes using a position from -100 to 100
+      let x = Math.floor(Math.random() * 200) - 100;
+      let y = Math.floor(Math.random() * 200) - 100;
+
+      const newNode = {
+        id: v4(),
+        data: {
+          name: type,
+          description: '',
+          inScope: true,
+          scopeReason: '',
+          dataTags: [],
+          techTags: [],
+          securityTags: [],
+        },
+        type,
+        position: { x, y },
+      };
+      return (type === 'trustBoundary' ? [newNode, ...nds] : [...nds, newNode]);
+    });
+  }, [setNodes]);
+
 
   return (
     <SpaceBetween direction="vertical" size="s">
@@ -72,8 +126,10 @@ function Flow() {
         >
           <Background />
           <Controls />
+          <Panel position="top-left"><NodeSelector addCallback={onAdd} /></Panel>
         </ReactFlow>
       </s.OuterContainer>
+      <PropertiesPanel component={selectedComponent} changeHandler={setNodeDataValue} />
     </SpaceBetween>
   );
 }
