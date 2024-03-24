@@ -10,8 +10,14 @@ import ReactFlow, {
   Panel,
   Node,
   Edge,
+  ReactFlowInstance,
+  useReactFlow,
+  ControlButton,
 } from 'reactflow';
 import styled from '@emotion/styled';
+import { MagicWandIcon } from '@radix-ui/react-icons';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { v4 } from 'uuid';
 import 'reactflow/dist/style.css';
@@ -20,13 +26,16 @@ import ActorNode from './Nodes/ActorNode';
 import DatastoreNode from './Nodes/DatastoreNode';
 import ProcessNode from './Nodes/ProcessNode';
 import TrustBoundaryNode from './Nodes/TrustBoundaryNode';
+import NodeSelector from './Nodes/NodeSelector';
 
 import BiDirectionalEdge from './Edges/BiDirectionalEdge';
 
-import NodeSelector from './Nodes/NodeSelector';
-
 import PropertiesPanel from './Properties/PropertiesPanel';
 
+import ThreatList from './Threats/ThreatList';
+
+import { useThreatsContext } from '../../../contexts';
+import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
 
 const edgeTypes = {
   biDirectional: BiDirectionalEdge,
@@ -52,7 +61,37 @@ namespace s {
 }
 
 function Flow() {
+  const { currentWorkspace } = useWorkspacesContext();
+  const flowKey = `dataflow-diagram-${currentWorkspace?.id}`;
 
+  const { setViewport } = useReactFlow();
+
+  // Save and restore state
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance<any, any> | null>(null);
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+    }
+  }, [rfInstance, flowKey]);
+
+  const onInit = async (instance) => {
+    setRfInstance(instance);
+    const restoreFlow = async () => {
+      const flow = JSON.parse(localStorage.getItem(flowKey) as string);
+
+      if (flow) {
+        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+        setNodes(flow.nodes || []);
+        setEdges(flow.edges || []);
+        setViewport({ x, y, zoom });
+      }
+    };
+    await restoreFlow();
+  };
+
+  // Nodes and edges state
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -60,6 +99,17 @@ function Flow() {
   const [selectedComponent, setSelectedComponent] = useState<Node | Edge | null>(null);
 
   useEffect(() => {
+    if (!selectedComponent) {
+      return;
+    }
+
+    setEdges((eds) =>
+      eds.map((edge) => {
+        if (edge.id === selectedComponent?.id) {
+          edge.data = { ...edge.data, ...nodeDataValue };
+        }
+        return edge;
+      }));
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === selectedComponent?.id) {
@@ -67,19 +117,40 @@ function Flow() {
         }
         return node;
       }));
-  }, [nodeDataValue, selectedComponent, setNodes, setEdges]);
+  }, [selectedComponent, nodeDataValue, setNodes, setEdges]);
 
   useOnSelectionChange({
     onChange: (selected) => {
-      console.log('selected', selected);
-      setSelectedComponent(selected.nodes[0] || selected.edges[0] || null);
+      setNodeDataValue({});
+      if (selected.nodes.length + selected.edges.length === 0) {
+        setSelectedComponent(null);
+        return;
+      }
+      setSelectedComponent(selected.nodes[0] || selected.edges[0]);
     },
   });
 
   const onConnect = useCallback(
     (params) => {
-      const edge = { ...params, type: 'biDirectional' };
-      setEdges((eds) => addEdge(edge, eds));
+      const newEdge =
+      {
+        ...params,
+        id: v4(),
+        type: 'biDirectional',
+        data: {
+          name: 'Data',
+          description: '',
+          outOfScope: false,
+          scopeReason: '',
+          dataTags: [],
+          techTags: [],
+          securityTags: [],
+          tags: [],
+          selectedThreats: [],
+        },
+      };
+      setEdges((eds) => addEdge(newEdge, eds));
+      setNodeDataValue({});
     }, [setEdges],
   );
 
@@ -94,11 +165,13 @@ function Flow() {
         data: {
           name: type,
           description: '',
-          inScope: true,
+          outOfScope: false,
           scopeReason: '',
           dataTags: [],
           techTags: [],
           securityTags: [],
+          tags: [],
+          selectedThreats: [],
         },
         type,
         position: { x, y },
@@ -106,6 +179,14 @@ function Flow() {
       return (type === 'trustBoundary' ? [newNode, ...nds] : [...nds, newNode]);
     });
   }, [setNodes]);
+
+  // Threats state
+  const { statementList } = useThreatsContext();
+  const [threatList, setThreatList] = useState(statementList);
+
+  useEffect(() => { // update list of threats panel
+    setThreatList(statementList);
+  }, [setThreatList, statementList]);
 
 
   return (
@@ -123,13 +204,24 @@ function Flow() {
           maxZoom={4}
           fitView
           connectionMode={ConnectionMode.Loose}
+          onInit={onInit}
         >
           <Background />
-          <Controls />
+          <Controls>
+            <ControlButton onClick={onSave}>
+              <MagicWandIcon />
+            </ControlButton>
+          </Controls>
           <Panel position="top-left"><NodeSelector addCallback={onAdd} /></Panel>
         </ReactFlow>
       </s.OuterContainer>
-      <PropertiesPanel component={selectedComponent} changeHandler={setNodeDataValue} />
+      <Container header={<Header>Properties</Header>}>
+        <PropertiesPanel component={selectedComponent} changeHandler={setNodeDataValue} />
+      </Container>
+      <ThreatList
+        threats={threatList}
+        component={selectedComponent}
+        changeHandler={setNodeDataValue} />
     </SpaceBetween>
   );
 }

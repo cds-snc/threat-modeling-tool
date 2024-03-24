@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { getBezierPath, BaseEdge, useStore, EdgeProps, ReactFlowState, EdgeLabelRenderer, MarkerType } from 'reactflow';
 
 export type GetSpecialPathParams = {
@@ -17,7 +18,7 @@ export const getSpecialPath = (
   return [`M ${sourceX} ${sourceY} Q ${centerX} ${centerY + offset} ${targetX} ${targetY}`, centerX, centerY + offset];
 };
 
-export default function CustomEdge({
+export default memo(({
   id,
   source,
   target,
@@ -28,7 +29,8 @@ export default function CustomEdge({
   sourcePosition,
   targetPosition,
   selected,
-}: EdgeProps) {
+  data,
+}: EdgeProps) => {
   const isBiDirectionEdge = useStore((s: ReactFlowState) => {
     const edgeExists = s.edges.some(
       (e) =>
@@ -50,7 +52,6 @@ export default function CustomEdge({
   let path = '';
   let labelX: number = 0;
   let labelY: number = 0;
-  let name = 'Edge';
 
   if (isBiDirectionEdge) {
     [path, labelX, labelY] = getSpecialPath(edgePathParams, sourceX < targetX ? 25 : -25);
@@ -64,7 +65,7 @@ export default function CustomEdge({
         strokeWidth: 2,
         zIndex: 1,
         stroke: selected ? '#FF0072' : '#000',
-      }}/>
+      }} />
       <EdgeLabelRenderer>
         <div
           style={{
@@ -79,8 +80,8 @@ export default function CustomEdge({
           }}
           className="nodrag nopan"
         >
-          {name}
+          {data.name}
         </div>
       </EdgeLabelRenderer>
     </>);
-}
+});
