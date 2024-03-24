@@ -15,10 +15,10 @@ const NodeSelectorStyle = styled.div`
 export default memo(({ addCallback }: NodeSelectorProps) => {
   return (
     <NodeSelectorStyle>
-      <BoxIcon onClick={() => addCallback && addCallback('actor')}/>
-      <CircleIcon onClick={() => addCallback && addCallback('process')}/>
-      <SectionIcon onClick={() => addCallback && addCallback('datastore')}/>
-      <TransparencyGridIcon onClick={() => addCallback && addCallback('trustBoundary')}/>
+      <BoxIcon role='button' aria-label='actor-icon' onClick={() => addCallback && addCallback('actor')}/>
+      <CircleIcon role='button' aria-label='process-icon' onClick={() => addCallback && addCallback('process')}/>
+      <SectionIcon role='button' aria-label='datastore-icon' onClick={() => addCallback && addCallback('datastore')}/>
+      <TransparencyGridIcon role='button' aria-label='trust-boundary-icon' onClick={() => addCallback && addCallback('trustBoundary')}/>
     </NodeSelectorStyle>
   );
 });
