@@ -1,43 +1,52 @@
 {
-  "transformIgnorePatterns": [
-    "[/\\\\]node_modules[/\\\\](?!unified).+\\.(js|jsx|mjs|cjs|ts|tsx)$"
+  "roots": [
+    "<rootDir>/src"
+  ],
+  "collectCoverageFrom": [
+    "src/**/*.{js,jsx,ts,tsx}",
+    "!src/**/*.d.ts"
+  ],
+  "setupFiles": [
+    "/home/max/threat-modeling-tool/node_modules/react-app-polyfill/jsdom.js"
+  ],
+  "setupFilesAfterEnv": [
+    "<rootDir>/src/setupTests.ts"
   ],
   "testMatch": [
-    "<rootDir>/src/**/__tests__/**/*.ts?(x)",
-    "<rootDir>/(test|src)/**/*(*.)@(spec|test).ts?(x)"
+    "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+    "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
   ],
-  "clearMocks": true,
-  "collectCoverage": true,
-  "coverageReporters": [
+  "testEnvironment": "jsdom",
+  "transform": {
+    "^.+\\\\.(js|jsx|mjs|cjs|ts|tsx)$": "/home/max/threat-modeling-tool/node_modules/react-scripts/config/jest/babelTransform.js",
+    "^.+\\\\.css$": "/home/max/threat-modeling-tool/node_modules/react-scripts/config/jest/cssTransform.js",
+    "^(?!.*\\\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "/home/max/threat-modeling-tool/node_modules/react-scripts/config/jest/fileTransform.js"
+  },
+  "transformIgnorePatterns": [
+    "[/\\\\\\\\]node_modules[/\\\\\\\\].+\\\\.(js|jsx|mjs|cjs|ts|tsx)$",
+    "^.+\\\\.module\\\\.(css|sass|scss)$"
+  ],
+  "modulePaths": [],
+  "moduleNameMapper": {
+    "^react-native$": "react-native-web",
+    "^.+\\\\.module\\\\.(css|sass|scss)$": "identity-obj-proxy"
+  },
+  "moduleFileExtensions": [
+    "web.js",
+    "js",
+    "web.ts",
+    "ts",
+    "web.tsx",
+    "tsx",
     "json",
-    "lcov",
-    "clover",
-    "cobertura",
-    "text"
+    "web.jsx",
+    "jsx",
+    "node"
   ],
-  "coverageDirectory": "coverage",
-  "coveragePathIgnorePatterns": [
-    "/node_modules/"
+  "watchPlugins": [
+    "jest-watch-typeahead/filename",
+    "jest-watch-typeahead/testname"
   ],
-  "testPathIgnorePatterns": [
-    "/node_modules/"
-  ],
-  "watchPathIgnorePatterns": [
-    "/node_modules/"
-  ],
-  "reporters": [
-    "default",
-    [
-      "jest-junit",
-      {
-        "outputDirectory": "test-reports"
-      }
-    ]
-  ],
-  "preset": "ts-jest",
-  "globals": {
-    "ts-jest": {
-      "tsconfig": "tsconfig.dev.json"
-    }
-  }
+  "resetMocks": true,
+  "rootDir": "/home/max/threat-modeling-tool"
 }

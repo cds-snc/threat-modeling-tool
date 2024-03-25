@@ -1909,10 +1909,10 @@
   resolved "https://registry.yarnpkg.com/@cloudscape-design/global-styles/-/global-styles-1.0.24.tgz#9cacbd8b38eb015277952e6b180836671904bc1e"
   integrity sha512-yKOKQ70T27zj/6wgrYWmkE5T181Mnoy4ozXUiydqj2nmlsciXHQ78aIFMiSNaD8lUWvHLtyqi1bijtbIpVUJPA==
 
-"@cloudscape-design/jest-preset@*":
-  version "2.0.29"
-  resolved "https://registry.yarnpkg.com/@cloudscape-design/jest-preset/-/jest-preset-2.0.29.tgz#75c52110599bd2dedc780eea48906bd38c5f5191"
-  integrity sha512-75EbnJcytMll8erXzhihAJxQneqBjQAobaf/PODF16rTj+DLw6Gtnikl/IoBORGOzwmQljzVeQyiFI4ZhXgmng==
+"@cloudscape-design/jest-preset@^2.0.28":
+  version "2.0.30"
+  resolved "https://registry.yarnpkg.com/@cloudscape-design/jest-preset/-/jest-preset-2.0.30.tgz#3dba0f415dfcef503718418dd326ee16a249e80c"
+  integrity sha512-HYC9cgWOO0F5w1X/CCJALsBviLzUvQlGdU+sGhfhALeT0ehyKXrNtH74B1lkp8BHqLc1IjbkHiYBQb5FAVP8Zg==
   dependencies:
     "@babel/plugin-transform-modules-commonjs" "^7.9.0"
 

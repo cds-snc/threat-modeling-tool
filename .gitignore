@@ -36,3 +36,4 @@ jspm_packages/
 /build/
 !/project.json
 .terragrunt*
+/test-reports
