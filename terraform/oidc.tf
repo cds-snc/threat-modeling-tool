@@ -118,7 +118,7 @@ data "aws_iam_policy_document" "ecr_image_manage" {
       "ecr:UploadLayerPart"
     ]
     resources = [
-      aws_ecr_repository.website_staging_container.arn
+      aws_ecr_repository.threat_modeling_pr_review.arn
     ]
   }
 
