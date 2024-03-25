@@ -1,0 +1,32 @@
+name: Staging review apps
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  FUNCTION_NAME: "pr-review-env"
+  GITHUB_SHA: ${{ github.sha }}
+  IMAGE: threat-modeling-pr-review
+  REGISTRY: 283582579564.dkr.ecr.ca-central-1.amazonaws.com
+  ROLE_ARN: arn:aws:iam::283582579564:role/pr-review-env-lambda
+  REGION: ca-central-1
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write  
+
+jobs:
+  build-and-push-staging-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set envs
+        run: echo "PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build container
+        run: |
+          docker build -t $REGISTRY/$IMAGE:$PR_NUMBER . -f Dockerfile.lambda
