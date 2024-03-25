@@ -3,10 +3,8 @@ FROM node:18@sha256:a17842484dd30af97540e5416c9a62943c709583977ba41481d601ecffb7
 ENV NODE_ENV=production
 ENV NEXT_OUTPUT_STANDALONE=true
 
-COPY ./src /src
-COPY ./package.json /package.json
-COPY ./yarn.lock /yarn.lock
-WORKDIR /
+COPY . /src
+WORKDIR /src
 
 ADD https://github.com/cds-snc/static-content-lambda/raw/main/release/latest/lambda-static-server /lambda-static-server
 RUN chmod 755 /lambda-static-server
@@ -16,7 +14,7 @@ RUN yarn build
 
 FROM scratch
 
-COPY --from=build /public /var/www/html
+COPY --from=build /src/public /var/www/html
 COPY --from=build /lambda-static-server /lambda-static-server
 
 ENTRYPOINT [ "/lambda-static-server" ]
