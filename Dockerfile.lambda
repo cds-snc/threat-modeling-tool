@@ -15,7 +15,7 @@ RUN yarn build
 
 FROM scratch
 
-COPY --from=build /src/public /var/www/html
+COPY --from=build /src/build /var/www/html
 COPY --from=build /lambda-static-server /lambda-static-server
 
 ENTRYPOINT [ "/lambda-static-server" ]
