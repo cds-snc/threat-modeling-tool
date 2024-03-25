@@ -1,0 +1,103 @@
+name: Staging review apps
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  FUNCTION_NAME: "pr-review-env"
+  GITHUB_SHA: ${{ github.sha }}
+  IMAGE: threat-modeling-pr-review
+  REGISTRY: 283582579564.dkr.ecr.ca-central-1.amazonaws.com
+  ROLE_ARN: arn:aws:iam::283582579564:role/pr-review-env-lambda
+  REGION: ca-central-1
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write  
+
+jobs:
+  build-and-push-staging-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set envs
+        run: echo "PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build container
+        run: |
+          docker build -t $REGISTRY/$IMAGE:$PR_NUMBER . -f Dockerfile.lambda
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::283582579564:role/pr-review-env-manage
+          role-session-name: PRReviewEnv
+          aws-region: ${{ env.REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+
+      - name: Push containers to ECR
+        run: |
+          docker push $REGISTRY/$IMAGE:$PR_NUMBER
+
+      - name: Delete old images
+        run: |
+          IMAGES_TO_DELETE=$( aws ecr list-images --region ${{ env.REGION }} --repository-name $IMAGE --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+          aws ecr batch-delete-image --region ${{ env.REGION }} --repository-name $IMAGE --image-ids "$IMAGES_TO_DELETE" || true
+
+      - name: Logout of Amazon ECR
+        run: docker logout $REGISTRY
+
+  deploy-staging-images:
+    needs: build-and-push-staging-container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set envs
+        run: echo "PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::283582579564:role/pr-review-env-manage
+          role-session-name: PRReviewEnv
+          aws-region: ${{ env.REGION }}
+
+      - name: Create/Update lambda function
+        run: |
+          if aws lambda get-function --function-name $FUNCTION_NAME-$PR_NUMBER > /dev/null 2>&1; then
+            aws lambda update-function-code \
+              --function-name $FUNCTION_NAME-$PR_NUMBER \
+              --image-uri $REGISTRY/$IMAGE:$PR_NUMBER > /dev/null 2>&1
+          else
+            aws lambda create-function \
+              --function-name $FUNCTION_NAME-$PR_NUMBER \
+              --package-type Image \
+              --role $ROLE_ARN \
+              --code ImageUri=$REGISTRY/$IMAGE:$PR_NUMBER \
+              --description "$GITHUB_REPOSITORY/pull/$PR_NUMBER"
+
+            aws lambda wait function-active --function-name $FUNCTION_NAME-$PR_NUMBER
+            echo URL=$(aws lambda create-function-url-config --function-name $FUNCTION_NAME-$PR_NUMBER --auth-type NONE | jq .FunctionUrl) >> $GITHUB_ENV
+            aws lambda add-permission --function-name $FUNCTION_NAME-$PR_NUMBER --statement-id FunctionURLAllowPublicAccess --action lambda:InvokeFunctionUrl --principal "*" --function-url-auth-type NONE > /dev/null 2>&1
+            aws logs create-log-group --log-group-name /aws/lambda/$FUNCTION_NAME-$PR_NUMBER > /dev/null 2>&1
+            aws logs put-retention-policy --log-group-name /aws/lambda/$FUNCTION_NAME-$PR_NUMBER --retention-in-days 7 > /dev/null 2>&1
+          fi
+
+      - name: Update PR
+        if: env.URL != ''
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## :test_tube: Review environment \n${process.env.URL.slice(1, -1)}`
+            })
