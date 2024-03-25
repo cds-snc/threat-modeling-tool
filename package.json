@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@aws-northstar/ui": "*",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@cloudscape-design/board-components": "^3.0.54",
     "@cloudscape-design/collection-hooks": "^1.0.38",
     "@cloudscape-design/components": "^3.0.566",
