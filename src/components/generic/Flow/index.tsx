@@ -5,7 +5,6 @@ import ReactFlow, {
   addEdge,
   useEdgesState,
   useNodesState,
-  useOnSelectionChange,
   ConnectionMode,
   Panel,
   Node,
@@ -13,6 +12,8 @@ import ReactFlow, {
   ReactFlowInstance,
   useReactFlow,
   ControlButton,
+  applyEdgeChanges,
+  applyNodeChanges,
 } from 'reactflow';
 import styled from '@emotion/styled';
 import { MagicWandIcon } from '@radix-ui/react-icons';
@@ -92,8 +93,8 @@ function Flow() {
   };
 
   // Nodes and edges state
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes] = useNodesState([]);
+  const [edges, setEdges] = useEdgesState([]);
 
   const [nodeDataValue, setNodeDataValue] = useState({});
   const [selectedComponent, setSelectedComponent] = useState<Node | Edge | null>(null);
@@ -119,16 +120,31 @@ function Flow() {
       }));
   }, [selectedComponent, nodeDataValue, setNodes, setEdges]);
 
-  useOnSelectionChange({
-    onChange: (selected) => {
-      setNodeDataValue({});
-      if (selected.nodes.length + selected.edges.length === 0) {
-        setSelectedComponent(null);
-        return;
-      }
-      setSelectedComponent(selected.nodes[0] || selected.edges[0]);
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes((oldNodes) => applyNodeChanges(changes, oldNodes));
+      for (const selected of changes.filter(c => c.type === 'select')) {
+        if (selected.selected) {
+          setNodeDataValue({});
+          setSelectedComponent(nodes.find((node) => node.id === selected.id) as Node | null);
+        }
+      };
     },
-  });
+    [nodes, setNodes],
+  );
+
+  const onEdgesChange = useCallback(
+    (changes) => {
+      setEdges((oldEdges) => applyEdgeChanges(changes, oldEdges));
+      for (const selected of changes.filter(c => c.type === 'select')) {
+        if (selected.selected) {
+          setNodeDataValue({});
+          setSelectedComponent(edges.find((edge) => edge.id === selected.id) as Edge | null);
+        }
+      }
+    },
+    [edges, setEdges],
+  );
 
   const onConnect = useCallback(
     (params) => {
