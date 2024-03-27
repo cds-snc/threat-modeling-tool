@@ -11,12 +11,10 @@ import ReactFlow, {
   Edge,
   ReactFlowInstance,
   useReactFlow,
-  ControlButton,
   applyEdgeChanges,
   applyNodeChanges,
 } from 'reactflow';
 import styled from '@emotion/styled';
-import { MagicWandIcon } from '@radix-ui/react-icons';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import SpaceBetween from '@cloudscape-design/components/space-between';
@@ -32,6 +30,7 @@ import NodeSelector from './Nodes/NodeSelector';
 import BiDirectionalEdge from './Edges/BiDirectionalEdge';
 
 import PropertiesPanel from './Properties/PropertiesPanel';
+import SaveButton from './SaveButton/SaveButton';
 
 import ThreatList from './Threats/ThreatList';
 
@@ -69,11 +68,13 @@ function Flow() {
 
   // Save and restore state
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<any, any> | null>(null);
+  const [saveState, setSaveState] = useState(true);
 
   const onSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
       localStorage.setItem(flowKey, JSON.stringify(flow));
+      setSaveState(true);
     }
   }, [rfInstance, flowKey]);
 
@@ -123,6 +124,7 @@ function Flow() {
         }
         return node;
       }));
+    setSaveState(false);
   }, [selectedComponent, nodeDataValue, setNodes, setEdges, getZoom, zoomTo, nodes.length]);
 
   const onNodesChange = useCallback(
@@ -202,6 +204,7 @@ function Flow() {
         type,
         position: { x, y },
       };
+      setSaveState(false);
       return (type === 'trustBoundary' ? [newNode, ...nds] : [...nds, newNode]);
     });
   }, [setNodes]);
@@ -217,30 +220,28 @@ function Flow() {
 
   return (
     <SpaceBetween direction="vertical" size="s">
-      <s.OuterContainer>
-        <ReactFlow
-          nodes={nodes}
-          onNodesChange={onNodesChange}
-          edges={edges}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          edgeTypes={edgeTypes}
-          nodeTypes={nodeTypes}
-          minZoom={0.2}
-          maxZoom={4}
-          fitView
-          connectionMode={ConnectionMode.Loose}
-          onInit={onInit}
-        >
-          <Background />
-          <Controls>
-            <ControlButton onClick={onSave}>
-              <MagicWandIcon />
-            </ControlButton>
-          </Controls>
-          <Panel position="top-left"><NodeSelector addCallback={onAdd} /></Panel>
-        </ReactFlow>
-      </s.OuterContainer>
+      <Container header={<Header actions={<SaveButton saveHandler={onSave} saveState={saveState} />}>Data flow diagram</Header>}>
+        <s.OuterContainer>
+          <ReactFlow
+            nodes={nodes}
+            onNodesChange={onNodesChange}
+            edges={edges}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            edgeTypes={edgeTypes}
+            nodeTypes={nodeTypes}
+            minZoom={0.2}
+            maxZoom={4}
+            fitView
+            connectionMode={ConnectionMode.Loose}
+            onInit={onInit}
+          >
+            <Background />
+            <Controls />
+            <Panel position="top-left"><NodeSelector addCallback={onAdd} /></Panel>
+          </ReactFlow>
+        </s.OuterContainer>
+      </Container>
       <Container header={<Header>Properties</Header>}>
         <PropertiesPanel component={selectedComponent} changeHandler={setNodeDataValue} />
       </Container>
