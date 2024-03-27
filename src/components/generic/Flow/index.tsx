@@ -122,11 +122,13 @@ function Flow() {
 
   const onNodesChange = useCallback(
     (changes) => {
+      setNodeDataValue({});
       setNodes((oldNodes) => applyNodeChanges(changes, oldNodes));
-      for (const selected of changes.filter(c => c.type === 'select')) {
-        if (selected.selected) {
-          setNodeDataValue({});
-          setSelectedComponent(nodes.find((node) => node.id === selected.id) as Node | null);
+      for (let selection of changes.filter(c => c.type === 'select' || (c.type === 'position' && c.dragging === false))) {
+        if (selection.selected || selection.dragging === false) {
+          setSelectedComponent(nodes.find((node) => node.id === selection.id) as Node | null);
+        } else {
+          setSelectedComponent(null);
         }
       };
     },
@@ -135,11 +137,14 @@ function Flow() {
 
   const onEdgesChange = useCallback(
     (changes) => {
+      setNodeDataValue({});
       setEdges((oldEdges) => applyEdgeChanges(changes, oldEdges));
-      for (const selected of changes.filter(c => c.type === 'select')) {
-        if (selected.selected) {
-          setNodeDataValue({});
-          setSelectedComponent(edges.find((edge) => edge.id === selected.id) as Edge | null);
+      setSelectedComponent(null);
+      for (let selection of changes.filter(c => c.type === 'select')) {
+        if (selection.selected) {
+          setSelectedComponent(edges.find((edge) => edge.id === selection.id) as Edge | null);
+        } else {
+          setSelectedComponent(null);
         }
       }
     },
