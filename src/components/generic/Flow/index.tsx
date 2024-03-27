@@ -64,7 +64,7 @@ function Flow() {
   const { currentWorkspace } = useWorkspacesContext();
   const flowKey = `dataflow-diagram-${currentWorkspace?.id}`;
 
-  const { setViewport } = useReactFlow();
+  const { zoomTo, getZoom, setViewport } = useReactFlow();
 
   // Save and restore state
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<any, any> | null>(null);
@@ -102,6 +102,11 @@ function Flow() {
 
   useEffect(() => {
     if (!selectedComponent) {
+      // If this is the first node added to the flow, zoom out to prevent an implicit max zoom (of 4)
+      // this is probably another bug in react-flow that needs to be investigated and reported
+      if (nodes.length === 1 && getZoom() === 4) {
+        zoomTo(1);
+      }
       return;
     }
 
@@ -120,7 +125,7 @@ function Flow() {
         return node;
       }));
     setSaveState(false);
-  }, [selectedComponent, nodeDataValue, setNodes, setEdges]);
+  }, [selectedComponent, nodeDataValue, setNodes, setEdges, getZoom, zoomTo, nodes.length]);
 
   const onNodesChange = useCallback(
     (changes) => {

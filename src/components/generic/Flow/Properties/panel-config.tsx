@@ -1,7 +1,7 @@
 import { SelectProps } from '@cloudscape-design/components';
 
 export function dataFeaturesOptions(objectType: string): SelectProps.Options {
-  return [
+  let features = [
     {
       label: 'Customer Data',
       options: [
@@ -34,7 +34,7 @@ export function dataFeaturesOptions(objectType: string): SelectProps.Options {
     },
     {
       label: 'Logs, credentials, encryption',
-      disabled: objectType === 'end' ? false : true, // enable only for datastores
+      disabled: objectType === 'datastore' ? false : true, // enable only for datastores
       options: [
         {
           label: 'Store logs',
@@ -60,7 +60,7 @@ export function dataFeaturesOptions(objectType: string): SelectProps.Options {
     },
     {
       label: 'Data exchange format',
-      disabled: objectType === 'start' || objectType === 'link' ? false : true, // enable only for processes and links (data flows)
+      disabled: objectType === 'process' || objectType === 'biDirectional' ? false : true, // enable only for processes and links (data flows)
       options: [
         {
           label: 'JSON',
@@ -99,13 +99,14 @@ export function dataFeaturesOptions(objectType: string): SelectProps.Options {
       ],
     },
   ];
+  return features.filter(f => !f.disabled);
 };
 
 export function techFeaturesOptions(objectType: string): SelectProps.Options {
-  return [
+  let features = [
     {
       label: 'Architecture',
-      disabled: ((objectType==='start') ? false:true), // enable only for processes
+      disabled: ((objectType==='process') ? false:true), // enable only for processes
       options: [
         {
           label: 'Serverless',
@@ -126,7 +127,7 @@ export function techFeaturesOptions(objectType: string): SelectProps.Options {
     },
     {
       label: 'OS and programming languages',
-      disabled: ((objectType==='start') ? false:true), // enable only for processes
+      disabled: ((objectType==='process') ? false:true), // enable only for processes
       options: [
         {
           label: 'Linux',
@@ -177,7 +178,7 @@ export function techFeaturesOptions(objectType: string): SelectProps.Options {
     },
     {
       label: 'Data storage and querying',
-      disabled: ((objectType==='end') ? false:true), // enable only for datastores
+      disabled: ((objectType==='datastore') ? false:true), // enable only for datastores
       options: [
         {
           label: 'MySQL',
@@ -208,8 +209,13 @@ export function techFeaturesOptions(objectType: string): SelectProps.Options {
     },
     {
       label: 'Backend frameworks',
-      disabled: ((objectType==='start') ? false:true), // enable only for processes and links (data flows)
+      disabled: ((objectType==='process') ? false:true), // enable only for processes and links (data flows)
       options: [
+        {
+          label: 'Node.js',
+          value: 'bf_nodejs',
+          description: 'This component uses Node.js',
+        },
         {
           label: 'Ruby on Rails',
           value: 'bf_ruby',
@@ -244,7 +250,7 @@ export function techFeaturesOptions(objectType: string): SelectProps.Options {
     },
     {
       label: 'Frontend frameworks',
-      disabled: ((objectType==='process-point') ? false:true), // enable only for external actors
+      disabled: ((objectType==='actor') ? false:true), // enable only for external actors
       options: [
         {
           label: 'React',
@@ -299,13 +305,14 @@ export function techFeaturesOptions(objectType: string): SelectProps.Options {
       ],
     },
   ];
+  return features.filter(f => !f.disabled);
 };
 
 export function securityFeaturesOptions(objectType: string): SelectProps.Options {
-  return [
+  let features = [
     {
       label: 'Authentication',
-      disabled: ((objectType==='end' || objectType==='end' || objectType==='start' || objectType==='process-point') ? false:true), // enable only for datastores, processes, external actors
+      disabled: ((objectType==='datastore' || objectType==='process' || objectType==='actor') ? false:true), // enable only for datastores, processes, external actors
       options: [
         {
           label: 'OpenID',
@@ -365,4 +372,5 @@ export function securityFeaturesOptions(objectType: string): SelectProps.Options
       ],
     },
   ];
+  return features.filter(f => !f.disabled);
 };
