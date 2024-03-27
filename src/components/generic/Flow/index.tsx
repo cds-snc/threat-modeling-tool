@@ -123,7 +123,7 @@ function Flow() {
         }
         return node;
       }));
-  }, [selectedComponent, nodeDataValue, setNodes, setEdges, getZoom, zoomTo]);
+  }, [selectedComponent, nodeDataValue, setNodes, setEdges, getZoom, zoomTo, nodes.length]);
 
   const onNodesChange = useCallback(
     (changes) => {
