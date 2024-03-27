@@ -5,7 +5,6 @@ import ReactFlow, {
   addEdge,
   useEdgesState,
   useNodesState,
-  useOnSelectionChange,
   ConnectionMode,
   Panel,
   Node,
@@ -13,6 +12,8 @@ import ReactFlow, {
   ReactFlowInstance,
   useReactFlow,
   ControlButton,
+  applyEdgeChanges,
+  applyNodeChanges,
 } from 'reactflow';
 import styled from '@emotion/styled';
 import { MagicWandIcon } from '@radix-ui/react-icons';
@@ -92,8 +93,8 @@ function Flow() {
   };
 
   // Nodes and edges state
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes] = useNodesState([]);
+  const [edges, setEdges] = useEdgesState([]);
 
   const [nodeDataValue, setNodeDataValue] = useState({});
   const [selectedComponent, setSelectedComponent] = useState<Node | Edge | null>(null);
@@ -119,16 +120,36 @@ function Flow() {
       }));
   }, [selectedComponent, nodeDataValue, setNodes, setEdges]);
 
-  useOnSelectionChange({
-    onChange: (selected) => {
+  const onNodesChange = useCallback(
+    (changes) => {
       setNodeDataValue({});
-      if (selected.nodes.length + selected.edges.length === 0) {
-        setSelectedComponent(null);
-        return;
-      }
-      setSelectedComponent(selected.nodes[0] || selected.edges[0]);
+      setNodes((oldNodes) => applyNodeChanges(changes, oldNodes));
+      for (let selection of changes.filter(c => c.type === 'select' || (c.type === 'position' && c.dragging === false))) {
+        if (selection.selected || selection.dragging === false) {
+          setSelectedComponent(nodes.find((node) => node.id === selection.id) as Node | null);
+        } else {
+          setSelectedComponent(null);
+        }
+      };
     },
-  });
+    [nodes, setNodes],
+  );
+
+  const onEdgesChange = useCallback(
+    (changes) => {
+      setNodeDataValue({});
+      setEdges((oldEdges) => applyEdgeChanges(changes, oldEdges));
+      setSelectedComponent(null);
+      for (let selection of changes.filter(c => c.type === 'select')) {
+        if (selection.selected) {
+          setSelectedComponent(edges.find((edge) => edge.id === selection.id) as Edge | null);
+        } else {
+          setSelectedComponent(null);
+        }
+      }
+    },
+    [edges, setEdges],
+  );
 
   const onConnect = useCallback(
     (params) => {
