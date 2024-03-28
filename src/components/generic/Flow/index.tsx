@@ -13,6 +13,7 @@ import ReactFlow, {
   useReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
+  MarkerType,
 } from 'reactflow';
 import styled from '@emotion/styled';
 import Container from '@cloudscape-design/components/container';
@@ -177,7 +178,7 @@ function Flow() {
           selectedThreats: [],
         },
       };
-      setEdges((eds) => addEdge(newEdge, eds));
+      setEdges((eds) => addEdge(addEndMarker(newEdge), eds));
       setNodeDataValue({});
     }, [setEdges],
   );
@@ -217,6 +218,15 @@ function Flow() {
     setThreatList(statementList);
   }, [setThreatList, statementList]);
 
+  const addEndMarker = (edge) => ({
+    ...edge,
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      width: 20,
+      height: 20,
+      color: '#b1b1b7',
+    },
+  });
 
   return (
     <SpaceBetween direction="vertical" size="s">

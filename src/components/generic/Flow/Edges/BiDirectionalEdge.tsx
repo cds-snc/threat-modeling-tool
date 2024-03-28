@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { getBezierPath, BaseEdge, useStore, EdgeProps, ReactFlowState, EdgeLabelRenderer, MarkerType } from 'reactflow';
+import { getBezierPath, BaseEdge, useStore, EdgeProps, ReactFlowState, EdgeLabelRenderer } from 'reactflow';
 
 export type GetSpecialPathParams = {
   sourceX: number;
@@ -30,6 +30,7 @@ export default memo(({
   targetPosition,
   selected,
   data,
+  markerEnd,
 }: EdgeProps) => {
   const isBiDirectionEdge = useStore((s: ReactFlowState) => {
     const edgeExists = s.edges.some(
@@ -61,7 +62,7 @@ export default memo(({
 
   return (
     <>
-      <BaseEdge id={id} path={path} markerEnd={MarkerType.Arrow} style={{
+      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={{
         strokeWidth: 2,
         zIndex: 1,
         stroke: selected ? '#FF0072' : '#000',
