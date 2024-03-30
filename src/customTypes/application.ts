@@ -23,6 +23,7 @@ export const ApplicationInfoSchema = z.object({
   */
   name: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
   description: z.string().max(FREE_TEXT_INPUT_MAX_LENGTH).optional(),
+  openAIKey: z.string().max(SINGLE_FIELD_INPUT_MAX_LENGTH).optional(),
   securityCategory: z.string().optional(),
   useIaaS: z.boolean().optional(),
   usePaaS: z.boolean().optional(),

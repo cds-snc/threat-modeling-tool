@@ -22,6 +22,8 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { v4 } from 'uuid';
 import 'reactflow/dist/style.css';
 
+import { LOCAL_STORAGE_KEY_DATA_FLOW_DIAGRAM } from '../../../configs/localStorageKeys';
+
 import ActorNode from './Nodes/ActorNode';
 import DatastoreNode from './Nodes/DatastoreNode';
 import ProcessNode from './Nodes/ProcessNode';
@@ -36,7 +38,6 @@ import SaveButton from './SaveButton/SaveButton';
 import ThreatList from './Threats/ThreatList';
 
 import { useThreatsContext } from '../../../contexts';
-import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
 
 const edgeTypes = {
   biDirectional: BiDirectionalEdge,
@@ -62,9 +63,6 @@ namespace s {
 }
 
 function Flow() {
-  const { currentWorkspace } = useWorkspacesContext();
-  const flowKey = `dataflow-diagram-${currentWorkspace?.id}`;
-
   const { zoomTo, getZoom, setViewport } = useReactFlow();
 
   // Save and restore state
@@ -74,15 +72,15 @@ function Flow() {
   const onSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
+      localStorage.setItem(LOCAL_STORAGE_KEY_DATA_FLOW_DIAGRAM, JSON.stringify(flow));
       setSaveState(true);
     }
-  }, [rfInstance, flowKey]);
+  }, [rfInstance]);
 
   const onInit = async (instance) => {
     setRfInstance(instance);
     const restoreFlow = async () => {
-      const flow = JSON.parse(localStorage.getItem(flowKey) as string);
+      const flow = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_DATA_FLOW_DIAGRAM) as string);
 
       if (flow) {
         const { x = 0, y = 0, zoom = 1 } = flow.viewport;
@@ -258,7 +256,8 @@ function Flow() {
       <ThreatList
         threats={threatList}
         component={selectedComponent}
-        changeHandler={setNodeDataValue} />
+        changeHandler={setNodeDataValue}
+        flow={rfInstance?.toObject()}/>
     </SpaceBetween>
   );
 }

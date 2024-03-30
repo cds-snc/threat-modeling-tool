@@ -27,6 +27,7 @@ export interface ApplicationInfoContextApi {
 const initialState: ApplicationInfoContextApi = {
   applicationInfo: {
     description: '',
+    openAIKey: '',
     securityCategory: 'CCCS Medium',
     useIaaS: false,
     usePaaS: false,

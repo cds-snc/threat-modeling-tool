@@ -67,6 +67,7 @@
     "eslint-plugin-header": "^3.1.1",
     "indefinite": "*",
     "lodash": "^4.17.21",
+    "openai": "^4.30.0",
     "react": "*",
     "react-dom": "*",
     "react-draggable": "^4.4.6",
