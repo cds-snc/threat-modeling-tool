@@ -207,7 +207,7 @@ function Flow() {
         position: { x, y },
       };
       setSaveState(false);
-      return (type === 'trustBoundary' ? [newNode, ...nds] : [...nds, newNode]);
+      return [...nds, newNode];
     });
   }, [setNodes]);
 
