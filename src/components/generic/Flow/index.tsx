@@ -130,7 +130,7 @@ function Flow() {
     (changes) => {
       setNodeDataValue({});
       setNodes((oldNodes) => applyNodeChanges(changes, oldNodes));
-      for (let selection of changes.filter(c => c.type === 'select' || (c.type === 'position' && c.dragging === false))) {
+      for (let selection of changes.filter(c => c.type === 'select' || (c.type === 'position' && c.dragging === false) || c.type ==='remove')) {
         if (selection.selected || selection.dragging === false) {
           setSelectedComponent(nodes.find((node) => node.id === selection.id) as Node | null);
         } else {
