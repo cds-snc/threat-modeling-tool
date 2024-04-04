@@ -32,6 +32,7 @@ import BiDirectionalEdge from './Edges/BiDirectionalEdge';
 
 import PropertiesPanel from './Properties/PropertiesPanel';
 import SaveButton from './SaveButton/SaveButton';
+import ZIndexChanger from './Nodes/ZIndexChanger';
 
 import ThreatList from './Threats/ThreatList';
 
@@ -206,9 +207,24 @@ function Flow() {
         position: { x, y },
       };
       setSaveState(false);
-      return (type === 'trustBoundary' ? [newNode, ...nds] : [...nds, newNode]);
+      return [...nds, newNode];
     });
   }, [setNodes]);
+
+  const onZIndexChange = useCallback((direction: string) => {
+    setNodes((nds) => {
+      const selectedNode = nds.find((node) => node.id === selectedComponent?.id);
+      if (!selectedNode) {
+        return nds;
+      }
+      const index = nds.indexOf(selectedNode);
+      const newIndex = direction === 'last' ? 0 : direction === 'down' ? index - 1 : direction === 'up' ? index + 1 : nds.length - 1;
+      const node = nds.splice(index, 1)[0];
+      nds.splice(newIndex, 0, node);
+      setSaveState(false);
+      return [...nds];
+    });
+  }, [setNodes, selectedComponent]);
 
   // Threats state
   const { statementList } = useThreatsContext();
@@ -249,6 +265,7 @@ function Flow() {
             <Background />
             <Controls />
             <Panel position="top-left"><NodeSelector addCallback={onAdd} /></Panel>
+            <Panel position="top-right"><ZIndexChanger addCallback={onZIndexChange} /></Panel>
           </ReactFlow>
         </s.OuterContainer>
       </Container>
