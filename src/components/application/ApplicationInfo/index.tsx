@@ -35,6 +35,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
   const [editMode, setEditMode] = useState(!applicationInfo.name && !applicationInfo.description );
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
+  const [openAIKey, setOpenAIKey] = useState('');
   const [securityCategory, setSecurityCategory] = useState('CCCS Medium');
   const [checkedIaaS, setCheckedIaaS] = useState(false);
   const [checkedPaaS, setCheckedPaaS] = useState(false);
@@ -54,6 +55,7 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
       ...prev,
       description: content,
       name,
+      openAIKey,
       securityCategory: securityCategory,
       useIaaS: checkedIaaS,
       usePaaS: checkedPaaS,
@@ -67,11 +69,12 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
     setEditMode(false);
   }, [checkedApplication, checkedCompute, checkedData,
     checkedIaaS, checkedNetwork, checkedPaaS, checkedSaaS,
-    checkedStorage, content, name, securityCategory, setApplicationInfo]);
+    checkedStorage, content, name, openAIKey, securityCategory, setApplicationInfo]);
 
   const handleEdit = useCallback(() => {
     setContent(applicationInfo.description || '');
     setName(applicationInfo.name || '');
+    setOpenAIKey(applicationInfo.openAIKey || '');
     setSecurityCategory(applicationInfo.securityCategory || 'CCCS Medium');
     setCheckedIaaS(applicationInfo.useIaaS || false);
     setCheckedPaaS(applicationInfo.usePaaS || false);
@@ -200,6 +203,18 @@ const ApplicationInfo: FC<EditableComponentBaseProps> = ({
           >
           Network
           </Checkbox>
+        </FormField>
+        <FormField
+          label="OpenAI Key"
+        >
+          <Input
+            value={openAIKey}
+            onChange={event =>
+              setOpenAIKey(event.detail.value)
+            }
+            validateData={ApplicationInfoSchema.shape.openAIKey.safeParse}
+            placeholder='Enter OpenAI API key'
+          />
         </FormField>
       </SpaceBetween>) :
       (

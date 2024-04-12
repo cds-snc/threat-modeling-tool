@@ -26,7 +26,8 @@ import {
   PropertyFilter,
 } from '@cloudscape-design/components';
 import { columnDefinitions, getMatchesCountText, paginationLabels, collectionPreferencesProps, filteringConstants, filteringProperties } from './table-config';
-import { useThreatsContext } from '../../../../contexts/ThreatsContext';
+import { useThreatsContext, useApplicationInfoContext } from '../../../../contexts';
+import OpenAIModal from '../../OpenAIModal';
 
 function EmptyState({ title, subtitle, action }) {
   return (
@@ -42,9 +43,12 @@ function EmptyState({ title, subtitle, action }) {
   );
 }
 
-export default memo(({ threats, component, changeHandler }: { threats: any; component: any; changeHandler: any } ) => {
+export default memo(({ threats, component, changeHandler, flow }: { threats: any; component: any; changeHandler: any; flow: any }) => {
 
   const [data, setData] = useState((component && component.data) || {});
+  const [AIModalVisable, setAIModalVisable] = useState(false);
+
+  const { applicationInfo } = useApplicationInfoContext();
 
   useEffect(() => {
     setData((component && component.data) || {});
@@ -97,7 +101,7 @@ export default memo(({ threats, component, changeHandler }: { threats: any; comp
             subtitle=""
             action={
               <Button onClick={() => actions.setFiltering('')}>
-              Clear filter
+                Clear filter
               </Button>
             }
           />
@@ -117,48 +121,54 @@ export default memo(({ threats, component, changeHandler }: { threats: any; comp
   }
 
   return (
-    <Table
-      {...collectionProps}
-      selectionType="multi"
-      header={
-        <Header
-          counter={
-            data.threats?.length
-              ? `(${data.threats.length}/${threats.length})`
-              : `(${threats.length})`
-          }
-        >
-          Threats
-        </Header>
-      }
-      columnDefinitions={columnDefinitions}
-      visibleColumns={preferences.visibleContent}
-      items={items}
-      trackBy="id"
-      selectedItems={data.threats}
-      onSelectionChange={(e) => updateData('threats', e.detail.selectedItems, [])}
-      stickyHeader
-      resizableColumns
-      wrapLines
-      stripedRows
-      pagination={
-        <Pagination {...paginationProps} ariaLabels={paginationLabels} />
-      }
-      preferences={
-        <CollectionPreferences
-          {...collectionPreferencesProps}
-          preferences={preferences}
-          onConfirm={({ detail }) => setPreferences(detail)}
-        />
-      }
-      filter={
-        <PropertyFilter
-          {...propertyFilterProps}
-          countText={getMatchesCountText(filteredItemsCount)}
-          expandToViewport={true}
-          i18nStrings={filteringConstants}
-        />
-      }
-    />
+    <>
+      <Table
+        {...collectionProps}
+        selectionType="multi"
+        header={
+          <Header
+            actions={
+              (applicationInfo?.openAIKey ? <Button variant="primary" onClick={() => setAIModalVisable(true)}>Generate</Button> : null)
+            }
+            counter={
+              data.threats?.length
+                ? `(${data.threats.length}/${threats.length})`
+                : `(${threats.length})`
+            }
+          >
+            Threats
+          </Header>
+        }
+        columnDefinitions={columnDefinitions}
+        visibleColumns={preferences.visibleContent}
+        items={items}
+        trackBy="id"
+        selectedItems={data.threats}
+        onSelectionChange={(e) => updateData('threats', e.detail.selectedItems, [])}
+        stickyHeader
+        resizableColumns
+        wrapLines
+        stripedRows
+        pagination={
+          <Pagination {...paginationProps} ariaLabels={paginationLabels} />
+        }
+        preferences={
+          <CollectionPreferences
+            {...collectionPreferencesProps}
+            preferences={preferences}
+            onConfirm={({ detail }) => setPreferences(detail)}
+          />
+        }
+        filter={
+          <PropertyFilter
+            {...propertyFilterProps}
+            countText={getMatchesCountText(filteredItemsCount)}
+            expandToViewport={true}
+            i18nStrings={filteringConstants}
+          />
+        }
+      />
+      <OpenAIModal visible={AIModalVisable} setVisible={setAIModalVisable} data={component} apiKey={applicationInfo?.openAIKey} flow={flow} />
+    </>
   );
 });
