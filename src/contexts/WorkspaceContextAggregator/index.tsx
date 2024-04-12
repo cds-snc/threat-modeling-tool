@@ -21,6 +21,7 @@ import ArchitectureInfoContextProvider from '../ArchitectureContext';
 import AssumptionLinksContextProvider from '../AssumptionLinksContext';
 import AssumptionsContextProvider from '../AssumptionsContext';
 import DataflowInfoContextProvider from '../DataflowContext';
+import FlowContextProvider from '../FlowContext';
 import ExampleContextProvider from '../ExampleContext';
 import GlobalSetupContextProvider from '../GlobalSetupContext';
 import MitigationLinksContextProvider from '../MitigationLinksContext';
@@ -58,7 +59,9 @@ const WorkspaceContextInnerAggregator: FC<PropsWithChildren<WorkspaceContextAggr
                       <ApplicationInfoContextProvider workspaceId={workspaceId}>
                         <ArchitectureInfoContextProvider workspaceId={workspaceId}>
                           <DataflowInfoContextProvider workspaceId={workspaceId}>
-                            {children}
+                            <FlowContextProvider workspaceId={workspaceId}>
+                              {children}
+                            </FlowContextProvider>
                           </DataflowInfoContextProvider>
                         </ArchitectureInfoContextProvider>
                       </ApplicationInfoContextProvider>

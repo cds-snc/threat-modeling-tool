@@ -36,8 +36,7 @@ import ZIndexChanger from './Nodes/ZIndexChanger';
 
 import ThreatList from './Threats/ThreatList';
 
-import { useThreatsContext } from '../../../contexts';
-import { useWorkspacesContext } from '../../../contexts/WorkspacesContext';
+import { useFlowContext, useThreatsContext } from '../../../contexts';
 
 const edgeTypes = {
   biDirectional: BiDirectionalEdge,
@@ -63,35 +62,33 @@ namespace s {
 }
 
 function Flow() {
-  const { currentWorkspace } = useWorkspacesContext();
-  const flowKey = `dataflow-diagram-${currentWorkspace?.id}`;
-
   const { zoomTo, getZoom, setViewport } = useReactFlow();
 
   // Save and restore state
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<any, any> | null>(null);
   const [saveState, setSaveState] = useState(true);
 
+  const { flow, setFlow } = useFlowContext();
+
   const onSave = useCallback(() => {
     if (rfInstance) {
-      const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
+      setFlow({ content: JSON.stringify(rfInstance.toObject()) });
       setSaveState(true);
     }
-  }, [rfInstance, flowKey]);
+  }, [rfInstance, setFlow]);
+
+  const restoreFlow = async () => {
+    if (flow.content) {
+      const diagram = JSON.parse(flow.content || '{}');
+      const { x = 0, y = 0, zoom = 1 } = diagram.viewport;
+      setNodes(diagram.nodes || []);
+      setEdges(diagram.edges || []);
+      setViewport({ x, y, zoom });
+    }
+  };
 
   const onInit = async (instance) => {
     setRfInstance(instance);
-    const restoreFlow = async () => {
-      const flow = JSON.parse(localStorage.getItem(flowKey) as string);
-
-      if (flow) {
-        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-        setNodes(flow.nodes || []);
-        setEdges(flow.edges || []);
-        setViewport({ x, y, zoom });
-      }
-    };
     await restoreFlow();
   };
 
