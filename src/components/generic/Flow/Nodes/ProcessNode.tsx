@@ -26,7 +26,6 @@ export default memo(({ data, selected }: { data: any; selected: boolean }) => {
         id="top-source"
         position={Position.Top}
         style={{ background: '#555' }}
-        onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={true}
       />
       <Handle
@@ -34,7 +33,6 @@ export default memo(({ data, selected }: { data: any; selected: boolean }) => {
         id="left-source"
         position={Position.Left}
         style={{ background: '#555' }}
-        onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={true}
       />
       <ProcessStyle selected={selected}>
