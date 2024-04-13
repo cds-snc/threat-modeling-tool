@@ -67,6 +67,8 @@ function Flow() {
   // Save and restore state
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<any, any> | null>(null);
   const [saveState, setSaveState] = useState(true);
+  const [nodes, setNodes] = useNodesState([]);
+  const [edges, setEdges] = useEdgesState([]);
 
   const { flow, setFlow } = useFlowContext();
 
@@ -77,7 +79,7 @@ function Flow() {
     }
   }, [rfInstance, setFlow]);
 
-  const restoreFlow = async () => {
+  const restoreFlow = useCallback(async () => {
     if (flow.content) {
       const diagram = JSON.parse(flow.content || '{}');
       const { x = 0, y = 0, zoom = 1 } = diagram.viewport;
@@ -85,7 +87,11 @@ function Flow() {
       setEdges(diagram.edges || []);
       setViewport({ x, y, zoom });
     }
-  };
+  }, [flow.content, setNodes, setEdges, setViewport]);
+
+  useEffect(() => {
+    restoreFlow().catch(console.error);
+  }, [flow.content, restoreFlow]);
 
   const onInit = async (instance) => {
     setRfInstance(instance);
@@ -93,9 +99,6 @@ function Flow() {
   };
 
   // Nodes and edges state
-  const [nodes, setNodes] = useNodesState([]);
-  const [edges, setEdges] = useEdgesState([]);
-
   const [nodeDataValue, setNodeDataValue] = useState({});
   const [selectedComponent, setSelectedComponent] = useState<Node | Edge | null>(null);
 
