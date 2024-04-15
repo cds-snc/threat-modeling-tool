@@ -9,7 +9,6 @@ const DiagramInfo: FC<EditableComponentBaseProps> = () => {
       <Flow />
     </ReactFlowProvider>
   );
-
 };
 
 export default DiagramInfo;

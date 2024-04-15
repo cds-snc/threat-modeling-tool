@@ -25,6 +25,9 @@ import { useGlobalSetupContext } from '../../contexts/GlobalSetupContext';
 import { useMitigationLinksContext } from '../../contexts/MitigationLinksContext';
 import { useMitigationsContext } from '../../contexts/MitigationsContext';
 import { useThreatsContext } from '../../contexts/ThreatsContext';
+import { useFlowContext } from '../../contexts/FlowContext';
+import { useControlsContext } from '../../contexts/ControlsContext';
+import { useControlLinksContext } from '../../contexts/ControlLinksContext';
 
 const useRemoveData = () => {
   const { composerMode } = useGlobalSetupContext();
@@ -37,6 +40,9 @@ const useRemoveData = () => {
   const { removeAllStatements, onDeleteWorkspace: threatsDeleteWorkspace } = useThreatsContext();
   const { removeAllAssumptionLinks, onDeleteWorkspace: assumptionLinksDeleteWorkspace } = useAssumptionLinksContext();
   const { removeAllMitigationLinks, onDeleteWorkspace: mitigationLinksDeleteWorkspace } = useMitigationLinksContext();
+  const { removeFlow, onDeleteWorkspace: flowDeleteWorkspace } = useFlowContext();
+  const { removeAllControls, onDeleteWorkspace: controlsDeleteWorkspace } = useControlsContext();
+  const { removeAllControlLinks, onDeleteWorkspace: controlLinksDeleteWorkspace } = useControlLinksContext();
 
   const removeData = useCallback(async () => {
     if (composerMode === 'Full') {
@@ -49,6 +55,9 @@ const useRemoveData = () => {
         removeAllStatements(),
         removeAllAssumptionLinks(),
         removeAllMitigationLinks(),
+        removeFlow(),
+        removeAllControls(),
+        removeAllControlLinks(),
       ]);
     }
 
@@ -57,7 +66,7 @@ const useRemoveData = () => {
     removeApplicationInfo, removeArchitectureInfo, removeDataflowInfo,
     removeAllAssumptions, removeAllMitigations,
     removeAllStatements, removeAllAssumptionLinks,
-    removeAllMitigationLinks]);
+    removeAllMitigationLinks, removeFlow, removeAllControls, removeAllControlLinks]);
 
   const deleteCurrentWorkspace = useCallback(async (toDeleteWorkspaceId: string) => {
     if (toDeleteWorkspaceId) {
@@ -71,6 +80,9 @@ const useRemoveData = () => {
         mitigationsDeleteWorkspace(toDeleteWorkspaceId),
         assumptionLinksDeleteWorkspace(toDeleteWorkspaceId),
         mitigationLinksDeleteWorkspace(toDeleteWorkspaceId),
+        flowDeleteWorkspace(toDeleteWorkspaceId),
+        controlsDeleteWorkspace(toDeleteWorkspaceId),
+        controlLinksDeleteWorkspace(toDeleteWorkspaceId),
       ]);
 
       switchWorkspace(null);
@@ -85,6 +97,9 @@ const useRemoveData = () => {
     mitigationsDeleteWorkspace,
     assumptionLinksDeleteWorkspace,
     mitigationLinksDeleteWorkspace,
+    flowDeleteWorkspace,
+    controlsDeleteWorkspace,
+    controlLinksDeleteWorkspace,
     removeWorkspace,
   ]);
 

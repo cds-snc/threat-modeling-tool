@@ -14,6 +14,10 @@
   limitations under the License.
  ******************************************************************************************************************** */
 
+export const FLOW_DEFAULT_VALUE = {
+  content: '',
+};
+
 export const INFO_DEFAULT_VALUE = {
   description: '',
 };

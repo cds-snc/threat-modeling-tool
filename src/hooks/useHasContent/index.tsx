@@ -20,12 +20,13 @@ import { useArchitectureInfoContext } from '../../contexts/ArchitectureContext';
 import { useAssumptionsContext } from '../../contexts/AssumptionsContext';
 import { useDataflowInfoContext } from '../../contexts/DataflowContext';
 import { useDiagramInfoContext } from '../../contexts/DiagramContext';
+import { useFlowContext } from '../../contexts/FlowContext';
 import { useMitigationsContext } from '../../contexts/MitigationsContext';
 import { useControlsContext } from '../../contexts/ControlsContext';
 import { useControlProfilesContext } from '../../contexts/ControlProfilesContext';
 import { useThreatsContext } from '../../contexts/ThreatsContext';
 import { HasContentDetails } from '../../customTypes';
-import { hasApplicationName, hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDiagramInfo, hasDataflowInfo, hasMitigations, hasControls, hasControlProfiles, hasThreats } from '../../utils/hasContent';
+import { hasApplicationName, hasApplicationInfo, hasArchitectureInfo, hasAssumptions, hasDiagramInfo, hasDataflowInfo, hasMitigations, hasControls, hasControlProfiles, hasThreats, hasFlow } from '../../utils/hasContent';
 
 
 const useHasContent = () => {
@@ -33,19 +34,21 @@ const useHasContent = () => {
   const { architectureInfo } = useArchitectureInfoContext();
   const { diagramInfo } = useDiagramInfoContext();
   const { dataflowInfo } = useDataflowInfoContext();
+  const { flow } = useFlowContext();
   const { assumptionList } = useAssumptionsContext();
   const { controlList } = useControlsContext();
   const { controlProfileList } = useControlProfilesContext();
   const { mitigationList } = useMitigationsContext();
   const { statementList } = useThreatsContext();
 
-  const hasContent: [ boolean, HasContentDetails] = useMemo(() => {
+  const hasContent: [boolean, HasContentDetails] = useMemo(() => {
     const details = {
       applicationName: hasApplicationName(applicationInfo),
       applicationInfo: hasApplicationInfo(applicationInfo),
       architecture: hasArchitectureInfo(architectureInfo),
       diagram: hasDiagramInfo(diagramInfo),
       dataflow: hasDataflowInfo(dataflowInfo),
+      flow: hasFlow(flow),
       assumptions: hasAssumptions(assumptionList),
       controls: hasControls(controlList),
       controlProfiles: hasControlProfiles(controlProfileList),
@@ -56,7 +59,18 @@ const useHasContent = () => {
     const sum = Object.values(details).some(x => x);
 
     return [sum, details];
-  }, [applicationInfo, architectureInfo, dataflowInfo, assumptionList, mitigationList, controlList, controlProfileList, statementList, diagramInfo]);
+  }, [
+    applicationInfo,
+    architectureInfo,
+    dataflowInfo,
+    assumptionList,
+    mitigationList,
+    controlList,
+    controlProfileList,
+    statementList,
+    diagramInfo,
+    flow,
+  ]);
 
   return hasContent;
 };
