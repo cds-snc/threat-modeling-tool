@@ -47,7 +47,7 @@ export default memo(({ visible, setVisible, data, flow, apiKey }: { visible: boo
           { role: 'assistant', content: 'Generate a threat statement for the impacted asset.' },
           { role: 'user', content: `Here is the information about the impacted asset in json format: ${JSON.stringify(data)} Here is the data flow diagram in json format: ${JSON.stringify(flow)}` },
         ],
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o',
       }).then((response) => {
         let content = response.choices[0].message.content || '[]';
         setThreats(JSON.parse(content).map((item) => ({ id: v4(), ...item })) || []);
