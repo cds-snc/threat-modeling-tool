@@ -6,10 +6,10 @@
 		"github.copilot"
 	],
 	"features": {
-		"ghcr.io/lukewiwa/features/shellcheck:0": {
+		"ghcr.io/lukewiwa/features/shellcheck:0@sha256:9d61a060404fb127ae0c3aea3adbf85869ba575ab8e612f168c82c48ef0c502e": {
 			"version": "stable"
 		},
-		"ghcr.io/devcontainers/features/terraform:1": {
+		"ghcr.io/devcontainers/features/terraform:1@sha256:403fe3406aaf4618d9ca5b79cd1bd4a3576eac8816b18419650ab2f87026bb09": {
 			"version": "latest",
 			"tflint": "latest",
 			"terragrunt": "latest"
