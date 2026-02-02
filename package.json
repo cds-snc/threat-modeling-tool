@@ -27,7 +27,7 @@
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "eslint": "^8",
+    "eslint": "^9.0.0",
     "eslint-import-resolver-node": "*",
     "eslint-import-resolver-typescript": "*",
     "eslint-plugin-import": "^2.29.1",
