@@ -8,7 +8,7 @@ on:
 
 jobs:
   terraform-plan:
-    uses: cds-snc/workflows/.github/workflows/terragrunt-plan.yml@main
+    uses: cds-snc/workflows/.github/workflows/terragrunt-plan.yml@5bc26e2c0126f884867fbd192aff741f150f1521 # main
     with:
       module: terraform
       role_arn: arn:aws:iam::283582579564:role/threat-modeling-tool-plan
