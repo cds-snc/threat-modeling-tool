@@ -7,7 +7,7 @@ on:
 
 jobs:
   terragrunt-apply:
-    uses: cds-snc/workflows/.github/workflows/terragrunt-apply.yml@main
+    uses: cds-snc/workflows/.github/workflows/terragrunt-apply.yml@ecc8fcbf920082d303fed0d5b4ad8ad144aa95b6 # main
     with:
       module: terraform
       role_arn: arn:aws:iam::283582579564:role/threat-modeling-tool-apply
